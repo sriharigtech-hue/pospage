@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Sidebar -->
+    <LinearLayout
+        android:id="@+id/leftSidebar"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#E6F0FF"
+        android:padding="8dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/serviceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <!-- Center -->
+    <LinearLayout
+        android:id="@+id/centerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/leftSidebar"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Search + Arrange -->
+        <LinearLayout
+            android:id="@+id/centerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:iconifiedByDefault="false"
+                android:hint="Search by name"/>
+
+            <Button
+                android:id="@+id/btnArrange"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Arrange"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/centerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,15 +1,22 @@
 package com.example.apitest.network
 
 
+import com.example.apitest.dataModel.AddCategoryOutput
 import com.example.apitest.dataModel.CategoryInput
-import com.example.apitest.dataModel.CategoryOutput
+import com.example.apitest.dataModel.CategoryListOutput
+
+import com.example.apitest.dataModel.StatusResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 
 
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 
 interface ApiService {
@@ -18,5 +25,17 @@ interface ApiService {
     fun stockCategoryApi(
         @Header("Authorization") jwtToken: String,
         @Body input: CategoryInput?,
-    ): Call<CategoryOutput>
+    ): Call<CategoryListOutput>
+
+
+    @POST("add_category")
+    fun addCategoryApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: CategoryInput?,
+//        @Part("status") status: RequestBody?,
+    ): Call<AddCategoryOutput>
+
+
+
+
 }

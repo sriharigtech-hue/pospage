@@ -19,7 +19,7 @@ class CategoryAdapter(private val items: List<Category>) :
 
     class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.tvName)
-        val image: ImageView = itemView.findViewById(R.id.ivImage)
+//        val image: ImageView = itemView.findViewById(R.id.ivImage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -31,10 +31,11 @@ class CategoryAdapter(private val items: List<Category>) :
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = items[position]
         holder.name.text = category.category_name
-        Glide.with(holder.itemView.context)
-            .load(category.category_image)
-            .into(holder.image)
+//        Glide.with(holder.itemView.context)
+//            .load(category.category_image)
+//            .into(holder.image)
     }
 
     override fun getItemCount(): Int = items.size
 }
+

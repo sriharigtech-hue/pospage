@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -61,4 +63,8 @@ dependencies {
     implementation ("com.squareup.moshi:moshi:1.15.0")
     implementation ("com.squareup.retrofit2:converter-moshi:2.11.0")
     kapt ("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+    implementation  ("com.github.angads25:toggle:1.1.0")
+    implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.25")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+
 }

@@ -1,10 +1,150 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <!-- Top Bar -->
+    <RelativeLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_height="64dp"
+        android:background="@drawable/gradient_bg">
+
+        <!-- Back Button -->
+        <RelativeLayout
+            android:id="@+id/backButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="18dp"
+            android:background="@drawable/button_curve_border"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/back" />
+        </RelativeLayout>
+
+        <!-- Logo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/backButton"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/splashLogo2"
+                android:layout_width="110dp"
+                android:layout_height="24dp"
+                android:src="@drawable/splash2"/>
+        </LinearLayout>
+
+        <!-- Cart and Search -->
+        <ImageView
+            android:id="@+id/cart"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/searchIcon"
+            android:src="@drawable/custom_product"/>
+        <ImageView
+            android:id="@+id/searchIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/viewBillsLayout"
+            android:src="@drawable/search"/>
+        <RelativeLayout
+            android:id="@+id/viewBillsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="18dp">
+            <ImageView
+                android:id="@+id/viewBillsIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/cart"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- Tab Bar -->
+    <LinearLayout
+        android:id="@+id/tabBar"
+        android:layout_below="@id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/white"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/tabItems"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_12dp"
+            android:paddingVertical="@dimen/_6dp"
+            android:text="Items"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
+            android:background="@drawable/tab_selected_bg" />
+        <TextView
+            android:id="@+id/tabSubCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16dp"
+            android:paddingHorizontal="@dimen/_12dp"
+            android:paddingVertical="@dimen/_6dp"
+            android:text="Sub-Category"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/tabCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16dp"
+            android:paddingHorizontal="@dimen/_12dp"
+            android:paddingVertical="@dimen/_6dp"
+            android:text="Category"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- Fragment Container -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_below="@id/tabBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"/>
+
+    <!-- POS Circle Button -->
+    <RelativeLayout
+        android:id="@+id/sale_but"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="6dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/updateImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/circle2"/>
+        <ImageView
+            android:id="@+id/sale_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/pos_icon"/>
+    </RelativeLayout>
+
+</RelativeLayout>

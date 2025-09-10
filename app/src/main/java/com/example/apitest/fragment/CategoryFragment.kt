@@ -1,0 +1,93 @@
+package com.example.apitest.fragment
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.apitest.AddCategoryActivity
+import com.example.apitest.R
+import com.example.apitest.adapter.CategoryAdapter
+import com.example.apitest.dataModel.Category
+import com.example.apitest.dataModel.CategoryInput
+import com.example.apitest.dataModel.CategoryListOutput
+import com.example.apitest.network.ApiClient
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+class CategoryFragment : Fragment() {
+
+
+    private val filteredCategories = mutableListOf<Category>()
+    private lateinit var btnAddCategory: FloatingActionButton
+    private lateinit var addCategoryLauncher: ActivityResultLauncher<Intent>
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: CategoryAdapter
+    private val categories = mutableListOf<Category>()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_category, container, false)
+
+        recyclerView = view.findViewById(R.id.categoryRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = CategoryAdapter(categories)
+        recyclerView.adapter = adapter
+
+
+        btnAddCategory = view.findViewById(R.id.btnAddCategory)
+
+        addCategoryLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                fetchCategories() // refresh all categories after add
+            }
+        }
+
+        btnAddCategory.setOnClickListener {
+            val intent = Intent(requireContext(), AddCategoryActivity::class.java)
+            addCategoryLauncher.launch(intent)
+        }
+
+        fetchCategories()
+        return view
+    }
+
+    private fun fetchCategories() {
+        val token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiYjE1YTc2MWYyMTA3NTJiYTY2MjBiMDg4NTUzYmRiMGYxYWVhZmEwOTJlMWY4MGI1YmFjYmExNzA4MDFlN2Y2NGU1NDEyODQyMzBjYTJiM2YiLCJpYXQiOjE3NTY4MTA5MzUuNjIwMDU5LCJuYmYiOjE3NTY4MTA5MzUuNjIwMDYyLCJleHAiOjE3ODgzNDY5MzUuNjE2NjA2LCJzdWIiOiI2MCIsInNjb3BlcyI6W119.UzX5UwID0Xd9Ia9ZIahOq7ugA8k8viEIOX261q2H2rhR7vMGZHTmm6ymDhdWKmmtSN0fTmU8AijKQzHN4g9HRZvr9seeEHQN3doBFT4odcCbufig4LEH2E0oMjQMmOIYEIjbj-n8o5i2lcqOfchu3vCrDt6McE7GBuPzTA87wyQpMPyO4IAUKU7h7TnwVx3VB_Y8aAUR5DpLr9-LQ7PpOG_hPUvqfUJ3jLoaluDAXA-1hPQ8EXKRz15xAfQxHLR0LLNOCf31hIj7JOxJQFDU-wzXs9g-bH6aAPOY2Q5tye-JZPoLNDCFRxNIkK7HgddkFdH7w0DnW2r4s4vjtfKe0Ubc0aOAxgE74OS_50rw-QEZjl0SceQhoNqeSgSH43_JSjAWX5-VxlwNBgGBBVMXBsKUt52S_eVyyOJpA_qXCqFjVqmWh-MPgo55-dEHw9FFc1ptvzY6FUeYnwBs4Kd65SZyFfU0Esx9wqtq5ZarZDR-gfZUlaP-toKzOzpAs7QasunG62nHDBdUX4P-EdCDFjQdroxeX983vJGe_GzYj5sBRZauXsqg0wtvZmAR2qaxzK4HB853hs7BJn0QAQRZIM7qERV0VqgynnWIrPFhV1WDyU_NMxPQh3WM6jqICK30uqiD7-201ga-522-Dnbxd1vF8CQIFGMRgiwikl3cfoI"
+        val input = CategoryInput(status = "1")
+
+        ApiClient.instance.stockCategoryApi(token, input)
+            .enqueue(object : Callback<CategoryListOutput> {
+                override fun onResponse(
+                    call: Call<CategoryListOutput>,
+                    response: Response<CategoryListOutput>
+                ) {
+                    if (response.isSuccessful && response.body()?.status == true) {
+                        categories.clear()
+                        categories.addAll(response.body()?.data ?: emptyList())
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        Toast.makeText(requireContext(), "Error fetching categories", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<CategoryListOutput>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+}
+

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText">
+
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_64dp"
+        android:background="@drawable/gradient_bg">
+
+        <RelativeLayout
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/_32dp"
+            android:layout_height="@dimen/_32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_18dp"
+            android:background="@drawable/button_curve_border"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_18dp"
+                android:layout_height="@dimen/_18dp"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/back" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_toEndOf="@+id/backButton"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/splashLogo2"
+                android:layout_width="@dimen/_110dp"
+                android:layout_height="@dimen/_24dp"
+                android:layout_gravity="start"
+                android:src="@drawable/splash2" />
+
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:fontFamily="@font/font_bold"
+            android:text="Add Category"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sp" />
+
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_below="@+id/topBar"
+        android:background="@color/bgColor">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_18dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12dp"
+                android:hint="Category Name *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/categoryName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="text"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/categorySpinnerTitleLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:fontFamily="@font/font_semibold"
+                android:text="Add Category Image (Size upto 100kb)"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14sp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/AddImageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_1dp"
+                android:layout_marginTop="@dimen/_16dp"
+                android:layout_marginBottom="@dimen/_6dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/_32dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/_16dp"
+                        android:paddingVertical="@dimen/_16dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/categorySpinnerTitle1Layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/font_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Add Category Image"
+                            android:textColor="@color/textBlack"
+                            android:textSize="@dimen/_14sp" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/_24dp"
+                            android:layout_height="@dimen/_24dp"
+                            android:src="@android:drawable/ic_input_add"
+                            app:tint="@color/textBlack" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/photo_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_8dp"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/_12dp"
+                        android:visibility="gone">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/photo_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/_8dp"
+                            android:fontFamily="@font/font_semibold"
+                            android:text="Upload Images"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14dp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/photosRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_24dp"
+                android:layout_marginBottom="@dimen/_24dp"
+                android:background="@drawable/gradient_btn"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/font_semibold"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_16dp"
+                android:text="Save"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16sp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</RelativeLayout>
