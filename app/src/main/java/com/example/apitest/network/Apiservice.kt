@@ -6,7 +6,7 @@ import com.example.apitest.dataModel.CategoryInput
 import com.example.apitest.dataModel.CategoryListOutput
 
 import com.example.apitest.dataModel.StatusResponse
-import okhttp3.MultipartBody
+import com.example.apitest.dataModel.StatusUpdateInput
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -35,7 +35,21 @@ interface ApiService {
 //        @Part("status") status: RequestBody?,
     ): Call<AddCategoryOutput>
 
+    @Multipart
+    @POST("edit_category")
+    fun uploadEditCategory(
+        @Header("Authorization") jwtToken: String,
+        @Part("category_id") category_id: RequestBody?,
+        @Part("category_name") category_name: RequestBody?,
+        @Part("status") status: RequestBody?,
+    ): Call<StatusResponse>
 
 
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("delete_category")
+    fun deleteCategory(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: StatusUpdateInput?
+    ): Call<StatusResponse>
 
 }

@@ -26,3 +26,9 @@ data class AddCategoryOutput(
     val data: String? // empty string in this API
 )
 
+data class EditCategoryResponse(
+    val data: String?,
+    val status: Boolean,
+    val message: String
+)
+

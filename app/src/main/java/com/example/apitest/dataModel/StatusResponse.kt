@@ -19,6 +19,8 @@ data class StatusResponse(
     @Json(name = "pdf")
     var pdf: String? = null,
     @Json(name = "order_id")
-    var order_id: Int? = null
+    var order_id: Int? = null,
+    @Json(name = "data")
+    val data: String? = null,
 
 )
