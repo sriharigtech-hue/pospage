@@ -1,12 +1,14 @@
 package com.example.apitest.network
 
 
-import com.example.apitest.dataModel.AddCategoryOutput
 import com.example.apitest.dataModel.CategoryInput
 import com.example.apitest.dataModel.CategoryListOutput
+import com.example.apitest.dataModel.Input
 
 import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.dataModel.StatusUpdateInput
+import com.example.apitest.dataModel.SubCategoryOutput
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -28,17 +30,20 @@ interface ApiService {
     ): Call<CategoryListOutput>
 
 
+    @Multipart
     @POST("add_category")
-    fun addCategoryApi(
+    fun uploadCategory(
         @Header("Authorization") jwtToken: String,
-        @Body input: CategoryInput?,
-//        @Part("status") status: RequestBody?,
-    ): Call<AddCategoryOutput>
+        @Part category_image: MultipartBody.Part?,
+        @Part("category_name") type: RequestBody?,
+        @Part("status") status: RequestBody?,
+    ): Call<StatusResponse>
 
     @Multipart
     @POST("edit_category")
     fun uploadEditCategory(
         @Header("Authorization") jwtToken: String,
+        @Part category_image: MultipartBody.Part?,
         @Part("category_id") category_id: RequestBody?,
         @Part("category_name") category_name: RequestBody?,
         @Part("status") status: RequestBody?,
@@ -51,5 +56,18 @@ interface ApiService {
         @Header("Authorization") jwtToken: String,
         @Body statusUpdateInput: StatusUpdateInput?
     ): Call<StatusResponse>
+
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("all_sub_category")
+    fun getAllSubCategoryApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<SubCategoryOutput?>?
+
+
+
+
+
 
 }

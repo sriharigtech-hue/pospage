@@ -64,6 +64,8 @@ class CategoryFragment : Fragment() {
                 fetchCategories() // refresh all categories after add
             }
         }
+
+
         // Edit category launcher
         editCategoryLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -85,7 +87,9 @@ class CategoryFragment : Fragment() {
             val intent = Intent(requireContext(), AddCategoryActivity::class.java)
             addCategoryLauncher.launch(intent)
         }
-        // 🔍 Attach search filter
+
+
+        //  Attach search filter
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
             override fun onQueryTextChange(newText: String?): Boolean {

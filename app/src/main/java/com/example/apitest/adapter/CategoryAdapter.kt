@@ -56,7 +56,7 @@ class CategoryAdapter(private val categories: MutableList<Category>) :
         val name: TextView = itemView.findViewById(R.id.tvName)
         val editButton: LinearLayout = itemView.findViewById(R.id.editOption)
         val deleteButton: LinearLayout = itemView.findViewById(R.id.deleteProduct)
-//        val image: ImageView = itemView.findViewById(R.id.ivImage)
+
 
     }
 

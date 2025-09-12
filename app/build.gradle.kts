@@ -67,5 +67,7 @@ dependencies {
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.25")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation ("com.makeramen:roundedimageview:2.3.0")
 
 }

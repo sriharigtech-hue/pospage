@@ -4,58 +4,84 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.apitest.network.ApiClient
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.apitest.dataModel.StatusResponse
+import com.example.apitest.network.ApiClient
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.widget.TextView
-import android.view.View
-import android.provider.MediaStore
-import android.util.Log
-import kotlin.math.log
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class EditCategoryActivity : AppCompatActivity() {
 
     private lateinit var categoryNameEditText: TextInputEditText
-//    private lateinit var categoryImageView: CircleImageView
+    private lateinit var categoryImageView: CircleImageView
     private lateinit var saveButton: TextView
 
     private var categoryId: String = ""
     private var categoryImageUri: Uri? = null
+    private var categoryImageFile: File? = null
 
     private val IMAGE_PICK_CODE = 1001
+    private val baseUrl = "https://dev.ginexpos.com/" // Replace with your server's base URL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_category)
 
         categoryNameEditText = findViewById(R.id.EditCategoryName)
-//        categoryImageView = findViewById(R.id.categoryImage)
+        categoryImageView = findViewById(R.id.EditCategoryImage)
         saveButton = findViewById(R.id.EditSaveButton)
 
         // Get data from intent
         categoryId = intent.getStringExtra("category_id") ?: ""
         val categoryName = intent.getStringExtra("category_name") ?: ""
-//        val categoryImage = intent.getStringExtra("category_image") ?: ""
+        val categoryImage = intent.getStringExtra("category_image") ?: ""
 
+        // Set category name
         categoryNameEditText.setText(categoryName)
-//        if (categoryImage.isNotEmpty()) {
-//             Optional: load image via Glide or Picasso
-//             Glide.with(this).load(categoryImage).into(categoryImageView)
-//        }
-//
-//         Pick new image
-//        categoryImageView.setOnClickListener {
-//            pickImageFromGallery()
-//        }
 
+        // Load existing image if exists
+        // inside onCreate()
+        if (categoryImage.isNotEmpty()) {
+            // Use GlideUrl with Authorization header
+            val glideUrl = GlideUrl(
+                categoryImage,
+                LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiYjE1YTc2MWYyMTA3NTJiYTY2MjBiMDg4NTUzYmRiMGYxYWVhZmEwOTJlMWY4MGI1YmFjYmExNzA4MDFlN2Y2NGU1NDEyODQyMzBjYTJiM2YiLCJpYXQiOjE3NTY4MTA5MzUuNjIwMDU5LCJuYmYiOjE3NTY4MTA5MzUuNjIwMDYyLCJleHAiOjE3ODgzNDY5MzUuNjE2NjA2LCJzdWIiOiI2MCIsInNjb3BlcyI6W119.UzX5UwID0Xd9Ia9ZIahOq7ugA8k8viEIOX261q2H2rhR7vMGZHTmm6ymDhdWKmmtSN0fTmU8AijKQzHN4g9HRZvr9seeEHQN3doBFT4odcCbufig4LEH2E0oMjQMmOIYEIjbj-n8o5i2lcqOfchu3vCrDt6McE7GBuPzTA87wyQpMPyO4IAUKU7h7TnwVx3VB_Y8aAUR5DpLr9-LQ7PpOG_hPUvqfUJ3jLoaluDAXA-1hPQ8EXKRz15xAfQxHLR0LLNOCf31hIj7JOxJQFDU-wzXs9g-bH6aAPOY2Q5tye-JZPoLNDCFRxNIkK7HgddkFdH7w0DnW2r4s4vjtfKe0Ubc0aOAxgE74OS_50rw-QEZjl0SceQhoNqeSgSH43_JSjAWX5-VxlwNBgGBBVMXBsKUt52S_eVyyOJpA_qXCqFjVqmWh-MPgo55-dEHw9FFc1ptvzY6FUeYnwBs4Kd65SZyFfU0Esx9wqtq5ZarZDR-gfZUlaP-toKzOzpAs7QasunG62nHDBdUX4P-EdCDFjQdroxeX983vJGe_GzYj5sBRZauXsqg0wtvZmAR2qaxzK4HB853hs7BJn0QAQRZIM7qERV0VqgynnWIrPFhV1WDyU_NMxPQh3WM6jqICK30uqiD7-201ga-522-Dnbxd1vF8CQIFGMRgiwikl3cfoI")
+                    .build()
+            )
+
+            Glide.with(this)
+                .load(glideUrl)
+                .placeholder(R.drawable.ic_placeholder) // local placeholder
+                .error(R.drawable.ic_placeholder)
+                .circleCrop() // fits CircleImageView
+                .into(categoryImageView)
+        }
+
+
+        // Pick new image
+        categoryImageView.setOnClickListener {
+            pickImageFromGallery()
+        }
+
+        // Save category
         saveButton.setOnClickListener {
             val name = categoryNameEditText.text.toString().trim()
             if (name.isEmpty()) {
@@ -78,8 +104,19 @@ class EditCategoryActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
             categoryImageUri = data?.data
-//            categoryImageView.setImageURI(categoryImageUri)
+            categoryImageFile = categoryImageUri?.let { uriToFile(it) }
+            categoryImageView.setImageURI(categoryImageUri)
         }
+    }
+
+    private fun uriToFile(uri: Uri): File {
+        val inputStream: InputStream? = contentResolver.openInputStream(uri)
+        val file = File(cacheDir, "edit_upload_${System.currentTimeMillis()}.jpg")
+        val outputStream = FileOutputStream(file)
+        inputStream?.copyTo(outputStream)
+        outputStream.close()
+        inputStream?.close()
+        return file
     }
 
     private fun uploadEditCategory(categoryId: String, categoryName: String) {
@@ -89,8 +126,14 @@ class EditCategoryActivity : AppCompatActivity() {
         val categoryNameBody = RequestBody.create("text/plain".toMediaTypeOrNull(), categoryName)
         val statusBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "1")
 
+        val imagePart: MultipartBody.Part? = categoryImageFile?.let {
+            val reqFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("category_image", it.name, reqFile)
+        }
+
         ApiClient.instance.uploadEditCategory(
             jwtToken = token,
+            category_image = imagePart,
             category_id = categoryIdBody,
             category_name = categoryNameBody,
             status = statusBody
@@ -98,7 +141,6 @@ class EditCategoryActivity : AppCompatActivity() {
             override fun onResponse(call: Call<StatusResponse>, response: Response<StatusResponse>) {
                 if (response.isSuccessful && response.body()?.status == true) {
                     Toast.makeText(this@EditCategoryActivity, "Category updated!", Toast.LENGTH_SHORT).show()
-                    // Send updated data back to fragment
                     val intent = Intent().apply {
                         putExtra("category_id", categoryId)
                         putExtra("category_name", categoryName)

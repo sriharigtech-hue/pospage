@@ -1,7 +1,53 @@
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageView"
-    android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:layout_margin="4dp"
-    android:scaleType="centerCrop"
-    />
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemParentLayout"
+    android:layout_width="@dimen/_64dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_2dp"
+    android:layout_marginTop="@dimen/_8dp"
+    android:layout_marginEnd="@dimen/_2dp"
+    android:layout_marginBottom="@dimen/_4dp"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/_4dp">
+
+    <LinearLayout
+        android:id="@+id/img_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_2dp"
+        android:gravity="center">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/_36dp"
+            android:layout_height="@dimen/_36dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:riv_corner_radius="@dimen/_10dp" />
+    </LinearLayout>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/ItemSideBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_semibold"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/app_name"
+        android:textColor="@color/gray5D6B82"
+        android:textSize="@dimen/_12sp"
+        tools:ignore="HardcodedText" />
+
+
+</LinearLayout>
+
