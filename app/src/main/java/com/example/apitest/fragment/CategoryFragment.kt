@@ -104,7 +104,7 @@ class CategoryFragment : Fragment() {
             val intent = Intent(requireContext(), EditCategoryActivity::class.java)
             intent.putExtra("category_id", category.category_id.toString())
             intent.putExtra("category_name", category.category_name)
-//            intent.putExtra("category_image", category.image ?: "")
+          intent.putExtra("category_image", category.category_image ?: "")
             editCategoryLauncher.launch(intent)
         }
 

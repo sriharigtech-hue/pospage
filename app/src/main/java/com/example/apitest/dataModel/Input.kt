@@ -35,6 +35,8 @@ data class Input(
     @Json(name = "page")
     var page: String? = null,
     @Json(name = "sub_category_id")
-    var sub_category_id: String? = null
+    var sub_category_id: String? = null,
 
-)
+
+
+    )

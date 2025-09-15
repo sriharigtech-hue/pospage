@@ -1,20 +1,15 @@
 // CategoryAdapter.kt
 package com.example.apitest.adapter
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.apitest.EditCategoryActivity
 import com.example.apitest.R
 import com.example.apitest.dataModel.Category
+import com.google.android.material.imageview.ShapeableImageView
 
 class CategoryAdapter(private val categories: MutableList<Category>) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
@@ -26,8 +21,6 @@ class CategoryAdapter(private val categories: MutableList<Category>) :
     fun setOnEditClickListener(listener: (Category) -> Unit) {
         onEditClickListener = listener
     }
-
-
 
 
     fun setOnDeleteClickListener(listener: (Category) -> Unit) {
@@ -54,10 +47,8 @@ class CategoryAdapter(private val categories: MutableList<Category>) :
 
     class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.tvName)
-        val editButton: LinearLayout = itemView.findViewById(R.id.editOption)
-        val deleteButton: LinearLayout = itemView.findViewById(R.id.deleteProduct)
-
-
+        val editButton: ShapeableImageView = itemView.findViewById(R.id.EditOption)
+        val deleteButton: ShapeableImageView = itemView.findViewById(R.id.deleteProduct)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -72,7 +63,7 @@ class CategoryAdapter(private val categories: MutableList<Category>) :
 //        Glide.with(holder.itemView.context)
 //            .load(category.category_image)
 //            .into(holder.image)
-        // Delegate edit click back to fragment
+//         Delegate edit click back to fragment
         holder.editButton.setOnClickListener {
             onEditClickListener?.invoke(category)
         }
@@ -98,12 +89,14 @@ class CategoryAdapter(private val categories: MutableList<Category>) :
         filteredList = categories.toMutableList()
         notifyDataSetChanged()
     }
+
     // Filter logic
     fun filter(query: String) {
         filteredList = if (query.isEmpty()) {
             categories.toMutableList()
         } else {
-            categories.filter { it.category_name.contains(query, ignoreCase = true) }.toMutableList()
+            categories.filter { it.category_name.contains(query, ignoreCase = true) }
+                .toMutableList()
         }
         notifyDataSetChanged()
     }

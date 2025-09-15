@@ -9,5 +9,5 @@ data class CategoryInput(
     @Json(name = "status")
     var status: String? = "1",
     @Json(name = "category_name") // <-- this must match API exactly
-var category_name: String? = null,
+    var category_name: String? = null,
 )

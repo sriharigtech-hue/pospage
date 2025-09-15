@@ -1,22 +1,28 @@
+<!-- res/layout/fragment_items.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Sidebar -->
+    <!-- Left Sidebar -->
     <LinearLayout
         android:id="@+id/leftSidebar"
         android:layout_width="80dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="#E6F0FF"
+        android:orientation="vertical"
         android:padding="8dp">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/serviceList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@color/bg_gradient_transparent"
+            android:orientation="vertical"
+            android:paddingVertical="8dp" />
     </LinearLayout>
 
-    <!-- Center -->
+    <!-- Center Area -->
     <LinearLayout
         android:id="@+id/centerContainer"
         android:layout_width="match_parent"
@@ -25,32 +31,56 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <!-- Search + Arrange -->
+        <!-- Search + Arrange Row -->
         <LinearLayout
             android:id="@+id/centerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="Search by name"
                 android:iconifiedByDefault="false"
-                android:hint="Search by name"/>
+                android:background="@drawable/search_button_bg"
+                android:paddingHorizontal="8dp" />
 
             <Button
                 android:id="@+id/btnArrange"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Arrange"/>
+                android:layout_marginStart="8dp"
+                android:background="@drawable/arrange_button_bg"
+                android:text="Arrange"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
         </LinearLayout>
 
+        <!-- RecyclerView (center content below search bar) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/centerRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"/> <!-- extra bottom padding so FAB won't hide items -->
+
     </LinearLayout>
+
+    <!-- ✅ Floating Add Button (overlays RecyclerView at bottom-right) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/colorAccent"
+        app:tint="@android:color/white" />
+
 </RelativeLayout>

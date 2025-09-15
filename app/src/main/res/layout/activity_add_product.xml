@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    android:orientation="vertical"
+
+    tools:ignore="HardcodedText">
+
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_64dp"
+        android:background="@drawable/gradient_bg">
+
+        <RelativeLayout
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/_32dp"
+            android:layout_height="@dimen/_32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_18dp"
+            android:background="@drawable/button_curve_border"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_18dp"
+                android:layout_height="@dimen/_18dp"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/back" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_toEndOf="@+id/backButton"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/splashLogo2"
+                android:layout_width="@dimen/_110dp"
+                android:layout_height="@dimen/_24dp"
+                android:layout_gravity="start"
+                android:src="@drawable/splash2" />
+
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:fontFamily="@font/font_bold"
+            android:text="Add Product"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sp" />
+
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topBar"
+        android:background="@color/bgColor">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_18dp">
+
+            <LinearLayout
+                android:id="@+id/stockLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/font_semibold"
+                    android:text="Stock Status"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_14sp" />
+
+                <com.github.angads25.toggle.widget.LabeledSwitch
+                    android:id="@+id/on_off_button"
+                    android:layout_width="@dimen/_56dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/_8dp"
+                    app:colorBorder="@color/colorPrimary"
+                    app:colorOff="@color/white"
+                    app:colorOn="@color/colorPrimary"
+                    app:on="false"
+                    app:textOff="OFF"
+                    app:textOn="ON" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:hint="Item Name *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/productName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="text"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/categorySpinnerTitleLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:layout_marginBottom="@dimen/_16dp"
+                android:fontFamily="@font/font_semibold"
+                android:text="Please Select Category *"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14sp" />
+
+            <LinearLayout
+                android:id="@+id/categorySpinnerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/outer_curve_border2"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_16dp">
+
+                <Spinner
+                    android:id="@+id/categorySpinner"
+                    style="@style/SpinnerTheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_16dp"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/subCategorySpinnerTitleLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:layout_marginBottom="@dimen/_16dp"
+                android:fontFamily="@font/font_semibold"
+                android:text="Please Select Sub Category *"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14sp" />
+
+            <LinearLayout
+                android:id="@+id/subCategorySpinnerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/outer_curve_border2"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_16dp">
+
+                <Spinner
+                    android:id="@+id/subCategorySpinner"
+                    style="@style/SpinnerTheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_16dp"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12dp"
+                android:hint="Item Description"
+                android:textColorHint="@color/black"
+                android:visibility="gone"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_medium"
+                    android:gravity="start"
+                    android:inputType="textMultiLine"
+                    android:maxLines="8"
+                    android:minLines="4"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/hint7"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:hint="Enter Item Tax (%) *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/productTax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="numberDecimal"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/hint4"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16dp"
+                android:hint="Enter Item SKU"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/productSKU"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="text"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/font_semibold"
+                    android:text="Item Variation"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_14sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/addVariation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:background="@drawable/outer_curve_border"
+                    android:backgroundTint="@color/_4caf50"
+                    android:clickable="true"
+                    android:fontFamily="@font/font_bold"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/_12dp"
+                    android:paddingVertical="@dimen/_8dp"
+                    android:text="Add Variation"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sp"
+                    tools:ignore="RtlHardcoded" />
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/productVariationLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_2dp"
+                android:layout_marginBottom="@dimen/_8dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/_12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_8dp"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/productVariation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/no_list_error"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/_16dp"
+                        android:paddingBottom="@dimen/_56dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/_60dp"
+                            android:layout_height="@dimen/_60dp"
+                            android:layout_marginTop="@dimen/_56dp"
+                            android:tint="@color/colorPrimary"
+                            app:srcCompat="@drawable/search" />
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/failure_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_24dp"
+                            android:layout_marginTop="@dimen/_16dp"
+                            android:layout_marginEnd="@dimen/_24dp"
+                            android:fontFamily="@font/font_bold"
+                            android:gravity="center"
+                            android:text="No Item Variation Data Found"
+                            android:textAllCaps="false"
+                            android:textColor="@color/textBlack"
+                            android:textSize="@dimen/_14sp"
+                            tools:ignore="RtlHardcoded" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_24dp"
+                android:layout_marginBottom="@dimen/_24dp"
+                android:background="@drawable/gradient_btn"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/font_semibold"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_16dp"
+                android:text="Save"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16sp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</RelativeLayout>

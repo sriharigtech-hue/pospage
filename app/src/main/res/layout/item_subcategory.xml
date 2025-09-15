@@ -123,11 +123,12 @@
                 android:layout_toStartOf="@+id/recommendedProduct">
 
                 <LinearLayout
-                    android:id="@+id/ScEditOption"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ScEditOption"
                         android:layout_width="@dimen/_24dp"
                         android:layout_height="@dimen/_24dp"
                         android:layout_marginHorizontal="@dimen/_4dp"
@@ -136,11 +137,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ScDeleteProduct"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ScDeleteProduct"
                         android:layout_width="@dimen/_24dp"
                         android:layout_height="@dimen/_24dp"
                         android:layout_marginEnd="@dimen/_8dp"
