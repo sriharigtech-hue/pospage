@@ -157,13 +157,13 @@
                 android:layout_height="@dimen/_20dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/_8dp"
-                android:layout_toStartOf="@+id/on_off_button"
+                android:layout_toStartOf="@+id/CpOn_off_button"
                 android:src="@drawable/unrecommend"
                 android:visibility="gone"
                 app:tint="@color/ffc107" />
 
             <com.github.angads25.toggle.widget.LabeledSwitch
-                android:id="@+id/on_off_button"
+                android:id="@+id/CpOn_off_button"
                 android:layout_width="@dimen/_40dp"
                 android:layout_height="@dimen/_24dp"
                 android:layout_alignParentEnd="true"

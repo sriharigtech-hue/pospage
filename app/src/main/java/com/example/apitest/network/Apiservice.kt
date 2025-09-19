@@ -9,7 +9,11 @@ import com.example.apitest.dataModel.InputField
 import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.dataModel.StatusUpdateInput
 import com.example.apitest.dataModel.SubCategoryOutput
-import com.example.apitest.dataModel.CategoryOutput
+import com.example.apitest.dataModel.CategoryStatusUpdateInput
+import com.example.apitest.dataModel.ProfileOutput
+import com.example.apitest.dataModel.StockProductOutput
+import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
+import com.example.apitest.dataModel.UnitOutput
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -64,6 +68,14 @@ interface ApiService {
     ): Call<StatusResponse>
 
 
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("category_status_update")
+    fun categoryStatusUpdate(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: CategoryStatusUpdateInput?
+    ): Call<StatusResponse>
+
+
 
     //sub_category api
     @Headers("Accept:application/json; charset=UTF-8")
@@ -94,20 +106,45 @@ interface ApiService {
         @Body statusUpdateInput: StatusUpdateInput?
     ): Call<StatusResponse>
 
-//Item api
+  //API for sub_category status update
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("subcategory_status_update")
+    fun subCategoryStatusUpdate(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: SubCategoryStatusUpdateInput?
+    ): Call<StatusResponse>
+
+// API for displaying sub-category name based on category name, that we select
 
 
     @Headers("Accept:application/json; charset=UTF-8")
-    @POST("items_get_all_category")
-    fun itemsGetAllCategory(
+    @POST("category_sub_category")
+    fun addEditSubCategoryApi(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
-    ): Call<CategoryOutput>
+    ): Call<SubCategoryOutput?>?
 
 
 
 
 
+
+// API for fetch Items based on category and subcategory
+@Headers("Accept:application/json; charset=UTF-8")
+@POST("get_all_product")
+fun getAllProduct(
+    @Header("Authorization") jwtToken: String,
+    @Body input: Input?
+): Call<StockProductOutput>
+
+
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("my_profile")
+    fun getUserDetails(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<ProfileOutput?>?
 
 
 }

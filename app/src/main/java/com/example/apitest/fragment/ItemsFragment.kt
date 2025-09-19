@@ -2,6 +2,7 @@ package com.example.apitest.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,22 +10,36 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.apitest.AddProductActivity
+import com.example.apitest.adapter.ItemsAdapter
 import com.example.apitest.adapter.SidebarCategoryAdapter
+import com.example.apitest.adapter.SubCategoryHorizontalAdapter
 import com.example.apitest.dataModel.Category
 import com.example.apitest.dataModel.CategoryInput
 import com.example.apitest.dataModel.CategoryListOutput
-import com.example.apitest.network.ApiClient
+import com.example.apitest.dataModel.Input
+import com.example.apitest.dataModel.StockProductData
+import com.example.apitest.dataModel.StockProductOutput
+import com.example.apitest.dataModel.ProductInput
+import com.example.apitest.dataModel.SubCategoryDetails
+import com.example.apitest.dataModel.SubCategoryOutput
 import com.example.apitest.databinding.FragmentItemsBinding
+import com.example.apitest.network.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ItemsFragment : Fragment() {
 
+    private val jwtToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiNjk3MmE4MjVjMjZhNmU2ZDAxMTk3NjdiNDMzYzc4NWEzNTdmYzYxYTZhMTBjNjQ2MGViYTc4ZWQxNDM4NmQyYjM2YTFkNWJjZTIwZTc0MmIiLCJpYXQiOjE3NTgyNTU4MTEuMjA1Njg1LCJuYmYiOjE3NTgyNTU4MTEuMjA1Njg3LCJleHAiOjE3ODk3OTE4MTEuMjAyMzI1LCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.bWv1-ccFjlnUbHqgVKleTigmPBsohLqMMJ6KNx-zPgEsHzPvFn19WQV6kc85aXrKZOdbiazq4eb7y9I1wdXI8n-BQQ4jpqruQqW87KNzvuoOvd0qPKW-EbUFbst1I5QAgA4m0kySj8JxVHAFSgBtzocj42JUd0XuNHMtGjwLUH4QM4Njc-tkVSmVqIHN66LGoaslfkl5tQTxjFV0Xg1Ay1fyNdp5A1pSZPv4wTr9aAfR1nhrqA5FtU8x0BJyWcpk3ojQq3gWUB3CZgr0Qq7tMpzuZwufR-HWqCX-Be4YRZ1wyANAQHEt0JEp5HLV9htpfuCE7grP_sw-cywep-FxVlyKO0tyc7ykFnhOaI6YlREAms4m_NOpdleSnYv9or7uj8DQWI2F4318SoFSPFu1UsVI9n2Ygf54TZD4FDhMGjWSue2uBCS3HPleSyO6Qf2Lk64OovnYRXc_tJzddcvu8LEC8ihvZpDpr4KMmxGIM15c-4lh0gXpcOOPZXmHG4rG73ogFxVzJdp-nAs-h2U-Kh52kXmjFm2MAgfKSv-0IdgA2IXUxcWthRLO5WYtiggR-ghkTx9hy6Seyq5ZXYSmdnbJHcVRHyZYE6h7hl2pgeAIA3_er4oT_2DpmEW38pwoM__ezWYarjyPYkIEI2enMQTJE0FbCU7fe5wcuSMY140"
     private var _binding: FragmentItemsBinding? = null
     private val binding get() = _binding!!
 
-    private val categoriesList = mutableListOf<Category>()
+    private val categoriesList = mutableListOf<Category>()            // Left sidebar
+    private val itemsList = mutableListOf<StockProductData>()           // Center items (fixed type)
+    private val subCategoryList = mutableListOf<SubCategoryDetails>() // Top horizontal
+
+    private lateinit var itemsAdapter: ItemsAdapter
+    private lateinit var subCategoryAdapter: SubCategoryHorizontalAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,29 +51,59 @@ class ItemsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Floating Add Product
         binding.btnAddProduct.setOnClickListener {
-            val intent = Intent(requireContext(), AddProductActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), AddProductActivity::class.java))
         }
 
-        // Setup RecyclerView for left sidebar
+        // Left sidebar
         binding.serviceList.layoutManager = LinearLayoutManager(requireContext())
-        binding.serviceList.adapter = SidebarCategoryAdapter(categoriesList)
+        binding.serviceList.adapter = SidebarCategoryAdapter(categoriesList) { category ->
+            fetchItems(category.category_id.toString())
+
+            if (category.sub_category_status == "1") {
+                fetchSubCategories(category.category_id.toString(), status = "1")
+            } else {
+                subCategoryList.clear()
+                subCategoryAdapter.notifyDataSetChanged()
+                binding.subCategoryList.visibility = View.GONE
+            }
+        }
+
+        // Center RecyclerView
+        binding.centerRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        itemsAdapter = ItemsAdapter(itemsList)
+        binding.centerRecyclerView.adapter = itemsAdapter
+
+        // Subcategory horizontal RecyclerView
+        // Subcategory horizontal RecyclerView
+        binding.subCategoryList.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        subCategoryAdapter = SubCategoryHorizontalAdapter(subCategoryList) { subCategory ->
+            // Pass both categoryId & subCategoryId
+            fetchItems(
+                categoryId = subCategory.categoryId?.toString(),
+                subCategoryId = subCategory.subcategoryId?.toString()
+            )
+        }
+        binding.subCategoryList.adapter = subCategoryAdapter
+
+        binding.subCategoryList.adapter = subCategoryAdapter
 
         fetchCategories()
-
-
     }
 
+    // Fetch main categories
     private fun fetchCategories() {
-        val token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiYjE1YTc2MWYyMTA3NTJiYTY2MjBiMDg4NTUzYmRiMGYxYWVhZmEwOTJlMWY4MGI1YmFjYmExNzA4MDFlN2Y2NGU1NDEyODQyMzBjYTJiM2YiLCJpYXQiOjE3NTY4MTA5MzUuNjIwMDU5LCJuYmYiOjE3NTY4MTA5MzUuNjIwMDYyLCJleHAiOjE3ODgzNDY5MzUuNjE2NjA2LCJzdWIiOiI2MCIsInNjb3BlcyI6W119.UzX5UwID0Xd9Ia9ZIahOq7ugA8k8viEIOX261q2H2rhR7vMGZHTmm6ymDhdWKmmtSN0fTmU8AijKQzHN4g9HRZvr9seeEHQN3doBFT4odcCbufig4LEH2E0oMjQMmOIYEIjbj-n8o5i2lcqOfchu3vCrDt6McE7GBuPzTA87wyQpMPyO4IAUKU7h7TnwVx3VB_Y8aAUR5DpLr9-LQ7PpOG_hPUvqfUJ3jLoaluDAXA-1hPQ8EXKRz15xAfQxHLR0LLNOCf31hIj7JOxJQFDU-wzXs9g-bH6aAPOY2Q5tye-JZPoLNDCFRxNIkK7HgddkFdH7w0DnW2r4s4vjtfKe0Ubc0aOAxgE74OS_50rw-QEZjl0SceQhoNqeSgSH43_JSjAWX5-VxlwNBgGBBVMXBsKUt52S_eVyyOJpA_qXCqFjVqmWh-MPgo55-dEHw9FFc1ptvzY6FUeYnwBs4Kd65SZyFfU0Esx9wqtq5ZarZDR-gfZUlaP-toKzOzpAs7QasunG62nHDBdUX4P-EdCDFjQdroxeX983vJGe_GzYj5sBRZauXsqg0wtvZmAR2qaxzK4HB853hs7BJn0QAQRZIM7qERV0VqgynnWIrPFhV1WDyU_NMxPQh3WM6jqICK30uqiD7-201ga-522-Dnbxd1vF8CQIFGMRgiwikl3cfoI"
         val input = CategoryInput(status = "1")
 
-        ApiClient.instance.stockCategoryApi(token, input)
+        ApiClient.instance.stockCategoryApi(jwtToken, input)
             .enqueue(object : Callback<CategoryListOutput> {
                 override fun onResponse(
                     call: Call<CategoryListOutput>,
-                    response: Response<CategoryListOutput>
+                    response: Response<CategoryListOutput>,
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         val categories = response.body()!!.data ?: emptyList()
@@ -70,7 +115,68 @@ class ItemsFragment : Fragment() {
 
                 override fun onFailure(call: Call<CategoryListOutput>, t: Throwable) {
                     Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
 
+    // Fetch items
+    private fun fetchItems(categoryId: String? = null, subCategoryId: String? = null, status: String? = "1") {
+        val input = Input(
+            category_id  = categoryId,
+            sub_category_id = subCategoryId,
+            status = status
+        )
+        Log.d("ItemsFragment", "Sending input: $input")
+
+        ApiClient.instance.getAllProduct(jwtToken, input)
+            .enqueue(object : Callback<StockProductOutput> {
+                override fun onResponse(
+                    call: Call<StockProductOutput>,
+                    response: Response<StockProductOutput>,
+                ) {
+                    Log.d("ItemsFragment", "Full response: $response")
+                    if (response.isSuccessful && response.body()?.status == true) {
+                        itemsList.clear()
+                        itemsList.addAll(response.body()?.data ?: emptyList())
+                        itemsAdapter.notifyDataSetChanged()
+                    } else {
+                        Log.d("ItemsFragment", "Error response: ${response.errorBody()?.string()}")
+                        itemsList.clear()
+                        itemsAdapter.notifyDataSetChanged()
+                        Toast.makeText(requireContext(), "No items found", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<StockProductOutput>, t: Throwable) {
+                    Log.d("ItemsFragment", "Network error: ${t.message}")
+                    Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    // Fetch subcategories
+    private fun fetchSubCategories(categoryId: String? = null, status: String? = "1") {
+        val input = Input(category_id = categoryId, status = status)
+        Log.d("SubCategoryAPI", "Sending input: $input")
+
+        ApiClient.instance.getAllSubCategoryApi(jwtToken, input)
+            ?.enqueue(object : Callback<SubCategoryOutput?> {
+                override fun onResponse(
+                    call: Call<SubCategoryOutput?>,
+                    response: Response<SubCategoryOutput?>,
+                ) {
+                    Log.d("SubCategoryAPI", "Full response: $response")
+                    val data = response.body()?.data?.filter { it.categoryId.toString() == categoryId } ?: emptyList()
+
+                    subCategoryList.clear()
+                    subCategoryList.addAll(data)
+                    subCategoryAdapter.notifyDataSetChanged()
+                    binding.subCategoryList.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
+                }
+
+                override fun onFailure(call: Call<SubCategoryOutput?>, t: Throwable) {
+                    binding.subCategoryList.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }

@@ -1,0 +1,24 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardSubCategory"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="20dp"
+    app:cardBackgroundColor="@color/blueF1F4FF"
+    app:strokeColor="@color/blue243757"
+    app:strokeWidth="1dp"
+    app:cardElevation="2dp">
+
+    <TextView
+        android:id="@+id/txtSubCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:textColor="@color/blue243757"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:text="SubCategory"/>
+</com.google.android.material.card.MaterialCardView>

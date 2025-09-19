@@ -1,5 +1,6 @@
 package com.example.apitest.adapter
 
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,8 @@ import com.example.apitest.dataModel.Category
 import com.makeramen.roundedimageview.RoundedImageView
 
 class SidebarCategoryAdapter(
-    private val categories: List<Category>
+    private val categories: List<Category>,
+    private val onCategoryClick: (Category) -> Unit
 ) : RecyclerView.Adapter<SidebarCategoryAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -39,6 +41,10 @@ class SidebarCategoryAdapter(
                 .into(holder.image)
         } else {
             holder.image.setImageResource(R.mipmap.ic_launcher)
+        }
+        // 👇 call back to fragment
+        holder.itemView.setOnClickListener {
+            onCategoryClick(category)
         }
     }
 }

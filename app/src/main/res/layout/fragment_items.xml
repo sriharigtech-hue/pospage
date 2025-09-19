@@ -17,12 +17,11 @@
             android:id="@+id/serviceList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/bg_gradient_transparent"
             android:orientation="vertical"
             android:paddingVertical="8dp" />
     </LinearLayout>
 
-    <!-- Center Area -->
+    <!-- Center Container -->
     <LinearLayout
         android:id="@+id/centerContainer"
         android:layout_width="match_parent"
@@ -30,6 +29,18 @@
         android:layout_toEndOf="@id/leftSidebar"
         android:orientation="vertical"
         android:padding="8dp">
+
+        <!-- Subcategory Horizontal List (conditionally visible) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subCategoryList"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:clipToPadding="false"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"/>
 
         <!-- Search + Arrange Row -->
         <LinearLayout

@@ -21,6 +21,7 @@ import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.dataModel.StatusUpdateInput
 import com.example.apitest.dataModel.SubCategoryDetails
 import com.example.apitest.dataModel.SubCategoryOutput
+import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
 import com.example.apitest.network.ApiClient
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
@@ -31,6 +32,7 @@ class SubCategoryFragment : Fragment() {
 
     private val subCategoryList = mutableListOf<SubCategoryDetails>()
     private lateinit var adapter: SubCategoryAdapter
+    private val jwtToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiNjk3MmE4MjVjMjZhNmU2ZDAxMTk3NjdiNDMzYzc4NWEzNTdmYzYxYTZhMTBjNjQ2MGViYTc4ZWQxNDM4NmQyYjM2YTFkNWJjZTIwZTc0MmIiLCJpYXQiOjE3NTgyNTU4MTEuMjA1Njg1LCJuYmYiOjE3NTgyNTU4MTEuMjA1Njg3LCJleHAiOjE3ODk3OTE4MTEuMjAyMzI1LCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.bWv1-ccFjlnUbHqgVKleTigmPBsohLqMMJ6KNx-zPgEsHzPvFn19WQV6kc85aXrKZOdbiazq4eb7y9I1wdXI8n-BQQ4jpqruQqW87KNzvuoOvd0qPKW-EbUFbst1I5QAgA4m0kySj8JxVHAFSgBtzocj42JUd0XuNHMtGjwLUH4QM4Njc-tkVSmVqIHN66LGoaslfkl5tQTxjFV0Xg1Ay1fyNdp5A1pSZPv4wTr9aAfR1nhrqA5FtU8x0BJyWcpk3ojQq3gWUB3CZgr0Qq7tMpzuZwufR-HWqCX-Be4YRZ1wyANAQHEt0JEp5HLV9htpfuCE7grP_sw-cywep-FxVlyKO0tyc7ykFnhOaI6YlREAms4m_NOpdleSnYv9or7uj8DQWI2F4318SoFSPFu1UsVI9n2Ygf54TZD4FDhMGjWSue2uBCS3HPleSyO6Qf2Lk64OovnYRXc_tJzddcvu8LEC8ihvZpDpr4KMmxGIM15c-4lh0gXpcOOPZXmHG4rG73ogFxVzJdp-nAs-h2U-Kh52kXmjFm2MAgfKSv-0IdgA2IXUxcWthRLO5WYtiggR-ghkTx9hy6Seyq5ZXYSmdnbJHcVRHyZYE6h7hl2pgeAIA3_er4oT_2DpmEW38pwoM__ezWYarjyPYkIEI2enMQTJE0FbCU7fe5wcuSMY140"
 
     // Launcher for AddSubCategoryActivity
     private val addSubCategoryLauncher =
@@ -109,6 +111,13 @@ class SubCategoryFragment : Fragment() {
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                 .show()
         }
+        // Handle status toggle from adapter
+        adapter.setOnStatusToggleListener { subCategory, isChecked ->
+            updateSubCategoryStatus(subCategory, isChecked)
+        }
+
+
+
 
         val addButton = view.findViewById<FloatingActionButton>(R.id.btnAddSubCategory)
         addButton.setOnClickListener {
@@ -120,11 +129,10 @@ class SubCategoryFragment : Fragment() {
     }
 
     private fun fetchSubCategories() {
-        val token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiYjE1YTc2MWYyMTA3NTJiYTY2MjBiMDg4NTUzYmRiMGYxYWVhZmEwOTJlMWY4MGI1YmFjYmExNzA4MDFlN2Y2NGU1NDEyODQyMzBjYTJiM2YiLCJpYXQiOjE3NTY4MTA5MzUuNjIwMDU5LCJuYmYiOjE3NTY4MTA5MzUuNjIwMDYyLCJleHAiOjE3ODgzNDY5MzUuNjE2NjA2LCJzdWIiOiI2MCIsInNjb3BlcyI6W119.UzX5UwID0Xd9Ia9ZIahOq7ugA8k8viEIOX261q2H2rhR7vMGZHTmm6ymDhdWKmmtSN0fTmU8AijKQzHN4g9HRZvr9seeEHQN3doBFT4odcCbufig4LEH2E0oMjQMmOIYEIjbj-n8o5i2lcqOfchu3vCrDt6McE7GBuPzTA87wyQpMPyO4IAUKU7h7TnwVx3VB_Y8aAUR5DpLr9-LQ7PpOG_hPUvqfUJ3jLoaluDAXA-1hPQ8EXKRz15xAfQxHLR0LLNOCf31hIj7JOxJQFDU-wzXs9g-bH6aAPOY2Q5tye-JZPoLNDCFRxNIkK7HgddkFdH7w0DnW2r4s4vjtfKe0Ubc0aOAxgE74OS_50rw-QEZjl0SceQhoNqeSgSH43_JSjAWX5-VxlwNBgGBBVMXBsKUt52S_eVyyOJpA_qXCqFjVqmWh-MPgo55-dEHw9FFc1ptvzY6FUeYnwBs4Kd65SZyFfU0Esx9wqtq5ZarZDR-gfZUlaP-toKzOzpAs7QasunG62nHDBdUX4P-EdCDFjQdroxeX983vJGe_GzYj5sBRZauXsqg0wtvZmAR2qaxzK4HB853hs7BJn0QAQRZIM7qERV0VqgynnWIrPFhV1WDyU_NMxPQh3WM6jqICK30uqiD7-201ga-522-Dnbxd1vF8CQIFGMRgiwikl3cfoI"
 
         val input = Input(status = "1")
 
-        ApiClient.instance.getAllSubCategoryApi(token, input)
+        ApiClient.instance.getAllSubCategoryApi(jwtToken, input)
             ?.enqueue(object : Callback<SubCategoryOutput?> {
                 override fun onResponse(
                     call: Call<SubCategoryOutput?>,
@@ -157,15 +165,15 @@ class SubCategoryFragment : Fragment() {
             })
     }
     private fun deleteSubCategory(subCategory: SubCategoryDetails) {
-        val token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiYjE1YTc2MWYyMTA3NTJiYTY2MjBiMDg4NTUzYmRiMGYxYWVhZmEwOTJlMWY4MGI1YmFjYmExNzA4MDFlN2Y2NGU1NDEyODQyMzBjYTJiM2YiLCJpYXQiOjE3NTY4MTA5MzUuNjIwMDU5LCJuYmYiOjE3NTY4MTA5MzUuNjIwMDYyLCJleHAiOjE3ODgzNDY5MzUuNjE2NjA2LCJzdWIiOiI2MCIsInNjb3BlcyI6W119.UzX5UwID0Xd9Ia9ZIahOq7ugA8k8viEIOX261q2H2rhR7vMGZHTmm6ymDhdWKmmtSN0fTmU8AijKQzHN4g9HRZvr9seeEHQN3doBFT4odcCbufig4LEH2E0oMjQMmOIYEIjbj-n8o5i2lcqOfchu3vCrDt6McE7GBuPzTA87wyQpMPyO4IAUKU7h7TnwVx3VB_Y8aAUR5DpLr9-LQ7PpOG_hPUvqfUJ3jLoaluDAXA-1hPQ8EXKRz15xAfQxHLR0LLNOCf31hIj7JOxJQFDU-wzXs9g-bH6aAPOY2Q5tye-JZPoLNDCFRxNIkK7HgddkFdH7w0DnW2r4s4vjtfKe0Ubc0aOAxgE74OS_50rw-QEZjl0SceQhoNqeSgSH43_JSjAWX5-VxlwNBgGBBVMXBsKUt52S_eVyyOJpA_qXCqFjVqmWh-MPgo55-dEHw9FFc1ptvzY6FUeYnwBs4Kd65SZyFfU0Esx9wqtq5ZarZDR-gfZUlaP-toKzOzpAs7QasunG62nHDBdUX4P-EdCDFjQdroxeX983vJGe_GzYj5sBRZauXsqg0wtvZmAR2qaxzK4HB853hs7BJn0QAQRZIM7qERV0VqgynnWIrPFhV1WDyU_NMxPQh3WM6jqICK30uqiD7-201ga-522-Dnbxd1vF8CQIFGMRgiwikl3cfoI"
 
         val input = StatusUpdateInput(
             category_id = subCategory.categoryId ?: 0,
             sub_category_id = subCategory.subcategoryId.toString(),
-            status = "0" // important
+            status = 0,
+            category_status = 0 // important
         )
 
-        ApiClient.instance.deleteSubCategory(token, input)?.enqueue(object : Callback<StatusResponse> {
+        ApiClient.instance.deleteSubCategory(jwtToken, input)?.enqueue(object : Callback<StatusResponse> {
             override fun onResponse(call: Call<StatusResponse>, response: Response<StatusResponse>) {
                 if (response.isSuccessful && response.body()?.status == true) {
                     Toast.makeText(requireContext(), "Deleted successfully", Toast.LENGTH_SHORT).show()
@@ -185,6 +193,46 @@ class SubCategoryFragment : Fragment() {
             }
         })
     }
+    private fun updateSubCategoryStatus(subCategory: SubCategoryDetails, isChecked: Boolean) {
+        val newStatus = if (isChecked) 1 else 0
+
+        val input = SubCategoryStatusUpdateInput(
+            subcategory_id = subCategory.subcategoryId.toString(),
+            subcategory_status = newStatus.toString(),
+            status = "1"
+        )
+        Log.d("UpdateAPI", "Input: $input")
+
+        ApiClient.instance.subCategoryStatusUpdate(jwtToken, input)
+            .enqueue(object : Callback<StatusResponse> {
+
+                override fun onResponse(call: Call<StatusResponse>, response: Response<StatusResponse>) {
+                    Log.d("UpdateAPI", "Response: ${response.body()}")
+                    if (response.isSuccessful && response.body()?.status == true) {
+                        // Update local list
+                        subCategory.subcategoryStatus = newStatus
+                        val index = subCategoryList.indexOfFirst { it.subcategoryId == subCategory.subcategoryId }
+                        if (index != -1) adapter.notifyItemChanged(index)
+                        Toast.makeText(requireContext(), "Status updated!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.d("UpdateAPI", "Failed response: ${response.errorBody()?.string()}")
+                        // Revert switch if API fails
+                        val index = subCategoryList.indexOfFirst { it.subcategoryId == subCategory.subcategoryId }
+                        if (index != -1) adapter.notifyItemChanged(index)
+                        Toast.makeText(requireContext(), response.body()?.message ?: "Update failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<StatusResponse>, t: Throwable) {
+                    // Revert switch if network error
+                    val index = subCategoryList.indexOfFirst { it.subcategoryId == subCategory.subcategoryId }
+                    if (index != -1) adapter.notifyItemChanged(index)
+                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+
 
 
 

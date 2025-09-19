@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clickLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    tools:ignore="TooManyViews,HardcodedText,RtlHardcoded,SpUsage">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/cancel"
+        android:layout_width="@dimen/_30dp"
+        android:layout_height="@dimen/_30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/_2dp"
+        android:elevation="8dp"
+        android:padding="@dimen/_2dp"
+        android:src="@drawable/cancel" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_4dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_12dp"
+        app:cardElevation="2dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true">
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/percentage"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_46dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/font_semibold"
+                        android:gravity="center"
+                        android:text="Item Variation"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_15sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/gradient_bg">
+
+                </View>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/hint"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:hint="Enter Item Variation"
+                        android:textColorHint="@color/black"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                        app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                        app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                        app:boxCornerRadiusTopStart="@dimen/_24dp"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:boxStrokeErrorColor="@color/red_EB5757"
+                        app:boxStrokeWidth="@dimen/_1dp"
+                        app:boxStrokeWidthFocused="@dimen/_2dp"
+                        app:cursorColor="@color/colorPrimary"
+                        app:hintAnimationEnabled="true"
+                        app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                        app:hintTextColor="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/productVariation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_semibold"
+                            android:gravity="center_vertical"
+                            android:inputType="text"
+                            android:paddingVertical="@dimen/_16dp"
+                            android:paddingStart="@dimen/_16dp"
+                            android:paddingEnd="@dimen/_16dp"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/_9ea1a9"
+                            android:textSize="@dimen/_13sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/hint1"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:hint="Enter Item Sale Price *"
+                        android:textColorHint="@color/black"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                        app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                        app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                        app:boxCornerRadiusTopStart="@dimen/_24dp"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:boxStrokeErrorColor="@color/red_EB5757"
+                        app:boxStrokeWidth="@dimen/_1dp"
+                        app:boxStrokeWidthFocused="@dimen/_2dp"
+                        app:cursorColor="@color/colorPrimary"
+                        app:hintAnimationEnabled="true"
+                        app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                        app:hintTextColor="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/productPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_semibold"
+                            android:gravity="center_vertical"
+                            android:inputType="numberDecimal"
+                            android:paddingVertical="@dimen/_16dp"
+                            android:paddingStart="@dimen/_16dp"
+                            android:paddingEnd="@dimen/_16dp"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/_9ea1a9"
+                            android:textSize="@dimen/_13sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/hint2"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:hint="Enter Item Low Stock Alert *"
+                        android:textColorHint="@color/black"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                        app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                        app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                        app:boxCornerRadiusTopStart="@dimen/_24dp"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:boxStrokeErrorColor="@color/red_EB5757"
+                        app:boxStrokeWidth="@dimen/_1dp"
+                        app:boxStrokeWidthFocused="@dimen/_2dp"
+                        app:cursorColor="@color/colorPrimary"
+                        app:hintAnimationEnabled="true"
+                        app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                        app:hintTextColor="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/productLowStockAlert"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_semibold"
+                            android:gravity="center_vertical"
+                            android:inputType="numberDecimal"
+                            android:paddingVertical="@dimen/_16dp"
+                            android:paddingStart="@dimen/_16dp"
+                            android:paddingEnd="@dimen/_16dp"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/_9ea1a9"
+                            android:textSize="@dimen/_13sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/hint3"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:hint="Enter Item Stock Quantity *"
+                        android:textColorHint="@color/black"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                        app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                        app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                        app:boxCornerRadiusTopStart="@dimen/_24dp"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:boxStrokeErrorColor="@color/red_EB5757"
+                        app:boxStrokeWidth="@dimen/_1dp"
+                        app:boxStrokeWidthFocused="@dimen/_2dp"
+                        app:cursorColor="@color/colorPrimary"
+                        app:hintAnimationEnabled="true"
+                        app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                        app:hintTextColor="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/productStockQuantity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_semibold"
+                            android:gravity="center_vertical"
+                            android:inputType="numberDecimal"
+                            android:paddingVertical="@dimen/_16dp"
+                            android:paddingStart="@dimen/_16dp"
+                            android:paddingEnd="@dimen/_16dp"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/_9ea1a9"
+                            android:textSize="@dimen/_13sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/hint5"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:hint="Enter Item MRP Price *"
+                        android:textColorHint="@color/black"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                        app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                        app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                        app:boxCornerRadiusTopStart="@dimen/_24dp"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:boxStrokeErrorColor="@color/red_EB5757"
+                        app:boxStrokeWidth="@dimen/_1dp"
+                        app:boxStrokeWidthFocused="@dimen/_2dp"
+                        app:cursorColor="@color/colorPrimary"
+                        app:hintAnimationEnabled="true"
+                        app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                        app:hintTextColor="@color/black">
+
+<!--                        <com.google.android.material.textfield.TextInputEditText-->
+<!--                            android:id="@+id/mrpPrice"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:fontFamily="@font/font_semibold"-->
+<!--                            android:gravity="center_vertical"-->
+<!--                            android:inputType="numberDecimal"-->
+<!--                            android:paddingVertical="@dimen/_16dp"-->
+<!--                            android:paddingStart="@dimen/_16dp"-->
+<!--                            android:paddingEnd="@dimen/_16dp"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textColorHint="@color/_9ea1a9"-->
+<!--                            android:textSize="@dimen/_13sp" />-->
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/hint6"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:hint="Enter Item Whole Sale Price *"
+                        android:textColorHint="@color/black"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                        app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                        app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                        app:boxCornerRadiusTopStart="@dimen/_24dp"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        app:boxStrokeErrorColor="@color/red_EB5757"
+                        app:boxStrokeWidth="@dimen/_1dp"
+                        app:boxStrokeWidthFocused="@dimen/_2dp"
+                        app:cursorColor="@color/colorPrimary"
+                        app:hintAnimationEnabled="true"
+                        app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                        app:hintTextColor="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/productWholeSalePrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_semibold"
+                            android:gravity="center_vertical"
+                            android:inputType="numberDecimal"
+                            android:paddingVertical="@dimen/_16dp"
+                            android:paddingStart="@dimen/_16dp"
+                            android:paddingEnd="@dimen/_16dp"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/_9ea1a9"
+                            android:textSize="@dimen/_13sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+<!--                    <androidx.appcompat.widget.AppCompatTextView-->
+<!--                        android:id="@+id/unitSpinnerTitleLayout"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginHorizontal="@dimen/_16dp"-->
+<!--                        android:layout_marginTop="@dimen/_12dp"-->
+<!--                        android:fontFamily="@font/font_semibold"-->
+<!--                        android:text="Please Select Unit *"-->
+<!--                        android:textColor="@color/colorPrimary"-->
+<!--                        android:textSize="@dimen/_14sp" />-->
+
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/unitSpinnerLayout"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginHorizontal="@dimen/_16dp"-->
+<!--                        android:layout_marginTop="@dimen/_12dp"-->
+<!--                        android:background="@drawable/outer_curve_border2"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:paddingVertical="@dimen/_16dp">-->
+
+<!--                        <Spinner-->
+<!--                            android:id="@+id/unitSpinner"-->
+<!--                            style="@style/SpinnerTheme"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:paddingHorizontal="@dimen/_16dp"-->
+<!--                            android:spinnerMode="dropdown" />-->
+<!--                    </LinearLayout>-->
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/save"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_46dp"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginVertical="@dimen/_18dp"
+                        android:background="@drawable/gradient_btn"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/font_bold"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Save"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
+
+
+

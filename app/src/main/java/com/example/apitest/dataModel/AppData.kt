@@ -7,7 +7,7 @@ data class Category(
     val category_id: Int,
     val category_name: String,
     val category_image: String?,
-    val category_status: Int,
+    var category_status: Int,
     val sub_category_status: String?,
     val seq_no: String?
 )
@@ -31,6 +31,3 @@ data class EditCategoryResponse(
     val status: Boolean,
     val message: String
 )
-
-
-
