@@ -37,6 +37,7 @@ class AddSubCategoryActivity : AppCompatActivity() {
         }
 
 
+
         categorySpinner = findViewById(R.id.categorySpinner)
         subCategoryNameEt = findViewById(R.id.AddSubCategoryName)
 

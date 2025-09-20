@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun selectTab(selected: TextView) {
         tabItems.setBackgroundResource(0)
         tabSubCategory.setBackgroundResource(0)

@@ -61,6 +61,8 @@ class AddCategoryActivity : AppCompatActivity() {
             }
             uploadCategory(categoryName)
         }
+
+
     }
 
 
@@ -97,6 +99,7 @@ class AddCategoryActivity : AppCompatActivity() {
         binding.photoLayout.visibility = View.VISIBLE
         binding.photosRecyclerView.adapter = PhotoAdapter(listOf(uri))
     }
+
 
 
     // Get file size from URI
