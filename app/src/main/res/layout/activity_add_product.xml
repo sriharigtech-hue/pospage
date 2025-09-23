@@ -265,19 +265,19 @@
                 app:hintTextAppearance="@style/MyCustomTextAppearance1"
                 app:hintTextColor="@color/black">
 
-<!--                <com.google.android.material.textfield.TextInputEditText-->
-<!--                    android:id="@+id/productTax"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:fontFamily="@font/font_semibold"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:inputType="numberDecimal"-->
-<!--                    android:paddingVertical="@dimen/_16dp"-->
-<!--                    android:paddingStart="@dimen/_16dp"-->
-<!--                    android:paddingEnd="@dimen/_16dp"-->
-<!--                    android:textColor="@color/black"-->
-<!--                    android:textColorHint="@color/_9ea1a9"-->
-<!--                    android:textSize="@dimen/_14sp" />-->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/productTax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="numberDecimal"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

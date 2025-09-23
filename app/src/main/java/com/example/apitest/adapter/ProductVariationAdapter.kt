@@ -1,6 +1,7 @@
 
 package com.example.apitest.adapter
 
+import android.content.Context.MODE_PRIVATE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,12 +65,20 @@ class ProductVariationAdapter(
             onDeleteClick.invoke(position)
         }
 
+        val prefs = holder.itemView.context.getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val showMRP = prefs.getBoolean("show_mrp", true)
+        val showWholesale = prefs.getBoolean("show_wholesale", true)
+
+        holder.productMRPPrice.visibility = if (showMRP && !item.mrp_price.isNullOrEmpty()) View.VISIBLE else View.GONE
+        holder.view6.visibility = holder.productMRPPrice.visibility
+
+        holder.productWholeSalePrice.visibility = if (showWholesale && !item.whole_sale_price.isNullOrEmpty()) View.VISIBLE else View.GONE
+        holder.view7.visibility = holder.productWholeSalePrice.visibility
 
 
 
-
-        fun setOrHide(view: AppCompatTextView, value: Any?,dividerView: View? = null) {  //VIEW --> textview ,, value --> Int/String , dividerView --> straight line
-            if (value == null || value.toString().isEmpty()) {
+        fun setOrHide(view: AppCompatTextView, value: Any?, dividerView: View? = null, profileFlag: Boolean = true) {
+            if (!profileFlag || value == null || value.toString().isEmpty()) {
                 view.visibility = View.GONE
                 (view.parent as? View)?.visibility = View.GONE
                 dividerView?.visibility = View.GONE
@@ -87,8 +96,8 @@ class ProductVariationAdapter(
         setOrHide(holder.productStock, item.stockCount, holder.view3)
         setOrHide(holder.productLowStock, item.low_stock_alert, holder.view4)
         setOrHide(holder.productSKU, item.productVariationId, holder.view5)
-        setOrHide(holder.productMRPPrice, item.mrp_price, holder.view6)
-        setOrHide(holder.productWholeSalePrice, item.whole_sale_price, holder.view7)
+        setOrHide(holder.productMRPPrice, item.mrp_price, holder.view6, showMRP)
+        setOrHide(holder.productWholeSalePrice, item.whole_sale_price, holder.view7, showWholesale)
         setOrHide(holder.productTax, item.recommended_status, holder.view8) // replace with real tax field
         setOrHide(holder.productUnitName, null, holder.view9) // replace with real unit field if available
     }

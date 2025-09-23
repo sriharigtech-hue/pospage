@@ -1,11 +1,13 @@
 package com.example.apitest.dataModel
 
 
+import android.os.Parcelable
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-
+import kotlinx.parcelize.Parcelize
 @Keep
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class StockProductData(
     @Json(name = "id")
@@ -38,4 +40,4 @@ data class StockProductData(
     var low_stock_alert: Int? = null,
     @Json(name = "stock_update_status")
     var stock_update_status: Int? = null
-)
+): Parcelable

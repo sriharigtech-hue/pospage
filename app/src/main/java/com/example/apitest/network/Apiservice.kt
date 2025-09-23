@@ -1,6 +1,8 @@
 package com.example.apitest.network
 
 
+import com.example.apitest.dataModel.AddProductInput
+import com.example.apitest.dataModel.AddProductOutput
 import com.example.apitest.dataModel.CategoryInput
 import com.example.apitest.dataModel.CategoryListOutput
 import com.example.apitest.dataModel.Input
@@ -125,7 +127,12 @@ interface ApiService {
     ): Call<SubCategoryOutput?>?
 
 
-
+//    @Headers("Accept:application/json; charset=UTF-8")
+//    @POST("category_all_sub_category")
+//    fun subCategorySequenceApi(
+//        @Header("Authorization") jwtToken: String,
+//        @Body input: Input?
+//    ): Call<SubCategoryOutput?>?
 
 
 
@@ -138,6 +145,15 @@ fun getAllProduct(
 ): Call<StockProductOutput>
 
 
+    // API for adding product(Items)
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("add_product")
+    fun addProduct(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: AddProductInput?
+    ): Call<StatusResponse?>?
+
+
 
     @Headers("Accept:application/json; charset=UTF-8")
     @POST("my_profile")
@@ -146,5 +162,12 @@ fun getAllProduct(
         @Body input: Input?
     ): Call<ProfileOutput?>?
 
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("single_product_detail")
+    fun singleProductDetail(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: InputField?
+    ): Call<AddProductOutput?>?
 
 }
