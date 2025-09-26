@@ -1,6 +1,7 @@
 package com.example.apitest.adapter
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,15 +33,19 @@ class SubCategoryHorizontalAdapter(
 
     override fun getItemCount(): Int = subCategories.size
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val subCat = subCategories[position]
+        Log.d("SubCategoryHorizontalAdapter", "Binding subcategory: ${subCat.subcategoryName}")
         holder.txtSubCategory.text = subCat.subcategoryName ?: "N/A"
+
+
 
         // Always get the current adapter position
         val adapterPos = holder.adapterPosition
         if (adapterPos == RecyclerView.NO_POSITION) return
 
-        if (adapterPos == selectedPosition) {
+        if (position == selectedPosition) {
             holder.cardSubCategory.setCardBackgroundColor(
                 ContextCompat.getColor(holder.itemView.context, R.color.blue243757)
             )
@@ -72,6 +77,23 @@ class SubCategoryHorizontalAdapter(
     fun setData(newList: List<SubCategoryDetails>) {
         subCategories.clear()
         subCategories.addAll(newList)
+        selectedPosition = -1  // ✅ reset selection
         notifyDataSetChanged()
     }
+    fun setSelectedPosition(position: Int) {
+        val previousPosition = selectedPosition
+        selectedPosition = position
+        notifyItemChanged(previousPosition)
+        notifyItemChanged(selectedPosition)
+    }
+
+
+
+    fun clearSelection() {
+        selectedPosition = -1
+        notifyDataSetChanged()
+    }
+
+// In onBindViewHolder, highlight selected only if position == selectedPosition
+
 }

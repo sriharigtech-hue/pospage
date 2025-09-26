@@ -47,7 +47,7 @@ class SubCategoryAdapter(
             scNameTextView.text = subCategory.subcategoryName ?: "N/A"
             // Avoid triggering listener on recycling
             statusSwitch.setOnToggledListener(null)
-            statusSwitch.isOn = subCategory.subcategoryStatus == 1
+            statusSwitch.isOn = subCategory.subcategoryStatus == "1"
 
 
             statusSwitch.setOnToggledListener { _, isChecked ->
@@ -68,6 +68,7 @@ class SubCategoryAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         holder.bind(filteredList[position])
     }
 
@@ -92,5 +93,17 @@ class SubCategoryAdapter(
         }
         notifyDataSetChanged()
     }
+    // 🗑 NEW: Delete item properly
+    fun removeItem(subCategoryId: Int?) {
+        if (subCategoryId == null) return
+        val index = filteredList.indexOfFirst { it.subcategoryId == subCategoryId }
+        if (index != -1) {
+            val item = filteredList[index]
+            filteredList.removeAt(index)
+            subCategoryList.removeAll { it.subcategoryId == item.subcategoryId }
+            notifyItemRemoved(index)
+        }
+    }
+
 }
 

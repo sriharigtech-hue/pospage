@@ -5,6 +5,7 @@ import com.example.apitest.dataModel.AddProductInput
 import com.example.apitest.dataModel.AddProductOutput
 import com.example.apitest.dataModel.CategoryInput
 import com.example.apitest.dataModel.CategoryListOutput
+import com.example.apitest.dataModel.CategoryOutput
 import com.example.apitest.dataModel.Input
 import com.example.apitest.dataModel.InputField
 
@@ -153,6 +154,12 @@ fun getAllProduct(
         @Body dashboardInput: AddProductInput?
     ): Call<StatusResponse?>?
 
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("edit_product")
+    fun editProduct(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: AddProductInput?
+    ): Call<StatusResponse?>?
 
 
     @Headers("Accept:application/json; charset=UTF-8")
@@ -169,5 +176,34 @@ fun getAllProduct(
         @Header("Authorization") jwtToken: String,
         @Body dashboardInput: InputField?
     ): Call<AddProductOutput?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("delete_product")
+    fun deleteProduct(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: StatusUpdateInput?
+    ): Call<StatusResponse>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("product_status_update")
+    fun productStatusUpdate(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: StatusUpdateInput?
+    ): Call<StatusResponse>
+
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("items_get_all_category")
+    fun itemsGetAllCategory(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<CategoryOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("category_all_sub_category")
+    fun subCategorySequenceApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<SubCategoryOutput?>?
 
 }
