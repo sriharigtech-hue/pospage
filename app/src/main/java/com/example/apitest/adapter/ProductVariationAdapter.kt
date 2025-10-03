@@ -100,7 +100,7 @@ class ProductVariationAdapter(
         setOrHide(holder.productMRPPrice, item.mrp_price, holder.view6, showMRP)
         setOrHide(holder.productWholeSalePrice, item.whole_sale_price, holder.view7, showWholesale)
         setOrHide(holder.productTax, item.recommended_status, holder.view8) // replace with real tax field
-        setOrHide(holder.productUnitName, null, holder.view9) // replace with real unit field if available
+        setOrHide(holder.productUnitName, item.unit, holder.view9)
     }
 
 }

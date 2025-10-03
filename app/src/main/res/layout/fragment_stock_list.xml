@@ -1,0 +1,96 @@
+<!-- res/layout/fragment_items.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Left Sidebar -->
+    <LinearLayout
+        android:id="@+id/leftSidebar"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:background="#E6F0FF"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/serviceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="8dp" />
+    </LinearLayout>
+
+    <!-- Center Container -->
+    <LinearLayout
+        android:id="@+id/centerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/leftSidebar"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Subcategory Horizontal List (conditionally visible) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subCategoryList"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:clipToPadding="false"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"/>
+
+        <!-- Search + Arrange Row -->
+        <LinearLayout
+            android:id="@+id/centerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_keyword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/selectionBG"
+                android:layout_marginStart="@dimen/_12dp"
+                android:layout_marginTop="@dimen/_8dp"
+                android:layout_marginEnd="@dimen/_12dp"
+                android:layout_marginBottom="@dimen/_12dp"
+                android:background="@drawable/search_bg"
+                android:focusable="true"
+                android:textAppearance="@style/MyCustomTextAppearance2"
+                app:animateMenuItems="true"
+                app:iconifiedByDefault="false"
+                app:queryHint="Search by name"
+                app:searchHintIcon="@drawable/ic_search_category"
+                app:searchIcon="@drawable/ic_search_category" />
+
+        </LinearLayout>
+
+        <!-- RecyclerView (center content below search bar) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/centerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"/> <!-- extra bottom padding so FAB won't hide items -->
+
+    </LinearLayout>
+
+<!--    &lt;!&ndash; ✅ Floating Add Button (overlays RecyclerView at bottom-right) &ndash;&gt;-->
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/btnAddProduct"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:src="@drawable/ic_add"-->
+<!--        app:backgroundTint="@color/colorAccent"-->
+<!--        app:tint="@android:color/white" />-->
+
+</RelativeLayout>

@@ -26,7 +26,6 @@ data class StatusUpdateInput(
     var categoryId: String? = null,
     @Json(name = "category_status")
     var categoryStatus: String? = null,
-
 //Sub-category
     @Json(name = "sub_category_id")
     var sub_category_id: String? = null,
@@ -117,4 +116,11 @@ data class SubCategoryStatusUpdateInput(
     @Json(name = "status")
     var status: String? = null
 
+
+
+)
+@JsonClass(generateAdapter = true)
+data class DeleteUnitInput(
+    @Json(name = "unit_id") val unitId: String,
+    @Json(name = "status") val status: Int = 0
 )

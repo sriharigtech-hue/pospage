@@ -25,6 +25,7 @@
         <item name="fontFamily">@font/font_semibold</item>
     </style>
 
+
     <style name="MyCustomTextAppearance2" parent="TextAppearance.AppCompat.SearchResult.Title">
         <item name="textAllCaps">false</item>
         <item name="android:textSize">@dimen/_15sp</item>

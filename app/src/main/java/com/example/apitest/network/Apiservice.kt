@@ -13,6 +13,7 @@ import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.dataModel.StatusUpdateInput
 import com.example.apitest.dataModel.SubCategoryOutput
 import com.example.apitest.dataModel.CategoryStatusUpdateInput
+import com.example.apitest.dataModel.LowStockProductOutput
 import com.example.apitest.dataModel.ProfileOutput
 import com.example.apitest.dataModel.StockProductOutput
 import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
@@ -35,12 +36,12 @@ interface ApiService {
 
 
 
-    @Headers("Accept:application/json; charset=UTF-8")
-    @POST("stock_category")
-    fun stockCategoryApi(
-        @Header("Authorization") jwtToken: String,
-        @Body input: CategoryInput?,
-    ): Call<CategoryListOutput>
+        @Headers("Accept:application/json; charset=UTF-8")
+        @POST("stock_category")
+        fun stockCategoryApi(
+            @Header("Authorization") jwtToken: String,
+            @Body input: CategoryInput?,
+        ): Call<CategoryListOutput>
 
 
     @Multipart
@@ -117,8 +118,8 @@ interface ApiService {
         @Body statusUpdateInput: SubCategoryStatusUpdateInput?
     ): Call<StatusResponse>
 
-// API for displaying sub-category name based on category name, that we select
 
+// API for displaying sub-category name based on category name, that we select
 
     @Headers("Accept:application/json; charset=UTF-8")
     @POST("category_sub_category")
@@ -205,5 +206,56 @@ fun getAllProduct(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
     ): Call<SubCategoryOutput?>?
+
+    // Add unit API screen
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("unit")
+    fun unitApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<UnitOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("add_unit")
+    fun addUnit(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: InputField?
+    ): Call<StatusResponse?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("edit_unit")
+    fun editUnit(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: InputField?
+    ): Call<StatusResponse?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("delete_unit")
+    fun deleteUnit(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: StatusUpdateInput?
+    ): Call<StatusResponse>
+
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("get_stock_product")
+    fun stockProductApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<StockProductOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("update_stock_product")
+    fun productStockUpdate(
+        @Header("Authorization") jwtToken: String,
+        @Body statusUpdateInput: StatusUpdateInput?
+    ): Call<StatusResponse>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("low_stock_list")
+    fun lowStockList(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<LowStockProductOutput>
 
 }

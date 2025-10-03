@@ -12,8 +12,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.apitest.adapter.ProductVariationAdapter
 import com.example.apitest.dataModel.*
-import com.example.apitest.network.ApiClient
 import com.example.apitest.databinding.ActivityAddProductBinding
+import com.example.apitest.network.ApiClient
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
@@ -30,17 +30,12 @@ class AddProductActivity : AppCompatActivity() {
     private lateinit var subCategoryLayout: LinearLayout
     private var selectedSubCategoryId: Int? = null
 
-    private var filteredSubCategoryList = listOf<SubCategoryDetails>() // NEW
-
     private var categoryList: List<Category> = emptyList()
     private var subCategoryList: List<SubCategoryDetails> = emptyList()
 
     private lateinit var variationAdapter: ProductVariationAdapter
     private val localVariations = mutableListOf<StockProductData>()
     private var selectedCategoryId: Int? = null
-
-    private var isInitialCategoryLoad = true
-
 
     private var showMRP = true
     private var showWholesale = true
@@ -59,8 +54,6 @@ class AddProductActivity : AppCompatActivity() {
         setupRecyclerView()
         setupAddVariationButton()
 
-
-
         binding.saveButton.setOnClickListener { saveProduct() }
     }
 
@@ -77,34 +70,28 @@ class AddProductActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
         val stockEnabled = prefs.getBoolean("stock_enabled", false)
 
-
-
         val typeMethod = intent?.getIntExtra("type_method", 1) ?: 1
         val titleView = findViewById<AppCompatTextView>(R.id.title)
         isEditMode = (typeMethod == 2)
 
-        if (typeMethod == 1) { // Add mode
-            titleView.text = "Add Product"
-            // Load categories normally, no preselection
-            loadCategories()
-        } else if (typeMethod == 2) { // Edit mode
+        if (isEditMode) {
             titleView.text = "Edit Product"
             val productId = intent.getIntExtra("product_id", -1)
             if (productId != -1) {
-                fetchProductDetails(productId) // ✅ this will load categories + subcategories + preselect
-            } else {
-                Toast.makeText(this, "Invalid product ID", Toast.LENGTH_SHORT).show()
+                fetchProductDetails(productId)
             }
+        } else {
+            titleView.text = "Add Product"
+            loadCategoriesAndSubCategories()
         }
 
-
-        Log.d("AddProduct", "typeMethod: $typeMethod")
         showMRP = prefs.getBoolean("show_mrp", true)
         showWholesale = prefs.getBoolean("show_wholesale", true)
         showTax = prefs.getBoolean("show_tax", false)
 
         binding.stockLayout.visibility = if (stockEnabled) View.VISIBLE else View.GONE
         binding.onOffButton.isOn = stockEnabled
+
         binding.hint7.visibility = if (showTax) View.VISIBLE else View.GONE
     }
 
@@ -126,92 +113,29 @@ class AddProductActivity : AppCompatActivity() {
     }
 
     private fun fetchProductDetails(productId: Int) {
-        val input = InputField(  product_id = productId,  status = "1")
+        val input = InputField(product_id = productId, status = "1")
         ApiClient.instance.singleProductDetail(jwtToken, input)
             ?.enqueue(object : Callback<AddProductOutput?> {
-                override fun onResponse(
-                    call: Call<AddProductOutput?>,
-                    response: Response<AddProductOutput?>
-                ) {
-                    Log.d("AddProduct", "Response code: ${response.code()}")
-                    Log.d("AddProduct", "Raw response body: ${response.body()}")
-
+                override fun onResponse(call: Call<AddProductOutput?>, response: Response<AddProductOutput?>) {
                     val product = response.body()?.categoryList?.firstOrNull { it.product_id == productId }
-
-                    if (product != null) {
-                        Log.d("AddProduct", "Populating product: ${product.product_name}")
-                        populateProductFields(product)
-                    } else {
-                        Log.e("AddProduct", "Product ID $productId not found in response")
-                        Toast.makeText(this@AddProductActivity, "Product data not found", Toast.LENGTH_SHORT).show()
+                    product?.let {
+                        populateProductFields(it)
+                        loadCategoriesAndSubCategories(it.category_id, it.sub_category_id)
                     }
                 }
 
                 override fun onFailure(call: Call<AddProductOutput?>, t: Throwable) {
-                    Log.e("AddProduct", "API call failed: ${t.message}")
                     Toast.makeText(this@AddProductActivity, "Failed to load product", Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
-
-
-
     private fun populateProductFields(product: AddProductInput) {
-        // --- Set basic product fields ---
         binding.productName.setText(product.product_name)
-
         binding.onOffButton.isOn = product.stock_status == "1"
         binding.productTax.setText(product.product_tax ?: "")
 
-        // --- Keep selected IDs ---
-        val preselectCategoryId = product.category_id
-        val preselectSubCategoryId = product.sub_category_id
-
-        // --- Load categories and preselect category + subcategory ---
-        ApiClient.instance.stockCategoryApi(jwtToken, CategoryInput(status = "1"))
-            .enqueue(object : Callback<CategoryListOutput> {
-                override fun onResponse(call: Call<CategoryListOutput>, response: Response<CategoryListOutput>) {
-                    categoryList = response.body()?.data ?: emptyList()
-
-                    val categoryAdapter = ArrayAdapter(
-                        this@AddProductActivity,
-                        android.R.layout.simple_spinner_item,
-                        categoryList.map { it.category_name ?: "Unnamed" }
-                    )
-                    categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    categorySpinner.adapter = categoryAdapter
-
-                    // Preselect category
-                    val categoryToSelect = categoryList.firstOrNull { it.category_id == preselectCategoryId }
-                    val categoryIndex = categoryList.indexOf(categoryToSelect).takeIf { it >= 0 } ?: 0
-                    categorySpinner.setSelection(categoryIndex)
-                    selectedCategoryId = categoryList[categoryIndex].category_id
-
-                    // Load subcategories for this category and preselect subcategory
-                    selectedCategoryId?.let { loadSubCategories(it, preselectSubCategoryId) }
-
-
-                    // Listener after preselection
-                    categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                            val selectedCatId = categoryList[position].category_id
-                            if (selectedCatId != selectedCategoryId) {
-                                selectedCategoryId = selectedCatId
-                                selectedSubCategoryId = null
-                                loadSubCategories(selectedCatId)
-                            }
-                        }
-                        override fun onNothingSelected(parent: AdapterView<*>) {}
-                    }
-                }
-
-                override fun onFailure(call: Call<CategoryListOutput>, t: Throwable) {
-                    Toast.makeText(this@AddProductActivity, "Failed to load categories: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-
-        // --- Load variations ---
+        // Load variations
         localVariations.clear()
         product.product_price?.forEach { price ->
             localVariations.add(
@@ -222,7 +146,8 @@ class AddProductActivity : AppCompatActivity() {
                     stockCount = price.stock_quantity?.toIntOrNull(),
                     low_stock_alert = price.low_stock_alert?.toIntOrNull(),
                     mrp_price = price.mrp_price,
-                    whole_sale_price = price.whole_sale_price
+                    whole_sale_price = price.whole_sale_price,
+                    unit = price.unit_name
                 )
             )
         }
@@ -236,11 +161,24 @@ class AddProductActivity : AppCompatActivity() {
 
 
 
-    private fun loadCategories(preselectCategoryId: Int? = null, preselectSubCategoryId: Int? = null) {
+    private fun loadCategoriesAndSubCategories(
+        preselectCategoryId: Int? = null,
+        preselectSubCategoryId: Int? = null
+    ) {
         ApiClient.instance.stockCategoryApi(jwtToken, CategoryInput(status = "1"))
             .enqueue(object : Callback<CategoryListOutput> {
                 override fun onResponse(call: Call<CategoryListOutput>, response: Response<CategoryListOutput>) {
                     categoryList = response.body()?.data ?: emptyList()
+
+                    if (categoryList.isEmpty()) {
+                        Toast.makeText(this@AddProductActivity, "No categories available", Toast.LENGTH_SHORT).show()
+                        selectedCategoryId = null
+                        categorySpinner.adapter = null
+                        subCategoryTitle.visibility = View.GONE
+                        subCategoryLayout.visibility = View.GONE
+                        return
+                    }
+
                     val adapter = ArrayAdapter(
                         this@AddProductActivity,
                         android.R.layout.simple_spinner_item,
@@ -249,102 +187,92 @@ class AddProductActivity : AppCompatActivity() {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     categorySpinner.adapter = adapter
 
-                    // Preselect category
-                    val categoryToSelect = categoryList.firstOrNull { it.category_id == preselectCategoryId }
-                    val categoryIndex = categoryList.indexOf(categoryToSelect).takeIf { it >= 0 } ?: 0
+                    val categoryIndex = categoryList.indexOfFirst { it.category_id == preselectCategoryId }
+                        .takeIf { it >= 0 } ?: 0
                     categorySpinner.setSelection(categoryIndex)
                     selectedCategoryId = categoryList[categoryIndex].category_id
 
-                    // Load subcategories for selected category
-                    selectedCategoryId?.let { loadSubCategories(it, preselectSubCategoryId) }
+                    // Load subcategories for the selected category
+                    loadSubCategories(selectedCategoryId!!, preselectSubCategoryId)
 
-
-                    // Set listener after preselection
                     categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                            val selectedCatId = categoryList[position].category_id
-                            if (selectedCatId != selectedCategoryId) {
-                                selectedCategoryId = selectedCatId
+                            val newCatId = categoryList[position].category_id
+                            if (selectedCategoryId != newCatId) {
+                                selectedCategoryId = newCatId
                                 selectedSubCategoryId = null
-                                loadSubCategories(selectedCatId)
+                                loadSubCategories(newCatId)
                             }
                         }
+
                         override fun onNothingSelected(parent: AdapterView<*>) {}
                     }
-
                 }
 
                 override fun onFailure(call: Call<CategoryListOutput>, t: Throwable) {
-                    Toast.makeText(this@AddProductActivity, "Failed to load categories: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddProductActivity, "Failed to load categories", Toast.LENGTH_SHORT).show()
+                    categoryList = emptyList()
+                    selectedCategoryId = null
+                    categorySpinner.adapter = null
+                    subCategoryTitle.visibility = View.GONE
+                    subCategoryLayout.visibility = View.GONE
                 }
             })
     }
 
-
     private fun loadSubCategories(categoryId: Int, preselectSubCategoryId: Int? = null) {
-        val input = Input(category_id = categoryId.toString(), status = "1")
-        ApiClient.instance.subCategorySequenceApi(jwtToken, input)
+        val input = Input(status = "1", category_id = categoryId.toString())
+        ApiClient.instance.addEditSubCategoryApi(jwtToken, input)
             ?.enqueue(object : Callback<SubCategoryOutput?> {
                 override fun onResponse(call: Call<SubCategoryOutput?>, response: Response<SubCategoryOutput?>) {
-                    subCategoryList = response.body()?.data ?: emptyList()
+                    val filteredSubCategories = response.body()?.data?.filter { it.categoryId == categoryId } ?: emptyList()
 
-                    if (subCategoryList.isNotEmpty()) {
-                        // Filter out category name itself
-                        val selectedCategoryName = categoryList.firstOrNull { it.category_id == categoryId }?.category_name
-                        val filteredSubCategories = subCategoryList.filter { it.subcategoryName != selectedCategoryName }
-
-                        // Adapter
-                        val subCategoryAdapter = ArrayAdapter(
-                            this@AddProductActivity,
-                            android.R.layout.simple_spinner_item,
-                            filteredSubCategories.map { it.subcategoryName ?: "Unnamed" }
-                        )
-                        subCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        subCategorySpinner.adapter = subCategoryAdapter
-
-                        // Show layout
-                        subCategoryTitle.visibility = View.VISIBLE
-                        subCategoryLayout.visibility = View.VISIBLE
-
-                        // ✅ Correctly preselect
-                        val subCategoryToSelect = filteredSubCategories.firstOrNull { it.subcategoryId == preselectSubCategoryId }
-                        val subIndex = filteredSubCategories.indexOf(subCategoryToSelect).takeIf { it >= 0 } ?: -1
-                        if (subIndex >= 0) {
-                            subCategorySpinner.setSelection(subIndex)
-                            selectedSubCategoryId = filteredSubCategories[subIndex].subcategoryId
-                        } else {
-                            selectedSubCategoryId = null
-                        }
-
-                        // Listener
-                        subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                                if (position in filteredSubCategories.indices) {
-                                    selectedSubCategoryId = filteredSubCategories[position].subcategoryId
-                                    Log.d("AddProduct", "Selected SubCategory ID: $selectedSubCategoryId")
-                                }
-                            }
-
-                            override fun onNothingSelected(parent: AdapterView<*>) {
-                                selectedSubCategoryId = null
-                            }
-                        }
-
-                    } else {
+                    if (filteredSubCategories.isEmpty()) {
                         subCategoryTitle.visibility = View.GONE
                         subCategoryLayout.visibility = View.GONE
                         selectedSubCategoryId = null
+                        subCategorySpinner.adapter = null
+                        return
                     }
+
+                    val subCategoryNames = filteredSubCategories.map { it.subcategoryName ?: "Unnamed" }
+                    val adapter = ArrayAdapter(this@AddProductActivity, android.R.layout.simple_spinner_item, subCategoryNames)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    subCategorySpinner.adapter = adapter
+
+                    subCategoryTitle.visibility = View.VISIBLE
+                    subCategoryLayout.visibility = View.VISIBLE
+
+                    val subIndex = filteredSubCategories.indexOfFirst { it.subcategoryId == preselectSubCategoryId }
+                        .takeIf { it >= 0 } ?: 0
+                    subCategorySpinner.setSelection(subIndex)
+                    selectedSubCategoryId = filteredSubCategories[subIndex].subcategoryId
+
+                    subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                            selectedSubCategoryId = filteredSubCategories[position].subcategoryId
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>) {
+                            selectedSubCategoryId = 0
+                        }
+                    }
+
                 }
 
                 override fun onFailure(call: Call<SubCategoryOutput?>, t: Throwable) {
                     subCategoryTitle.visibility = View.GONE
                     subCategoryLayout.visibility = View.GONE
                     selectedSubCategoryId = null
-                    Toast.makeText(this@AddProductActivity, "Failed to load subcategories: ${t.message}", Toast.LENGTH_SHORT).show()
+                    subCategorySpinner.adapter = null
                 }
             })
     }
+
+
+
+
+
 
 
 
@@ -371,6 +299,8 @@ class AddProductActivity : AppCompatActivity() {
         val productStockQty = dialogView.findViewById<TextInputEditText>(R.id.productStockQuantity)
         val productMrp = dialogView.findViewById<TextInputEditText>(R.id.mrpPrice)
         val productWholeSale = dialogView.findViewById<TextInputEditText>(R.id.productWholeSalePrice)
+        val unitSpinner = dialogView.findViewById<Spinner>(R.id.unitSpinner)
+
 
         val hintLowStock = dialogView.findViewById<TextInputLayout>(R.id.hint2)
         val hintStockQty = dialogView.findViewById<TextInputLayout>(R.id.hint3)
@@ -391,6 +321,30 @@ class AddProductActivity : AppCompatActivity() {
             .create()
 
         cancelBtn.setOnClickListener { dialog.dismiss() }
+
+        ApiClient.instance.unitApi(jwtToken, Input(status = "1"))
+            .enqueue(object : Callback<UnitOutput> {
+                override fun onResponse(call: Call<UnitOutput>, response: Response<UnitOutput>) {
+                    val units = response.body()?.unitList ?: emptyList()
+                    if (units.isNotEmpty()) {
+                        val adapter = ArrayAdapter(
+                            this@AddProductActivity,
+                            android.R.layout.simple_spinner_item,
+                            units.map { it.unitName ?: "Unnamed" }
+                        )
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        unitSpinner.adapter = adapter
+
+                        // Optional: preselect first unit
+                        unitSpinner.setSelection(0)
+                    }
+                }
+
+                override fun onFailure(call: Call<UnitOutput>, t: Throwable) {
+                    Toast.makeText(this@AddProductActivity, "Failed to load units: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
 
         saveBtn.setOnClickListener {
             val variationName = productVariation.text.toString().trim()
@@ -416,7 +370,8 @@ class AddProductActivity : AppCompatActivity() {
                 stockCount = if (isStockOn) stockQty.toIntOrNull() else null,
                 low_stock_alert = if (isStockOn) lowStock.toIntOrNull() else null,
                 mrp_price = if (showMRP) mrp else null,
-                whole_sale_price = if (showWholesale) wholeSale else null
+                whole_sale_price = if (showWholesale) wholeSale else null,
+                unit = unitSpinner.selectedItem.toString()
             )
             localVariations.add(newVariation)
             variationAdapter.notifyItemInserted(localVariations.size - 1)
@@ -433,42 +388,17 @@ class AddProductActivity : AppCompatActivity() {
 
     // Fetch user_id automatically from profile API
     private fun fetchUserId(callback: (Int?) -> Unit) {
-
-        val input = Input(status = "1")  // Pass a valid body instead of null
-        ApiClient.instance.getUserDetails(jwtToken, input)
+        ApiClient.instance.getUserDetails(jwtToken, Input(status = "1"))
             ?.enqueue(object : Callback<ProfileOutput?> {
-                override fun onResponse(
-                    call: Call<ProfileOutput?>,
-                    response: Response<ProfileOutput?>
-                ) {
-                    Log.d("AddProduct", "Response: ${response.body()}")
-                    if (response.isSuccessful) {
-
-                        val userId = response.body()?.userDetails?.userId
-                        Log.d("AddProduct", "User ID: $userId")
-                        callback(userId)
-                    } else {
-                        Log.e("AddProduct", "Failed to fetch user profile: ${response.errorBody()?.string()}")
-                        Toast.makeText(
-                            this@AddProductActivity,
-                            "Failed to fetch user profile",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        callback(null)
-                    }
+                override fun onResponse(call: Call<ProfileOutput?>, response: Response<ProfileOutput?>) {
+                    callback(response.body()?.userDetails?.userId)
                 }
 
                 override fun onFailure(call: Call<ProfileOutput?>, t: Throwable) {
-                    Toast.makeText(
-                        this@AddProductActivity,
-                        "Error: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
                     callback(null)
                 }
             })
     }
-
 
     private fun saveProduct() {
         val itemName = binding.productName.text.toString().trim()
@@ -476,34 +406,24 @@ class AddProductActivity : AppCompatActivity() {
             binding.productName.error = "Please enter item name"
             return
         }
-
         if (localVariations.isEmpty()) {
             Toast.makeText(this, "Please add at least one variation", Toast.LENGTH_SHORT).show()
             return
         }
 
         val tax = if (showTax) binding.productTax.text.toString().trim().takeIf { it.isNotEmpty() } else null
-        if (showTax && tax.isNullOrEmpty()) {
-            binding.productTax.error = "Please enter tax"
-            return
-        }
 
-        // Product ID for edit mode
-        val prodId = intent.getIntExtra("product_id", -1)
-        if (isEditMode && prodId == -1) {
-            Toast.makeText(this, "Invalid product ID", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // ✅ Category ID (must exist)
         val categoryId = categoryList.getOrNull(categorySpinner.selectedItemPosition)?.category_id
         if (categoryId == null) {
             Toast.makeText(this, "Please select a category", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // ✅ SubCategory ID (optional but correct)
-        val subCategoryId: Int? = if (subCategoryLayout.visibility == View.VISIBLE) selectedSubCategoryId else null
+        val subCategoryId: Int = if (subCategoryLayout.visibility == View.VISIBLE) {
+            selectedSubCategoryId ?: 0
+        } else 0
+
+
 
         fetchUserId { userId ->
             if (userId == null) {
@@ -511,33 +431,36 @@ class AddProductActivity : AppCompatActivity() {
                 return@fetchUserId
             }
 
-            // Map variations for API
             val variationsForApi = localVariations.map { variation ->
                 AddProductPrice(
-                    product_variation_id = variation.productVariationId, // keep null if new
+                    product_variation_id = variation.productVariationId ?: 0,
                     product_variation = variation.productVariationName,
                     product_price = variation.product_price,
                     stock_quantity = variation.stockCount?.toString(),
                     low_stock_alert = variation.low_stock_alert?.toString(),
                     mrp_price = variation.mrp_price,
                     whole_sale_price = variation.whole_sale_price,
-                    product_tax = tax
+                    product_tax = tax,
+                    unit_id = "",  // if needed, map actual unit id
+                    unit_name = variation.unit,
+                    sku = ""
                 )
             }
 
-
             val productInput = AddProductInput(
-                product_id = if (isEditMode) prodId else null,
+                product_id = if (isEditMode) intent.getIntExtra("product_id", -1) else 0, // use 0 instead of null
                 product_name = itemName,
-                category_id = categoryId,
-                sub_category_id = subCategoryId, // ✅ corrected
+                category_id = categoryId ?: 0, // ensure integer
+                sub_category_id = subCategoryId, // already fixed above
                 product_status = 1,
-                stock_status = if (binding.onOffButton.isOn) "1" else "0", // ✅ set here
+                stock_status = if (binding.onOffButton.isOn) "1" else "0",
                 product_price = variationsForApi,
-                product_tax = tax,
-                user_id = userId,
+                product_tax = tax ?: "0",
+                user_id = userId ?: 0,
                 status = "1"
             )
+
+
 
             Log.d("AddProduct", "Request body: $productInput")
 
@@ -550,23 +473,8 @@ class AddProductActivity : AppCompatActivity() {
             apiCall?.enqueue(object : Callback<StatusResponse?> {
                 override fun onResponse(call: Call<StatusResponse?>, response: Response<StatusResponse?>) {
                     if (response.isSuccessful && response.body()?.status == true) {
-                        Toast.makeText(
-                            this@AddProductActivity,
-                            if (isEditMode) "Product updated successfully" else "Product added successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        val resultIntent = Intent().apply {
-                            putExtra("item_name", itemName)
-                            putExtra("tax", tax)
-                            putExtra("category_id", categoryId)
-                            subCategoryId?.let { putExtra("sub_category_id", it) }
-                            putExtra("sub_category_status", if (subCategoryLayout.visibility == View.VISIBLE) 1 else 0)
-
-
-                            putParcelableArrayListExtra("new_products", ArrayList(localVariations))
-                        }
-                        setResult(RESULT_OK, resultIntent)
+                        Toast.makeText(this@AddProductActivity, if (isEditMode) "Product updated" else "Product added", Toast.LENGTH_SHORT).show()
+                        setResult(RESULT_OK)
                         finish()
                     } else {
                         Toast.makeText(this@AddProductActivity, "Failed to save product", Toast.LENGTH_SHORT).show()
@@ -585,6 +493,7 @@ class AddProductActivity : AppCompatActivity() {
 
 
 
+
     private fun showEditVariationDialog(item: StockProductData, position: Int) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_variation, null)
 
@@ -594,6 +503,8 @@ class AddProductActivity : AppCompatActivity() {
         val productStockQty = dialogView.findViewById<TextInputEditText>(R.id.productStockQuantity)
         val productMrp = dialogView.findViewById<TextInputEditText>(R.id.mrpPrice)
         val productWholeSale = dialogView.findViewById<TextInputEditText>(R.id.productWholeSalePrice)
+        val unitSpinner = dialogView.findViewById<Spinner>(R.id.unitSpinner)
+
 
         val hintLowStock = dialogView.findViewById<TextInputLayout>(R.id.hint2)
         val hintStockQty = dialogView.findViewById<TextInputLayout>(R.id.hint3)
@@ -626,6 +537,30 @@ class AddProductActivity : AppCompatActivity() {
 
         cancelBtn.setOnClickListener { dialog.dismiss() }
 
+        ApiClient.instance.unitApi(jwtToken, Input(status = "1"))
+            .enqueue(object : Callback<UnitOutput> {
+                override fun onResponse(call: Call<UnitOutput>, response: Response<UnitOutput>) {
+                    val units = response.body()?.unitList ?: emptyList()
+                    if (units.isNotEmpty()) {
+                        val adapter = ArrayAdapter(
+                            this@AddProductActivity,
+                            android.R.layout.simple_spinner_item,
+                            units.map { it.unitName ?: "Unnamed" }
+                        )
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        unitSpinner.adapter = adapter
+
+                        // Preselect the unit saved in this variation
+                        val preselectIndex = units.indexOfFirst { it.unitName == item.unit }.takeIf { it >= 0 } ?: 0
+                        unitSpinner.setSelection(preselectIndex)
+                    }
+                }
+
+                override fun onFailure(call: Call<UnitOutput>, t: Throwable) {
+                    Toast.makeText(this@AddProductActivity, "Failed to load units: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
         saveBtn.setOnClickListener {
             val variationName = productVariation.text.toString().trim()
             val price = productPrice.text.toString().trim()
@@ -651,7 +586,8 @@ class AddProductActivity : AppCompatActivity() {
                 stockCount = if (isStockOn) stockQty.toIntOrNull() else null,
                 low_stock_alert = if (isStockOn) lowStock.toIntOrNull() else null,
                 mrp_price = if (showMRP) mrp else null,
-                whole_sale_price = if (showWholesale) wholeSale else null
+                whole_sale_price = if (showWholesale) wholeSale else null,
+                unit = unitSpinner.selectedItem.toString()
             )
             variationAdapter.notifyItemChanged(position)
 

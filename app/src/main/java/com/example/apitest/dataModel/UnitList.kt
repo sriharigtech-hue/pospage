@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class UnitList(
     @Json(name = "unit_id")
-    var unitId: Int? = null,
+    var unitId: String? = null,
     @Json(name = "unit_name")
     var unitName: String? = null,
     @Json(name = "unit_status")

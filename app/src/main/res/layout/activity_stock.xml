@@ -46,8 +46,7 @@
 
         </LinearLayout>
 
-        <!-- Cart and Search  and refresh -->
-
+        <!-- Cart and Search -->
 
 
         <ImageView
@@ -59,15 +58,14 @@
             android:layout_toStartOf="@+id/cart"
             app:tint="@color/white"
             app:srcCompat="@drawable/refresh"/>
-
         <ImageView
             android:id="@+id/cart"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_marginEnd="8dp"
-            android:layout_toStartOf="@+id/searchIcon"
             app:tint="@color/white"
+            android:layout_toStartOf="@+id/searchIcon"
             android:src="@drawable/custom_product"/>
         <ImageView
             android:id="@+id/searchIcon"
@@ -77,14 +75,12 @@
             android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/viewBillsLayout"
             android:src="@drawable/search"/>
-
         <RelativeLayout
             android:id="@+id/viewBillsLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-
             android:layout_marginEnd="18dp">
             <ImageView
                 android:id="@+id/viewBillsIcon"
@@ -94,6 +90,7 @@
                 android:src="@drawable/cart"/>
         </RelativeLayout>
     </RelativeLayout>
+
 
     <!-- Tab Bar -->
     <LinearLayout
@@ -106,43 +103,23 @@
         android:background="@color/white">
 
         <TextView
-            android:id="@+id/tabItems"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:id="@+id/tabStockList"
+            android:layout_width="@dimen/_100dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Items"
+            android:text="StockList"
             android:textColor="@color/blue"
-            android:textStyle="bold"
+
             android:background="@drawable/tab_selected_bg" />
 
         <TextView
-            android:id="@+id/tabSubCategory"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:id="@+id/tabLowStockList"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Sub-Category"
+            android:text="LowStockList"
             android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/tabCategory"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Category"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/tabUnit"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Unit"
-            android:visibility="gone"
-            android:textColor="@color/black"/>
     </LinearLayout>
 
     <!-- Fragment Container -->

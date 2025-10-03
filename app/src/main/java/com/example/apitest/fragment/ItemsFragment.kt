@@ -14,6 +14,7 @@ import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.apitest.AddProductActivity
+import com.example.apitest.MainActivity
 import com.example.apitest.adapter.ItemsAdapter
 import com.example.apitest.adapter.SidebarCategoryAdapter
 import com.example.apitest.adapter.SubCategoryHorizontalAdapter
@@ -68,6 +69,8 @@ class ItemsFragment : Fragment() {
             // ✅ sending extra value
             intent.putExtra("category_id", selectedCategoryId)
             intent.putExtra("sub_category_id", selectedSubCategoryId)
+            intent.putExtra("category_status", 1)
+
             intent.putExtra("sub_category_status", 1)
 
             // ✅ sending extra value
@@ -87,11 +90,9 @@ class ItemsFragment : Fragment() {
                 putExtra("product_id", product.productId)
                 putExtra("product_name", product.productName)
                 putExtra("category_id", product.categoryId)
-
-                putExtra("stock_enabled", true)
-                putExtra("show_mrp", true)
-                putExtra("show_wholesale", true)
-                putExtra("show_tax", true)
+                putExtra("category_name", product.categoryName)
+                putExtra("category_status", product.categoryStatus)
+                putExtra("sub_category_id", product.subCategoryId)
             }
             addProductLauncher.launch(intent) // Use launcher instead of startActivity
         }
@@ -129,12 +130,12 @@ class ItemsFragment : Fragment() {
                 // 1️⃣ Fetch subcategories
                 fetchSubCategories(category.categoryId.toString())
                 binding.subCategoryList.visibility = View.VISIBLE
-
+                // 3️⃣ Make sure no subcategory is pre-selected in UI
+                subCategoryAdapter.clearSelection()
                 // 2️⃣ Fetch category products (not tied to any subcategory)
                 fetchItems(category.categoryId.toString(), null)
 
-                // 3️⃣ Make sure no subcategory is pre-selected in UI
-                subCategoryAdapter.clearSelection()
+
 
             } else {
                 // No subcategories
@@ -162,6 +163,7 @@ class ItemsFragment : Fragment() {
         subCategoryAdapter = SubCategoryHorizontalAdapter(subCategoryList) { subCategory ->
             val catId = selectedCategoryId ?: return@SubCategoryHorizontalAdapter
             val subCatId = subCategory.subcategoryId?.toString()
+            selectedSubCategoryId = subCatId
             Log.d("ItemsFragment", "Subcategory clicked: ${subCategory.subcategoryName}, categoryId=$catId, subCategoryId=$subCatId")
 
             fetchItems(
@@ -335,12 +337,6 @@ class ItemsFragment : Fragment() {
 
 
 
-
-
-
-
-
-
     private fun fetchUserProfile(status: String? = "1") {
         val input = Input(status = "1")
         ApiClient.instance.getUserDetails(jwtToken, input)
@@ -353,13 +349,21 @@ class ItemsFragment : Fragment() {
                     val showWholesale = profile.userDetails?.whole_sale_price_status == "1"
                     val showTax = profile.userDetails?.product_tax_status == "1"
 
+                    val showUnit = profile.userDetails?.unit_status == "1"
+
+
+
                     requireContext().getSharedPreferences("app_prefs", AppCompatActivity.MODE_PRIVATE)
                         .edit {
                             putBoolean("stock_enabled", stockEnabled)
                             putBoolean("show_mrp", showMRP)
                             putBoolean("show_wholesale", showWholesale)
                             putBoolean("show_tax", showTax)
+                            putBoolean("show_unit", showUnit)
+
                         }
+
+                    (activity as? MainActivity)?.setUnitTabVisibility(showUnit)
                 }
 
                 override fun onFailure(call: Call<ProfileOutput?>, t: Throwable) {

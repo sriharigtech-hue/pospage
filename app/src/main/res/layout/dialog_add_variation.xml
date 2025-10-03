@@ -307,35 +307,35 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
 
-<!--                    <androidx.appcompat.widget.AppCompatTextView-->
-<!--                        android:id="@+id/unitSpinnerTitleLayout"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginHorizontal="@dimen/_16dp"-->
-<!--                        android:layout_marginTop="@dimen/_12dp"-->
-<!--                        android:fontFamily="@font/font_semibold"-->
-<!--                        android:text="Please Select Unit *"-->
-<!--                        android:textColor="@color/colorPrimary"-->
-<!--                        android:textSize="@dimen/_14sp" />-->
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/unitSpinnerTitleLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:fontFamily="@font/font_semibold"
+                        android:text="Please Select Unit *"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_14sp" />
 
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/unitSpinnerLayout"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginHorizontal="@dimen/_16dp"-->
-<!--                        android:layout_marginTop="@dimen/_12dp"-->
-<!--                        android:background="@drawable/outer_curve_border2"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:paddingVertical="@dimen/_16dp">-->
+                    <LinearLayout
+                        android:id="@+id/unitSpinnerLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:background="@drawable/outer_curve_border2"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/_16dp">
 
-<!--                        <Spinner-->
-<!--                            android:id="@+id/unitSpinner"-->
-<!--                            style="@style/SpinnerTheme"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:paddingHorizontal="@dimen/_16dp"-->
-<!--                            android:spinnerMode="dropdown" />-->
-<!--                    </LinearLayout>-->
+                        <Spinner
+                            android:id="@+id/unitSpinner"
+                            style="@style/SpinnerTheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_16dp"
+                            android:spinnerMode="dropdown" />
+                    </LinearLayout>
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/save"

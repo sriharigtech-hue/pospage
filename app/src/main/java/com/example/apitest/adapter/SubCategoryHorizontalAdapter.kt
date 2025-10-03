@@ -94,6 +94,14 @@ class SubCategoryHorizontalAdapter(
         notifyDataSetChanged()
     }
 
-// In onBindViewHolder, highlight selected only if position == selectedPosition
+    fun resetSelection() {
+        val oldPosition = selectedPosition
+        selectedPosition = RecyclerView.NO_POSITION
+        if (oldPosition != RecyclerView.NO_POSITION) {
+            notifyItemChanged(oldPosition)
+        }
+    }
+
+
 
 }

@@ -20,7 +20,8 @@ data class AddProductInput(
     var description: String? = null,
     @Json(name = "product_status")
     var product_status: Int? = null,
-    @Json(name = "sub_category_id")   // ✅ corrected key
+
+    @Json(name = "sub_categoryid")  // ✅ server expects this exact key
     var sub_category_id: Int? = null,
     @Json(name = "stock_status")
     var stock_status: String? = null,

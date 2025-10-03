@@ -29,4 +29,7 @@ data class AddProductPrice(
     var unit_name: String? = null,
     @Json(name = "sku")
     var sku: String? = null,
+
+    @Json(name = "unit")
+    val unit: String? = null
 )

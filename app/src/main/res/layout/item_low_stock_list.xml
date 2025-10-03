@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/_4dp"
+    android:layout_marginStart="@dimen/_8dp"
+    android:layout_marginEnd="@dimen/_8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_8dp"
+    app:cardElevation="2dp"
+    tools:ignore="HardcodedText">
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/_8dp"
+        android:paddingStart="@dimen/_8dp"
+        android:paddingEnd="@dimen/_8dp">
+
+        <RelativeLayout
+            android:id="@+id/number"
+            android:layout_width="@dimen/_40dp"
+            android:layout_height="@dimen/_40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/_4dp"
+            android:layout_marginEnd="@dimen/_4dp"
+            android:layout_toStartOf="@+id/editLowAlertStockOption"
+            android:background="@drawable/grad_ciecle"
+            android:elevation="4dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/_2dp"
+                android:fontFamily="@font/font_extra_bold"
+                android:gravity="start|center_vertical"
+                android:text="0"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sp"
+                tools:ignore="RtlHardcoded" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/product_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="@dimen/_6dp"
+            android:layout_marginTop="@dimen/_4dp"
+            android:layout_marginEnd="@dimen/_6dp"
+            android:layout_toStartOf="@+id/number">
+
+            <LinearLayout
+                android:id="@+id/product_name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/product_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_15sp"
+                    android:maxLines="2"
+                   />
+
+
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/_4dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/font_bold"
+                    android:gravity="start|center_vertical"
+                    android:maxLines="1"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_15sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/editLowAlertStockOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_20dp"
+                android:layout_marginHorizontal="@dimen/_8dp"
+                android:src="@drawable/edit"
+                android:id="@+id/edit_icon"
+                app:tint="@color/colorAccent" />
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
