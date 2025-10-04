@@ -107,9 +107,8 @@
 
         <TextView
             android:id="@+id/tabItems"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
             android:gravity="center"
             android:text="Items"
             android:textColor="@color/blue"
@@ -118,30 +117,28 @@
 
         <TextView
             android:id="@+id/tabSubCategory"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_width="90dp"
+            android:layout_height="30dp"
             android:gravity="center"
-            android:text="Sub-Category"
+            android:text="SubCategory"
             android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/tabCategory"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_width="90dp"
+            android:layout_height="30dp"
             android:gravity="center"
             android:text="Category"
             android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/tabUnit"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_width="90dp"
+            android:layout_height="30dp"
             android:gravity="center"
-            android:text="Unit"
             android:visibility="gone"
+            android:text="Unit"
+
             android:textColor="@color/black"/>
     </LinearLayout>
 
@@ -230,6 +227,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/_24dp"
                     android:layout_height="@dimen/_24dp"
+                    android:id="@+id/inventory_icon"
 
                     app:srcCompat="@drawable/inventory" />
 
@@ -259,6 +257,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/_24dp"
                     android:layout_height="@dimen/_24dp"
+                    android:id="@+id/stock_icon"
                     android:tint="@color/grey9599AB"
                     app:srcCompat="@drawable/web" />
 

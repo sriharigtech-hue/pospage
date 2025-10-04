@@ -41,7 +41,7 @@
                 android:fontFamily="@font/font_extra_bold"
                 android:gravity="start|center_vertical"
                 android:text="0"
-                android:textColor="@color/black"
+                android:textColor="@color/red"
                 android:textSize="@dimen/_14sp"
                 tools:ignore="RtlHardcoded" />
         </RelativeLayout>

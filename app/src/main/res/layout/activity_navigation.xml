@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Top Bar -->
     <RelativeLayout
@@ -42,13 +43,9 @@
                 android:layout_height="@dimen/_24dp"
                 android:layout_gravity="start"
                 android:src="@drawable/splash2" />
-
-
         </LinearLayout>
 
-        <!-- Cart and Search -->
-
-
+        <!-- Cart, Search, Refresh -->
         <ImageView
             android:id="@+id/refresh"
             android:layout_width="24dp"
@@ -58,15 +55,17 @@
             android:layout_toStartOf="@+id/cart"
             app:tint="@color/white"
             app:srcCompat="@drawable/refresh"/>
+
         <ImageView
             android:id="@+id/cart"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_marginEnd="8dp"
-            app:tint="@color/white"
             android:layout_toStartOf="@+id/searchIcon"
+            app:tint="@color/white"
             android:src="@drawable/custom_product"/>
+
         <ImageView
             android:id="@+id/searchIcon"
             android:layout_width="24dp"
@@ -75,6 +74,7 @@
             android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/viewBillsLayout"
             android:src="@drawable/search"/>
+
         <RelativeLayout
             android:id="@+id/viewBillsLayout"
             android:layout_width="wrap_content"
@@ -85,51 +85,77 @@
             <ImageView
                 android:id="@+id/viewBillsIcon"
                 android:layout_width="28dp"
-                app:tint="@color/white"
                 android:layout_height="28dp"
+                app:tint="@color/white"
                 android:src="@drawable/cart"/>
         </RelativeLayout>
     </RelativeLayout>
 
-
-    <!-- Tab Bar -->
-    <LinearLayout
-        android:id="@+id/tabBar"
-        android:layout_below="@id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@color/white">
-
-        <TextView
-            android:id="@+id/tabStockList"
-            android:layout_width="@dimen/_90dp"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="StockList"
-            android:textColor="@color/blue"
-
-            android:background="@drawable/tab_selected_bg" />
-
-        <TextView
-            android:id="@+id/tabLowStockList"
-            android:layout_width="90dp"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="LowStockList"
-            android:textColor="@color/black" />
-
-    </LinearLayout>
-
-    <!-- Fragment Container -->
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
-        android:layout_below="@id/tabBar"
-        android:layout_above="@id/bottom_container"
+    <!-- CENTER CONTENT: Tabs + RecyclerView + ViewPager -->
+    <RelativeLayout
+        android:id="@+id/displayerAttachableView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"/>
+        android:layout_below="@id/topBar"
+        android:layout_above="@id/bottom_container">
+
+        <RelativeLayout
+            android:id="@+id/overallServiceListLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_64dp"
+                android:gravity="center">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/sliding_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_16dp"
+                    android:background="@color/bgColor"
+                    app:tabBackground="@color/bgColor"
+                    app:tabGravity="fill"
+                    app:tabIndicator="@drawable/tab_bg"
+                    app:tabIndicatorAnimationMode="elastic"
+                    app:tabIndicatorColor="@color/colorAccent"
+                    app:tabIndicatorFullWidth="true"
+                    app:tabIndicatorGravity="center"
+                    app:tabIndicatorHeight="@dimen/_36dp"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="@color/colorAccent"
+                    app:tabTextAppearance="@style/MyCustomTextAppearance"
+                    app:tabTextColor="@color/textBlack" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/serviceListLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/bg_gradient_transparent"
+                android:elevation="4dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/serviceList"
+                    android:layout_width="@dimen/_70dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="@dimen/_8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_image" />
+            </LinearLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/list_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tab_layout"
+                android:layout_toEndOf="@+id/serviceListLayout"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <!-- POS Floating Button -->
     <RelativeLayout
@@ -207,7 +233,6 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/_24dp"
                     android:layout_height="@dimen/_24dp"
-
                     app:srcCompat="@drawable/inventory" />
 
                 <androidx.appcompat.widget.AppCompatTextView

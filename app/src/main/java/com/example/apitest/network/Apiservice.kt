@@ -236,13 +236,14 @@ fun getAllProduct(
         @Body statusUpdateInput: StatusUpdateInput?
     ): Call<StatusResponse>
 
-
+// STOCK SCREEN API
     @Headers("Accept:application/json; charset=UTF-8")
     @POST("get_stock_product")
     fun stockProductApi(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
     ): Call<StockProductOutput>
+
 
     @Headers("Accept:application/json; charset=UTF-8")
     @POST("update_stock_product")
@@ -257,5 +258,14 @@ fun getAllProduct(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
     ): Call<LowStockProductOutput>
+
+
+// POS SCREEN API
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("get_category")
+    fun categoryApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<CategoryOutput>
 
 }

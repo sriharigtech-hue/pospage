@@ -62,6 +62,10 @@ class LowStockAdapter(
             val dialogView = LayoutInflater.from(context)
                 .inflate(R.layout.dialog_edit_stock, null)
 
+            val heading = dialogView.findViewById<TextView>(R.id.percentage)
+            heading.text = "Low Stock"
+
+
             val dialog = AlertDialog.Builder(context)
                 .setView(dialogView)
                 .create()

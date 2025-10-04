@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.apitest.fragment.CategoryFragment
@@ -16,7 +17,7 @@ import com.example.apitest.dataModel.ProfileOutput
 import com.example.apitest.fragment.UnitFragment
 import com.example.apitest.network.ApiClient
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : NavigationActivity() {
 
     private lateinit var tabItems: TextView
     private lateinit var tabSubCategory: TextView
@@ -27,27 +28,24 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupBottomNavigation("inventory")
 
         tabItems = findViewById(R.id.tabItems)
         tabSubCategory = findViewById(R.id.tabSubCategory)
         tabCategory = findViewById(R.id.tabCategory)
         tabUnit = findViewById(R.id.tabUnit)
 
-        val inventoryButton = findViewById<LinearLayout>(R.id.inventory_button)
-        val stockButton = findViewById<LinearLayout>(R.id.web_button) // Stock tab
-        val homeButton = findViewById<LinearLayout>(R.id.home_button)
-        val profileButton = findViewById<LinearLayout>(R.id.profile_button)
 
 
-        inventoryButton.setOnClickListener {
-            // Already in MainActivity → maybe just select Inventory fragment or reload
-            startActivity(Intent(this, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP))
+
+        val posButton = findViewById<RelativeLayout>(R.id.sale_but)
+
+        posButton.setOnClickListener {
+            startActivity(Intent(this, POSActivity::class.java))
         }
 
-        stockButton.setOnClickListener {
-            fetchUserProfileForStock()
-        }
+
+
 
 
         tabUnit.visibility = View.GONE

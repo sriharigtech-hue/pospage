@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.apitest.R
+import androidx.core.content.ContextCompat
 import com.example.apitest.dataModel.StockProductData
 import com.google.android.material.imageview.ShapeableImageView
 import com.bumptech.glide.Glide
@@ -48,6 +49,19 @@ class StockProductAdapter(
         holder.productName.text = nameWithVariation
         holder.quantity.text = product.stockCount?.toString() ?: "0"
 
+        val stock = product.stockCount ?: 0
+        val lowAlert = product.low_stock_alert ?: 0
+
+        holder.quantity.text = stock.toString()
+
+// Check if stock is below alert
+        if (stock <= lowAlert) {
+            holder.quantity.setTextColor(holder.itemView.context.getColor(android.R.color.holo_red_dark))
+        } else {
+            holder.quantity.setTextColor(holder.itemView.context.getColor(android.R.color.holo_green_dark))
+        }
+
+
 
         // You can load product image if needed with Glide
         // Glide.with(holder.itemView.context).load(product.productImage).into(holder.editButton)
@@ -55,6 +69,9 @@ class StockProductAdapter(
         holder.editButton.setOnClickListener {
             val context = holder.itemView.context
             val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_stock, null)
+            val heading = dialogView.findViewById<TextView>(R.id.percentage)
+            heading.text = "Stock Available"
+
 
             val dialog = AlertDialog.Builder(context)
                 .setView(dialogView)
@@ -108,6 +125,7 @@ class StockProductAdapter(
                             response: retrofit2.Response<StatusResponse>
                         ) {
                             if (response.isSuccessful && response.body()?.status == true) {
+
                                 // Update local quantity
                                 product.stockCount = if (operation == "add") {
                                     (product.stockCount ?: 0) + qty

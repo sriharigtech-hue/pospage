@@ -145,6 +145,7 @@
             ApiClient.instance.stockProductApi(jwtToken, input)
                 .enqueue(object : Callback<StockProductOutput> {
                     override fun onResponse(call: Call<StockProductOutput>, response: Response<StockProductOutput>) {
+                        if (!isAdded) return
                         if (response.isSuccessful && response.body()?.status == true) {
                             response.body()?.data?.let { stockAdapter.updateList(it) }
 

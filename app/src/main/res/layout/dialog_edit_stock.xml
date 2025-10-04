@@ -53,7 +53,7 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/font_semibold"
                         android:gravity="center"
-                        android:text="Stock Available"
+                        android:text=""
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/_15sp" />
 

@@ -21,7 +21,6 @@ class LowStockListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: LowStockAdapter
-    private val jwtToken = "Bearer <your_token_here>"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,45 +55,7 @@ class LowStockListFragment : Fragment() {
             searchView.isIconified = false  // Expand search
             searchView.requestFocus()       // Focus on input
         }
-//        fetchLowStockProducts()
     }
-
-//    private fun fetchLowStockProducts() {
-//        val input = Input(status = "1") // fetch all active stock
-//        ApiClient.instance.stockProductApi(jwtToken, input)
-//            .enqueue(object : Callback<StockProductOutput> {
-//                override fun onResponse(
-//                    call: Call<StockProductOutput>,
-//                    response: Response<StockProductOutput>
-//                ) {
-//                    if (response.isSuccessful && response.body()?.status == true) {
-//                        val allProducts = response.body()?.data ?: emptyList()
-//
-//                        // filter low stock locally
-//                        val lowStockProducts = allProducts.filter {
-//                            (it.stockCount ?: 0) <= (it.low_stock_alert ?: 0)
-//                        }
-//
-//                        // Update your LowStockListFragment's data
-//                        LowStockListFragment.lowStockData.clear()
-//                        LowStockListFragment.lowStockData.addAll(lowStockProducts)
-//
-//                        // Notify adapter if fragment is visible
-//                        val fragment = parentFragmentManager.findFragmentByTag("LowStockListFragment")
-//                                as? LowStockListFragment
-//                        fragment?.refreshData()
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<StockProductOutput>, t: Throwable) {
-//                    Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//    }
-
-
-
-
 
     fun refreshData() {
         adapter.updateData(lowStockData)
