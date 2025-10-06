@@ -73,7 +73,8 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.makeramen:roundedimageview:2.3.0")
-    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0") // check latest version
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
+
 
 
 }

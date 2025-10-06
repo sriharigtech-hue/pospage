@@ -31,5 +31,7 @@ data class NewProductPrice(
     @Json(name = "unit_id")
     var unitId: String? = null,
     @Json(name = "unit_name")
-    var unitName: String? = null
+    var unitName: String? = null,
+
+
 )

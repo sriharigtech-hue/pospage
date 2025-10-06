@@ -14,6 +14,8 @@ import com.example.apitest.dataModel.StatusUpdateInput
 import com.example.apitest.dataModel.SubCategoryOutput
 import com.example.apitest.dataModel.CategoryStatusUpdateInput
 import com.example.apitest.dataModel.LowStockProductOutput
+import com.example.apitest.dataModel.NewProductOutput
+import com.example.apitest.dataModel.ProductInput
 import com.example.apitest.dataModel.ProfileOutput
 import com.example.apitest.dataModel.StockProductOutput
 import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
@@ -36,12 +38,12 @@ interface ApiService {
 
 
 
-        @Headers("Accept:application/json; charset=UTF-8")
-        @POST("stock_category")
-        fun stockCategoryApi(
-            @Header("Authorization") jwtToken: String,
-            @Body input: CategoryInput?,
-        ): Call<CategoryListOutput>
+                    @Headers("Accept:application/json; charset=UTF-8")
+                    @POST("stock_category")
+                    fun stockCategoryApi(
+                        @Header("Authorization") jwtToken: String,
+                        @Body input: CategoryInput?,
+                    ): Call<CategoryListOutput>
 
 
     @Multipart
@@ -267,5 +269,22 @@ fun getAllProduct(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
     ): Call<CategoryOutput>
+
+
+
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("get_sub_category")
+    fun subCategoryApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<SubCategoryOutput?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("get_pos_product")
+    fun posProductApi(
+        @Header("Authorization") jwtToken: String,
+        @Body productInput: ProductInput?
+    ): Call<NewProductOutput>?
 
 }
