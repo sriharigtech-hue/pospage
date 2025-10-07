@@ -17,15 +17,17 @@ import com.makeramen.roundedimageview.RoundedImageView
 
 class POSAdapter(
     private val products: List<NewProductList>,
-    private val onAddClick: (NewProductList, NewProductPrice, Double) -> Unit
+    private val cartMap: MutableMap<String, Int>,
+    private val onCartChange: (List<NewProductList>) -> Unit
 ) : RecyclerView.Adapter<POSAdapter.POSViewHolder>() {
+
+    // Stores last selected variation index per product
+    private val variationMap = mutableMapOf<String, Int>()
 
     inner class POSViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productName: AppCompatTextView = itemView.findViewById(R.id.product_name)
         val productImage: RoundedImageView = itemView.findViewById(R.id.product_img)
         val addToBag: AppCompatTextView = itemView.findViewById(R.id.add_to_bag)
-        val outOfStock: AppCompatTextView = itemView.findViewById(R.id.out_of_stock)
-        val lowStockAlert: View = itemView.findViewById(R.id.low_stock_alert)
         val spinnerLayout: LinearLayout = itemView.findViewById(R.id.spinnerLayout)
         val variationSpinner: Spinner = itemView.findViewById(R.id.amount_spinner)
         val productNumber: AppCompatTextView = itemView.findViewById(R.id.product_number)
@@ -57,99 +59,98 @@ class POSAdapter(
             .into(holder.productImage)
 
         val priceList = product.productPrice ?: emptyList()
-
-        // Spinner for variations
-        if (priceList.size > 1) {
+        if (priceList.isEmpty()) {
+            holder.container.visibility = View.GONE
+            return
+        } else {
             holder.container.visibility = View.VISIBLE
+        }
+
+        // Restore last selected variation index
+        val lastSelectedIndex = variationMap[product.productId.toString()] ?: 0
+        product.selectedVariationIndex = lastSelectedIndex
+
+        if (priceList.size > 1) {
             holder.spinnerLayout.visibility = View.VISIBLE
-            val variationList = priceList.map { it.productVariation ?: "Default" }
-            val adapter = ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, variationList)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            holder.variationSpinner.adapter = adapter
-            priceList.getOrNull(0)?.let { updatePriceViews(it, holder) }
+
+            val variationNames = priceList.map { it.productVariation ?: "Default" }
+            val spinnerAdapter = ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, variationNames)
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            holder.variationSpinner.adapter = spinnerAdapter
+
+            // Remove listener before setting selection to prevent unwanted triggers
+            holder.variationSpinner.onItemSelectedListener = null
+            holder.variationSpinner.setSelection(lastSelectedIndex, false)
+
+            // Set listener after selection
             holder.variationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                    priceList.getOrNull(pos)?.let { updatePriceViews(it, holder) }
-                    updateAddQuantityVisibility(product, holder, priceList.getOrNull(pos))
+                    product.selectedVariationIndex = pos
+                    variationMap[product.productId.toString()] = pos
+
+                    val selectedPrice = priceList[pos]
+                    val key = "${product.productId}_${selectedPrice.productPriceId}"
+
+                    // Restore previous quantity
+                    selectedPrice.selectedQuantity = cartMap[key] ?: 0
+
+                    updatePriceViews(selectedPrice, holder)
+                    updateQuantityVisibility(selectedPrice, holder)
+
+                    // Save current quantity in cart map
+                    cartMap[key] = selectedPrice.selectedQuantity
+                    onCartChange(products)
                 }
+
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         } else {
-            holder.container.visibility = View.GONE
             holder.spinnerLayout.visibility = View.GONE
-            val priceObj = priceList.firstOrNull()
-            holder.productAmount.text = priceObj?.productPrice ?: "0.00"
-            updateStockViews(priceObj, holder)
         }
 
-        // Initialize Add / Quantity / OutOfStock layout
-        val selectedPrice = if (priceList.size > 1)
-            priceList.getOrNull(holder.variationSpinner.selectedItemPosition)
-        else
-            priceList.firstOrNull()
+        // Restore quantity for currently selected variation
+        val selectedPrice = priceList[product.selectedVariationIndex]
+        val key = "${product.productId}_${selectedPrice.productPriceId}"
+        selectedPrice.selectedQuantity = cartMap[key] ?: 0
+        updatePriceViews(selectedPrice, holder)
+        updateQuantityVisibility(selectedPrice, holder)
 
-        updateAddQuantityVisibility(product, holder, selectedPrice)
-
-        // ADD button click
+        // Add to cart button
         holder.addToBag.setOnClickListener {
-            if ((selectedPrice?.stockCount ?: 0) <= 0) return@setOnClickListener
-            product.selectedQuantity = 1
-            holder.txtQuantity.text = "1"
-            holder.addToBag.visibility = View.GONE
-            holder.quantityLayout.visibility = View.VISIBLE
-            onAddClick(product, selectedPrice!!, 1.0)
+            selectedPrice.selectedQuantity = 1
+            cartMap[key] = selectedPrice.selectedQuantity
+            updateQuantityVisibility(selectedPrice, holder)
+            onCartChange(products)
         }
 
-        // INCREASE button
         holder.btnIncrease.setOnClickListener {
-            if ((selectedPrice?.stockCount ?: 0) <= 0) return@setOnClickListener
-            product.selectedQuantity += 1
-            holder.txtQuantity.text = product.selectedQuantity.toString()
-            onAddClick(product, selectedPrice!!, product.selectedQuantity.toDouble())
+            selectedPrice.selectedQuantity += 1
+            cartMap[key] = selectedPrice.selectedQuantity
+            updateQuantityVisibility(selectedPrice, holder)
+            onCartChange(products)
         }
 
-        // DECREASE button
         holder.btnDecrease.setOnClickListener {
-            if (product.selectedQuantity > 1) {
-                product.selectedQuantity -= 1
-                holder.txtQuantity.text = product.selectedQuantity.toString()
-                onAddClick(product, selectedPrice!!, product.selectedQuantity.toDouble())
-            } else {
-                product.selectedQuantity = 0
-                holder.txtQuantity.text = "0"
-                holder.quantityLayout.visibility = View.GONE
-                holder.addToBag.visibility = View.VISIBLE
-            }
+            selectedPrice.selectedQuantity = if (selectedPrice.selectedQuantity > 1) selectedPrice.selectedQuantity - 1 else 0
+            cartMap[key] = selectedPrice.selectedQuantity
+            updateQuantityVisibility(selectedPrice, holder)
+            onCartChange(products)
         }
     }
 
     private fun updatePriceViews(price: NewProductPrice, holder: POSViewHolder) {
         holder.productAmount.text = price.productPrice ?: "0.00"
-        updateStockViews(price, holder)
     }
 
-    private fun updateStockViews(price: NewProductPrice?, holder: POSViewHolder) {
-        val stock = price?.stockCount ?: 0
-        val alertLimit = price?.low_stock_alert ?: 0
-        holder.outOfStock.visibility = if (stock <= 0) View.VISIBLE else View.GONE
-        holder.lowStockAlert.visibility = if (stock in 1..alertLimit) View.VISIBLE else View.GONE
-    }
-
-    private fun updateAddQuantityVisibility(product: NewProductList, holder: POSViewHolder, price: NewProductPrice?) {
-        val stock = price?.stockCount ?: 0
-        if (stock <= 0) {
+    private fun updateQuantityVisibility(price: NewProductPrice, holder: POSViewHolder) {
+        if (price.selectedQuantity > 0) {
             holder.addToBag.visibility = View.GONE
-            holder.quantityLayout.visibility = View.GONE
+            holder.quantityLayout.visibility = View.VISIBLE
+            holder.txtQuantity.text = price.selectedQuantity.toString()
         } else {
-            if (product.selectedQuantity > 0) {
-                holder.addToBag.visibility = View.GONE
-                holder.quantityLayout.visibility = View.VISIBLE
-                holder.txtQuantity.text = product.selectedQuantity.toString()
-            } else {
-                holder.addToBag.visibility = View.VISIBLE
-                holder.quantityLayout.visibility = View.GONE
-                holder.txtQuantity.text = "0"
-            }
+            holder.addToBag.visibility = View.VISIBLE
+            holder.quantityLayout.visibility = View.GONE
+            holder.txtQuantity.text = "0"
         }
     }
 

@@ -48,6 +48,7 @@ class MainActivity : NavigationActivity() {
 
 
 
+
         tabUnit.visibility = View.GONE
 
         // Default fragment

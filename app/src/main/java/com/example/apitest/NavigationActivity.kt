@@ -9,7 +9,11 @@ import androidx.appcompat.widget.AppCompatImageView
 
 open class NavigationActivity : AppCompatActivity() {
 
-    protected fun setupBottomNavigation(currentTab: String) {
+    private var currentTab: String? = null
+
+    protected fun setupBottomNavigation(tab: String) {
+        currentTab = tab
+
         val inventoryBtn = findViewById<LinearLayout>(R.id.inventory_button)
         val stockBtn = findViewById<LinearLayout>(R.id.web_button)
         val posBtn = findViewById<RelativeLayout>(R.id.sale_but)
@@ -18,8 +22,6 @@ open class NavigationActivity : AppCompatActivity() {
         val stockIcon = stockBtn.findViewById<AppCompatImageView>(R.id.stock_icon)
         val posIcon = posBtn.findViewById<AppCompatImageView>(R.id.sale_icon)
 
-
-        // Reset all icons to default color
         fun resetIcons() {
             inventoryIcon?.setColorFilter(getColor(R.color.grey9599AB))
             stockIcon?.setColorFilter(getColor(R.color.grey9599AB))
@@ -28,34 +30,29 @@ open class NavigationActivity : AppCompatActivity() {
 
         resetIcons()
 
-        // Highlight selected tab
         when (currentTab) {
             "inventory" -> inventoryIcon?.setColorFilter(getColor(R.color.colorAccent))
             "stock" -> stockIcon?.setColorFilter(getColor(R.color.colorAccent))
             "pos" -> posIcon?.setColorFilter(getColor(R.color.colorAccent))
         }
 
-        // Click listeners
-        inventoryBtn?.setOnClickListener {
-            if (currentTab != "inventory") {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
+
+
+        inventoryBtn.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }
 
-        stockBtn?.setOnClickListener {
-            if (currentTab != "stock") {
-                startActivity(Intent(this, StockActivity::class.java))
-                finish()
-            }
+        stockBtn.setOnClickListener {
+            startActivity(Intent(this, StockActivity::class.java))
+            finish()
         }
 
-        posBtn?.setOnClickListener {
-            if (currentTab != "pos") {
-                startActivity(Intent(this, POSActivity::class.java))
-                finish()
-            }
+        posBtn.setOnClickListener {
+            startActivity(Intent(this, POSActivity::class.java))
+            finish()
         }
     }
 }
+
 

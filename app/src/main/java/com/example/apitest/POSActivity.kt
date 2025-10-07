@@ -1,22 +1,17 @@
 package com.example.apitest
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.apitest.adapter.POSAdapter
 import com.example.apitest.adapter.PosCategoryAdapter
 import com.example.apitest.adapter.PosSubCategoryAdapter
-import com.example.apitest.dataModel.CategoryList
-import com.example.apitest.dataModel.CategoryOutput
-import com.example.apitest.dataModel.Input
-import com.example.apitest.dataModel.NewProductList
-import com.example.apitest.dataModel.NewProductOutput
-import com.example.apitest.dataModel.ProductInput
-import com.example.apitest.dataModel.SubCategoryDetails
-import com.example.apitest.dataModel.SubCategoryOutput
-
+import com.example.apitest.dataModel.*
 import com.example.apitest.network.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,23 +22,27 @@ class POSActivity : NavigationActivity() {
 
     private lateinit var categoryRecyclerView: RecyclerView
     private lateinit var subCategoryRecyclerView: RecyclerView
-
     private lateinit var centerRecyclerView: RecyclerView
-
-
 
     private lateinit var categoryAdapter: PosCategoryAdapter
     private lateinit var subCategoryAdapter: PosSubCategoryAdapter
     private lateinit var productAdapter: POSAdapter
-
 
     private var categoryList = mutableListOf<CategoryList>()
     private val subCategoryList = mutableListOf<SubCategoryDetails>()
     private val productList = mutableListOf<NewProductList>()
 
     private var selectedCategoryId: String? = null
-
     private var selectedSubCategoryId: String? = null
+
+    private lateinit var cartSummaryBar: View
+    private lateinit var totalItemsText: TextView
+    private lateinit var totalAmountText: TextView
+    private lateinit var viewBillBtn: Button
+
+    private val cartMap = mutableMapOf<String, Int>()
+
+    private val allProductsMap = mutableMapOf<String, NewProductPrice>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,76 +50,63 @@ class POSActivity : NavigationActivity() {
         setContentView(R.layout.activity_posactivity)
         setupBottomNavigation("pos")
 
-        categoryRecyclerView = findViewById(R.id.serviceList)
-        categoryRecyclerView.layoutManager = LinearLayoutManager(this)
+        getUserProfile()
 
+        cartSummaryBar = findViewById(R.id.cartSummaryBar)
+        totalItemsText = findViewById(R.id.totalItems)
+        totalAmountText = findViewById(R.id.totalAmount)
+        viewBillBtn = findViewById(R.id.viewBillBtn)
+        cartSummaryBar.visibility = View.GONE
 
-        subCategoryRecyclerView = findViewById(R.id.subCategoryList)
-        subCategoryRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Category Adapter
+        categoryRecyclerView = findViewById(R.id.serviceList)
+        categoryRecyclerView.layoutManager = LinearLayoutManager(this)
         categoryAdapter = PosCategoryAdapter(categoryList) { category, _ ->
             val newCategoryId = category.categoryId?.toString()
-
             if (selectedCategoryId != newCategoryId) {
                 selectedCategoryId = newCategoryId
-
-                // Reset subcategory selection
                 selectedSubCategoryId = null
                 subCategoryList.clear()
                 subCategoryAdapter.resetSelection()
                 subCategoryAdapter.notifyDataSetChanged()
                 subCategoryRecyclerView.visibility = View.GONE
             }
-
-            // Fetch subcategories for the selected category
             getSubCategories(newCategoryId)
-
-            // If no subcategory selected, fetch products for the category
             getPOSProducts(newCategoryId.toString(), null)
         }
-
-
         categoryRecyclerView.adapter = categoryAdapter
 
 
+
+        // Subcategory Adapter
+        subCategoryRecyclerView = findViewById(R.id.subCategoryList)
+        subCategoryRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         subCategoryAdapter = PosSubCategoryAdapter(subCategoryList) { subCategory, _ ->
             val categoryId = selectedCategoryId ?: return@PosSubCategoryAdapter
             val subCategoryId = subCategory.subcategoryId?.toString() ?: return@PosSubCategoryAdapter
             selectedSubCategoryId = subCategoryId
-
-            // Fetch products for both category + subcategory
             getPOSProducts(categoryId, subCategoryId)
         }
-
-
-
         subCategoryRecyclerView.adapter = subCategoryAdapter
 
+
+
+        // Products RecyclerView
         centerRecyclerView = findViewById(R.id.centerRecyclerView)
         centerRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        productAdapter = POSAdapter(productList) { product, variation, quantity ->
-            Toast.makeText(
-                this,
-                "${product.productName} (${variation.productVariation}) added! Quantity: $quantity",
-                Toast.LENGTH_SHORT
-            ).show()
-
-        }
-
-
+        productAdapter = POSAdapter(productList, cartMap) { updateCartBar() }
         centerRecyclerView.adapter = productAdapter
 
-        // Call API
+
+
+        // Fetch categories
         getCategory()
     }
 
     private fun getCategory() {
-        val input = Input(status = "1") // pass status = 1
-
-
+        val input = Input(status = "1")
         ApiClient.instance.categoryApi(jwtToken, input)
             .enqueue(object : Callback<CategoryOutput> {
                 override fun onResponse(call: Call<CategoryOutput>, response: Response<CategoryOutput>) {
@@ -132,26 +118,18 @@ class POSActivity : NavigationActivity() {
                         Toast.makeText(this@POSActivity, "No categories found", Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 override fun onFailure(call: Call<CategoryOutput>, t: Throwable) {
                     Toast.makeText(this@POSActivity, "API Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
             })
     }
+
     private fun getSubCategories(categoryId: String?) {
         if (categoryId.isNullOrEmpty()) return
-
-        val input = Input(
-            status = "1",
-            category_id = categoryId
-        )
-
+        val input = Input(status = "1", category_id = categoryId)
         ApiClient.instance.subCategoryApi(jwtToken, input)
             ?.enqueue(object : Callback<SubCategoryOutput> {
-                override fun onResponse(
-                    call: Call<SubCategoryOutput>,
-                    response: Response<SubCategoryOutput>
-                ) {
+                override fun onResponse(call: Call<SubCategoryOutput>, response: Response<SubCategoryOutput>) {
                     if (response.isSuccessful && response.body()?.status == true) {
                         val subList = response.body()?.data ?: emptyList()
                         subCategoryList.clear()
@@ -162,39 +140,74 @@ class POSActivity : NavigationActivity() {
                         subCategoryList.clear()
                         subCategoryRecyclerView.visibility = View.GONE
                         subCategoryAdapter.notifyDataSetChanged()
-                        Toast.makeText(this@POSActivity, "No subcategories found", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                override fun onFailure(call: Call<SubCategoryOutput>, t: Throwable) {
-                    Toast.makeText(this@POSActivity, "Subcategory API Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-                }
+                override fun onFailure(call: Call<SubCategoryOutput>, t: Throwable) {}
             } as Callback<SubCategoryOutput?>)
     }
-    private fun getPOSProducts(categoryId: String, subCategoryId: String?) {
-        val input = ProductInput(
-            categoryId = categoryId,
-            subCategoryId = subCategoryId, // nullable
-            status = "1",
-            page = "1"
-        )
 
+
+    private fun getPOSProducts(categoryId: String, subCategoryId: String?) {
+        val input = ProductInput(categoryId = categoryId, subCategoryId = subCategoryId, status = "1", page = "1")
         ApiClient.instance.posProductApi(jwtToken, input)?.enqueue(object : Callback<NewProductOutput> {
             override fun onResponse(call: Call<NewProductOutput>, response: Response<NewProductOutput>) {
-                productList.clear()
                 if (response.isSuccessful && response.body()?.status == true) {
+                    productList.clear()
+                    response.body()?.data?.forEach { product ->
+                        product.productPrice?.forEach { variation ->
+                            val key = "${product.productId}_${variation.productPriceId}"
+                            // Restore previous quantity
+                            variation.selectedQuantity = cartMap[key] ?: variation.selectedQuantity
+                            allProductsMap[key] = variation
+                        }
+                    }
                     response.body()?.data?.let { productList.addAll(it) }
+                    productAdapter.notifyDataSetChanged()
+                    updateCartBar()
                 }
-                productAdapter.notifyDataSetChanged()
             }
-
-            override fun onFailure(call: Call<NewProductOutput>, t: Throwable) {
-                Toast.makeText(this@POSActivity, "Products API Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-            }
+            override fun onFailure(call: Call<NewProductOutput>, t: Throwable) {}
         })
     }
 
 
 
+    private fun getUserProfile() {
+        val input = Input(status = "1")
+        ApiClient.instance.getUserDetails(jwtToken, input)
+            ?.enqueue(object : Callback<ProfileOutput> {
+                override fun onResponse(call: Call<ProfileOutput>, response: Response<ProfileOutput>) {}
+                override fun onFailure(call: Call<ProfileOutput>, t: Throwable) {}
+            } as Callback<ProfileOutput?>)
+    }
+//
+//    private fun refreshCartBar(products: List<NewProductList>) {
+//        val selectedVariations = products.flatMap { it.productPrice ?: emptyList() }
+//            .filter { it.selectedQuantity > 0 }
+//
+//        val totalQty = selectedVariations.sumOf { it.selectedQuantity }
+//        val totalAmt = selectedVariations.sumOf {
+//            val price = it.productPrice?.toDoubleOrNull() ?: 0.0
+//            price * it.selectedQuantity
+//        }
+//
+//        cartSummaryBar.visibility = if (totalQty > 0) View.VISIBLE else View.GONE
+//        totalItemsText.text = "$totalQty item${if (totalQty > 1) "s" else ""}"
+//        totalAmountText.text = "₹%.2f".format(totalAmt)
+//    }
+// --- Cart summary ---
+private fun updateCartBar() {
+    var totalQty = 0
+    var totalAmount = 0.0
 
+    cartMap.forEach { (key, qty) ->
+        val variation = allProductsMap[key] ?: return@forEach
+        totalQty += qty
+        totalAmount += (variation.productPrice?.toDoubleOrNull() ?: 0.0) * qty
+    }
+
+    cartSummaryBar.visibility = if (totalQty > 0) View.VISIBLE else View.GONE
+    totalItemsText.text = "$totalQty item${if (totalQty > 1) "s" else ""}"
+    totalAmountText.text = "₹%.2f".format(totalAmount)
+}
 }

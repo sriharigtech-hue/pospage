@@ -171,7 +171,6 @@
                 android:layout_marginTop="@dimen/_2dp"
                 android:gravity="center"
                 android:text="POS"
-                android:textColor="@color/colorAccent"
                 android:textSize="@dimen/_12sp"
                 android:visibility="visible" />
         </LinearLayout>
@@ -217,7 +216,6 @@
                     android:fontFamily="@font/font_semibold"
                     android:gravity="center"
                     android:text="Inventory"
-                    android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_9sp" />
             </LinearLayout>
 

@@ -36,7 +36,10 @@ data class NewProductList(
     var unitId: Int? = null,
     @Json(name = "unit_name")
     var unitName: String? = null,
+//
+//    // 🟢 New field to track quantity selected by user , i added this
+//    var selectedQuantity: Int = 0,
 
-    // 🟢 New field to track quantity selected by user , i added this
-    var selectedQuantity: Int = 0
+    // 🟢 Track currently selected variation
+    var selectedVariationIndex: Int = 0
 )

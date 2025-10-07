@@ -33,5 +33,6 @@ data class NewProductPrice(
     @Json(name = "unit_name")
     var unitName: String? = null,
 
-
+// **New field to track quantity per variation**
+    var selectedQuantity: Int = 0
 )
