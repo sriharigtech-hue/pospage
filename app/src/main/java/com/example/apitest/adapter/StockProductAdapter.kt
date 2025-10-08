@@ -54,7 +54,7 @@ class StockProductAdapter(
 
         holder.quantity.text = stock.toString()
 
-// Check if stock is below alert
+        // Check if stock is below alert
         if (stock <= lowAlert) {
             holder.quantity.setTextColor(holder.itemView.context.getColor(android.R.color.holo_red_dark))
         } else {
@@ -178,5 +178,6 @@ class StockProductAdapter(
 
         notifyDataSetChanged()
     }
+
 
 }

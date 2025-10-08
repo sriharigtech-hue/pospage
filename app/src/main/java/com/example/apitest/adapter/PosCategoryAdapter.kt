@@ -55,6 +55,15 @@ class PosCategoryAdapter(
             onItemClick(categories[currentPosition], currentPosition)
         }
     }
+    fun selectCategory(index: Int) {
+        if (index in categories.indices) {
+            val previous = selectedPosition
+            selectedPosition = index
+            notifyItemChanged(previous)
+            notifyItemChanged(selectedPosition)
+        }
+    }
+
 
 
     override fun getItemCount(): Int = categories.size

@@ -59,4 +59,13 @@ class PosSubCategoryAdapter(
         selectedPosition = -1
         if (previous != -1) notifyItemChanged(previous)
     }
+    fun setSelectedIndex(index: Int) {
+        if (index in subCategories.indices) {
+            val previous = selectedPosition
+            selectedPosition = index
+            notifyItemChanged(previous)
+            notifyItemChanged(selectedPosition)
+        }
+    }
+
 }

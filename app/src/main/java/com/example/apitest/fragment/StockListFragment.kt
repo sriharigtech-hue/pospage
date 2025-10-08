@@ -16,10 +16,16 @@
     import com.example.apitest.adapter.SubCategoryHorizontalAdapter
     import com.example.apitest.dataModel.*
     import com.example.apitest.fragment.LowStockListFragment.Companion.lowStockData
+    import com.example.apitest.helperClass.CategoryHelper
     import com.example.apitest.network.ApiClient
     import retrofit2.Call
     import retrofit2.Callback
     import retrofit2.Response
+
+
+
+    // used helper class for category selection and subcategory selection , category helper file name
+
 
     class StockListFragment : Fragment() {
 
@@ -54,6 +60,7 @@
             setupCategorySidebar()
             setupSubCategoryList()
             setupStockRecycler()
+
             fetchLowStockList()
             fetchCategories()
 
@@ -79,17 +86,30 @@
             categoryAdapter = CategorySidebarAdapter(categories) { category ->
                 selectedCategoryId = category.category_id
                 selectedSubCategoryId = null // reset subcategory
-                fetchSubCategories(category.category_id)
-                fetchStockProducts()
+
+                // ✅ Use the helper class now
+                CategoryHelper.handleCategorySelection(
+                    jwtToken,
+                    category.category_id,
+                    category.category_name,
+                    subCategoryList,
+                    subCategories,
+                    subCategoryAdapter
+                ) { selectedSubId ->
+                    selectedSubCategoryId = selectedSubId
+                    fetchStockProducts()
+                }
             }
+
             serviceList.adapter = categoryAdapter
         }
 
         private fun setupSubCategoryList() {
             subCategoryList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
             subCategoryAdapter = SubCategoryHorizontalAdapter(subCategories) { subCategory ->
-                selectedSubCategoryId = subCategory.subcategoryId
+                selectedSubCategoryId = subCategory.subcategoryId  // keep 0 for category itself
                 fetchStockProducts()
+
             }
             subCategoryList.adapter = subCategoryAdapter
         }
@@ -108,78 +128,70 @@
                             categories.clear()
                             response.body()?.data?.let { categories.addAll(it) }
                             categoryAdapter.notifyDataSetChanged()
+
+                            if (categories.isNotEmpty()) {
+                                selectedCategoryId = categories[0].category_id
+                                categoryAdapter.setSelectedIndex(0)
+
+                                // Use helper for first category
+                                CategoryHelper.handleCategorySelection(
+                                    jwtToken,
+                                    categories[0].category_id,
+                                    categories[0].category_name,
+                                    subCategoryList,
+                                    subCategories,
+                                    subCategoryAdapter
+                                ) { selectedSubId ->
+                                    selectedSubCategoryId = selectedSubId
+                                    fetchStockProducts()
+                                }
+                            }
                         }
                     }
+
                     override fun onFailure(call: Call<CategoryListOutput>, t: Throwable) {
                         Log.e("StockListFragment", t.message ?: "")
                     }
                 })
         }
 
-        private fun fetchSubCategories(categoryId: Int) {
-            val input = Input(category_id = categoryId.toString(), status = "1")
-            ApiClient.instance.subCategorySequenceApi(jwtToken, input)
-                ?.enqueue(object : Callback<SubCategoryOutput?> {
-                    override fun onResponse(call: Call<SubCategoryOutput?>, response: Response<SubCategoryOutput?>) {
-                        if (response.isSuccessful && response.body()?.status == true) {
-                            subCategories.clear()
-                            response.body()?.data?.let { subCategories.addAll(it) }
-                            subCategoryList.visibility = if (subCategories.isNotEmpty()) View.VISIBLE else View.GONE
-                            subCategoryAdapter.notifyDataSetChanged()
-                            subCategoryAdapter.resetSelection()
-                            selectedSubCategoryId = null
-                        }
-                    }
-                    override fun onFailure(call: Call<SubCategoryOutput?>, t: Throwable) {
-                        Log.e("StockListFragment", t.message ?: "")
-                    }
-                })
-        }
-
         private fun fetchStockProducts() {
-            val input = Input(
-                status = "1",
-                category_id = selectedCategoryId?.toString(),
-                sub_category_id = selectedSubCategoryId?.toString()
-            )
+            val input = if (selectedSubCategoryId == 0) {
+                Input(status = "1", category_id = selectedCategoryId?.toString(), sub_category_id = null)
+            } else {
+                Input(status = "1", category_id = selectedCategoryId?.toString(), sub_category_id = selectedSubCategoryId?.toString())
+            }
+
             ApiClient.instance.stockProductApi(jwtToken, input)
                 .enqueue(object : Callback<StockProductOutput> {
                     override fun onResponse(call: Call<StockProductOutput>, response: Response<StockProductOutput>) {
                         if (!isAdded) return
                         if (response.isSuccessful && response.body()?.status == true) {
                             response.body()?.data?.let { stockAdapter.updateList(it) }
-
                         } else {
                             stockProducts.clear()
                             stockAdapter.notifyDataSetChanged()
                         }
                     }
+
                     override fun onFailure(call: Call<StockProductOutput>, t: Throwable) {
                         Log.e("StockListFragment", t.message ?: "")
                     }
                 })
         }
 
+
         private fun fetchLowStockList() {
             val input = Input(status = "1")
-
             ApiClient.instance.lowStockList(jwtToken, input)
                 .enqueue(object : Callback<LowStockProductOutput> {
-                    override fun onResponse(
-                        call: Call<LowStockProductOutput>,
-                        response: Response<LowStockProductOutput>
-                    ) {
+                    override fun onResponse(call: Call<LowStockProductOutput>, response: Response<LowStockProductOutput>) {
                         if (response.isSuccessful && response.body()?.status == true) {
                             lowStockData.clear()
                             response.body()?.data?.let { lowStockData.addAll(it) }
 
-
-
-                            // Notify LowStockListFragment if it is visible
-                            val fragment = parentFragmentManager.findFragmentByTag("LowStockListFragment")
-                                    as? LowStockListFragment
-                            fragment?.refreshData() // ✅ works
-
+                            val fragment = parentFragmentManager.findFragmentByTag("LowStockListFragment") as? LowStockListFragment
+                            fragment?.refreshData()
                         }
                     }
 

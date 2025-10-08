@@ -1,17 +1,20 @@
 package com.example.apitest
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.adapter.POSAdapter
 import com.example.apitest.adapter.PosCategoryAdapter
 import com.example.apitest.adapter.PosSubCategoryAdapter
+import com.example.apitest.cartScreen.CartActivity
 import com.example.apitest.dataModel.*
+import com.example.apitest.helperClass.CartManager
 import com.example.apitest.network.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,10 +42,13 @@ class POSActivity : NavigationActivity() {
     private lateinit var totalItemsText: TextView
     private lateinit var totalAmountText: TextView
     private lateinit var viewBillBtn: Button
+    private lateinit var cartBadge: TextView
 
-    private val cartMap = mutableMapOf<String, Int>()
 
-    private val allProductsMap = mutableMapOf<String, NewProductPrice>()
+    private lateinit var viewBillsLayout: View
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +57,26 @@ class POSActivity : NavigationActivity() {
         setupBottomNavigation("pos")
 
         getUserProfile()
+
+        cartBadge = findViewById(R.id.cartBadge)
+        updateCartBadge()
+
+        viewBillsLayout = findViewById(R.id.viewBillsLayout)
+        viewBillsLayout.setOnClickListener {
+            val totalItems = CartManager.getDistinctItemsCount() // count of items in cart
+
+            if (totalItems > 0) {
+                // If cart has items → open CartActivity
+                val intent = Intent(this, CartActivity::class.java)
+                startActivity(intent)
+            } else {
+                // Cart empty → stay in POS screen (maybe show a Toast)
+                Toast.makeText(this, "Add products to cart first", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
 
         cartSummaryBar = findViewById(R.id.cartSummaryBar)
         totalItemsText = findViewById(R.id.totalItems)
@@ -85,10 +111,19 @@ class POSActivity : NavigationActivity() {
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         subCategoryAdapter = PosSubCategoryAdapter(subCategoryList) { subCategory, _ ->
             val categoryId = selectedCategoryId ?: return@PosSubCategoryAdapter
-            val subCategoryId = subCategory.subcategoryId?.toString() ?: return@PosSubCategoryAdapter
+            val subCategoryId = subCategory.subcategoryId?.toString()
+
             selectedSubCategoryId = subCategoryId
-            getPOSProducts(categoryId, subCategoryId)
+
+            // ✅ If subcategory ID == category ID → show category-level products
+            if (subCategoryId == categoryId) {
+                getPOSProducts(categoryId, null)
+            } else {
+                getPOSProducts(categoryId, subCategoryId)
+            }
         }
+
+
         subCategoryRecyclerView.adapter = subCategoryAdapter
 
 
@@ -96,7 +131,11 @@ class POSActivity : NavigationActivity() {
         // Products RecyclerView
         centerRecyclerView = findViewById(R.id.centerRecyclerView)
         centerRecyclerView.layoutManager = LinearLayoutManager(this)
-        productAdapter = POSAdapter(productList, cartMap) { updateCartBar() }
+        productAdapter = POSAdapter(productList) {
+            updateCartBar()
+            updateCartBadge()  // <--- add this line
+        }
+
         centerRecyclerView.adapter = productAdapter
 
 
@@ -114,37 +153,76 @@ class POSActivity : NavigationActivity() {
                         categoryList.clear()
                         response.body()?.categoryList?.let { categoryList.addAll(it) }
                         categoryAdapter.notifyDataSetChanged()
+
+                        // ✅ Auto-select first category (if available)
+                        if (categoryList.isNotEmpty()) {
+                            val firstCategory = categoryList[0]
+                            selectedCategoryId = firstCategory.categoryId?.toString()
+                            categoryRecyclerView.post {
+                                categoryAdapter.selectCategory(0) // new helper
+                            }
+
+                            // Fetch subcategories & products
+                            getSubCategories(selectedCategoryId)
+                            getPOSProducts(selectedCategoryId.toString(), null)
+                        }
                     } else {
                         Toast.makeText(this@POSActivity, "No categories found", Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 override fun onFailure(call: Call<CategoryOutput>, t: Throwable) {
                     Toast.makeText(this@POSActivity, "API Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
+
     private fun getSubCategories(categoryId: String?) {
         if (categoryId.isNullOrEmpty()) return
+
         val input = Input(status = "1", category_id = categoryId)
         ApiClient.instance.subCategoryApi(jwtToken, input)
             ?.enqueue(object : Callback<SubCategoryOutput> {
                 override fun onResponse(call: Call<SubCategoryOutput>, response: Response<SubCategoryOutput>) {
                     if (response.isSuccessful && response.body()?.status == true) {
                         val subList = response.body()?.data ?: emptyList()
+
                         subCategoryList.clear()
                         subCategoryList.addAll(subList)
-                        subCategoryRecyclerView.visibility = if (subList.isEmpty()) View.GONE else View.VISIBLE
-                        subCategoryAdapter.notifyDataSetChanged()
+
+                        if (subList.isNotEmpty()) {
+                            subCategoryRecyclerView.visibility = View.VISIBLE
+
+                            // ✅ Auto-select first subcategory
+                            subCategoryAdapter.notifyDataSetChanged()
+                            subCategoryRecyclerView.post {
+                                subCategoryAdapter.setSelectedIndex(0)
+                                val firstSub = subList[0]
+
+                                // ✅ If first subcategory has same ID as category → load category products
+                                if (firstSub.subcategoryId?.toString() == categoryId) {
+                                    getPOSProducts(categoryId, null)
+                                } else {
+                                    getPOSProducts(categoryId, firstSub.subcategoryId?.toString())
+                                }
+                            }
+                        } else {
+                            subCategoryRecyclerView.visibility = View.GONE
+                            getPOSProducts(categoryId, null)
+                        }
                     } else {
                         subCategoryList.clear()
                         subCategoryRecyclerView.visibility = View.GONE
                         subCategoryAdapter.notifyDataSetChanged()
+                        getPOSProducts(categoryId, null)
                     }
                 }
+
                 override fun onFailure(call: Call<SubCategoryOutput>, t: Throwable) {}
             } as Callback<SubCategoryOutput?>)
     }
+
 
 
     private fun getPOSProducts(categoryId: String, subCategoryId: String?) {
@@ -156,9 +234,8 @@ class POSActivity : NavigationActivity() {
                     response.body()?.data?.forEach { product ->
                         product.productPrice?.forEach { variation ->
                             val key = "${product.productId}_${variation.productPriceId}"
-                            // Restore previous quantity
-                            variation.selectedQuantity = cartMap[key] ?: variation.selectedQuantity
-                            allProductsMap[key] = variation
+                            variation.selectedQuantity = CartManager.cartMap[key] ?: variation.selectedQuantity
+                            CartManager.allProductsMap[key] = variation
                         }
                     }
                     response.body()?.data?.let { productList.addAll(it) }
@@ -166,11 +243,10 @@ class POSActivity : NavigationActivity() {
                     updateCartBar()
                 }
             }
+
             override fun onFailure(call: Call<NewProductOutput>, t: Throwable) {}
         })
     }
-
-
 
     private fun getUserProfile() {
         val input = Input(status = "1")
@@ -180,34 +256,35 @@ class POSActivity : NavigationActivity() {
                 override fun onFailure(call: Call<ProfileOutput>, t: Throwable) {}
             } as Callback<ProfileOutput?>)
     }
-//
-//    private fun refreshCartBar(products: List<NewProductList>) {
-//        val selectedVariations = products.flatMap { it.productPrice ?: emptyList() }
-//            .filter { it.selectedQuantity > 0 }
-//
-//        val totalQty = selectedVariations.sumOf { it.selectedQuantity }
-//        val totalAmt = selectedVariations.sumOf {
-//            val price = it.productPrice?.toDoubleOrNull() ?: 0.0
-//            price * it.selectedQuantity
-//        }
-//
-//        cartSummaryBar.visibility = if (totalQty > 0) View.VISIBLE else View.GONE
-//        totalItemsText.text = "$totalQty item${if (totalQty > 1) "s" else ""}"
-//        totalAmountText.text = "₹%.2f".format(totalAmt)
-//    }
-// --- Cart summary ---
-private fun updateCartBar() {
-    var totalQty = 0
-    var totalAmount = 0.0
 
-    cartMap.forEach { (key, qty) ->
-        val variation = allProductsMap[key] ?: return@forEach
-        totalQty += qty
-        totalAmount += (variation.productPrice?.toDoubleOrNull() ?: 0.0) * qty
-    }
+
+
+// --- Cart summary update ---
+private fun updateCartBar() {
+    val totalQty = CartManager.getTotalQuantity()
+    val totalAmount = CartManager.getTotalAmount()
 
     cartSummaryBar.visibility = if (totalQty > 0) View.VISIBLE else View.GONE
     totalItemsText.text = "$totalQty item${if (totalQty > 1) "s" else ""}"
     totalAmountText.text = "₹%.2f".format(totalAmount)
 }
+
+    // logic for cart number showing in pos screen
+    private fun updateCartBadge() {
+        val totalItems = CartManager.getDistinctItemsCount()
+        if (totalItems > 0) {
+            cartBadge.visibility = View.VISIBLE
+            cartBadge.text = totalItems.toString()
+        } else {
+            cartBadge.visibility = View.GONE
+        }
+    }
+    private fun openCartScreen() {
+        val intent = Intent(this, CartActivity::class.java)
+        startActivity(intent)
+    }
+
+
+
+
 }

@@ -3,6 +3,7 @@ package com.example.apitest
 import android.os.Bundle
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.fragment.LowStockListFragment
 import com.example.apitest.fragment.StockListFragment
 
@@ -36,11 +37,7 @@ class StockActivity : NavigationActivity() {
         }
 
 
-
-
-
     }
-
 
     private fun selectTab(selected: TextView) {
         tabStockList.setBackgroundResource(0)

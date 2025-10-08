@@ -88,6 +88,19 @@
                 app:tint="@color/white"
                 android:layout_height="28dp"
                 android:src="@drawable/cart"/>
+            <!-- Badge -->
+            <TextView
+                android:id="@+id/cartBadge"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignEnd="@id/viewBillsIcon"
+                android:layout_alignTop="@id/viewBillsIcon"
+                android:background="@drawable/badge_background"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                android:visibility="gone"/>
         </RelativeLayout>
     </RelativeLayout>
 

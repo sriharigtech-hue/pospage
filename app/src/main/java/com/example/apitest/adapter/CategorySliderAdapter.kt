@@ -15,6 +15,8 @@ class CategorySidebarAdapter(
     private val onItemClick: (Category) -> Unit
 ) : RecyclerView.Adapter<CategorySidebarAdapter.CategoryViewHolder>() {
 
+    private var selectedPosition = -1  // Track selected index
+
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: RoundedImageView = itemView.findViewById(R.id.imageView)
         val name: TextView = itemView.findViewById(R.id.ItemSideBar)
@@ -31,16 +33,37 @@ class CategorySidebarAdapter(
 
         holder.name.text = category.category_name
 
-        // Load image using Glide
+        // Load image
         Glide.with(holder.itemView.context)
             .load(category.category_image)
             .placeholder(R.mipmap.ic_launcher)
             .into(holder.image)
 
+        // Highlight selected
+        if (position == selectedPosition) {
+            holder.itemView.setBackgroundResource(R.drawable.tab_selected_bg) // create bg drawable
+
+        } else {
+            holder.itemView.setBackgroundResource(0)
+            holder.name.setTextColor(holder.itemView.context.getColor(R.color.black))
+        }
+
         holder.itemView.setOnClickListener {
+            val previous = selectedPosition
+            selectedPosition = holder.bindingAdapterPosition
+            notifyItemChanged(previous)
+            notifyItemChanged(selectedPosition)
             onItemClick(category)
         }
     }
 
     override fun getItemCount(): Int = categories.size
+
+    // ✅ Auto-select a category (used from fragment)
+    fun setSelectedIndex(position: Int) {
+        val previous = selectedPosition
+        selectedPosition = position
+        notifyItemChanged(previous)
+        notifyItemChanged(selectedPosition)
+    }
 }

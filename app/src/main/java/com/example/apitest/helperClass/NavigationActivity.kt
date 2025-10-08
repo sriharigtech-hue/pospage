@@ -1,11 +1,14 @@
-package com.example.apitest
+package com.example.apitest.helperClass
 
 import android.content.Intent
-import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
+import com.example.apitest.MainActivity
+import com.example.apitest.POSActivity
+import com.example.apitest.R
+import com.example.apitest.StockActivity
 
 open class NavigationActivity : AppCompatActivity() {
 
@@ -54,5 +57,3 @@ open class NavigationActivity : AppCompatActivity() {
         }
     }
 }
-
-

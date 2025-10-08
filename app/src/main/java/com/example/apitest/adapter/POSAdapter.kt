@@ -13,11 +13,11 @@ import com.bumptech.glide.Glide
 import com.example.apitest.R
 import com.example.apitest.dataModel.NewProductList
 import com.example.apitest.dataModel.NewProductPrice
+import com.example.apitest.helperClass.CartManager
 import com.makeramen.roundedimageview.RoundedImageView
 
 class POSAdapter(
     private val products: List<NewProductList>,
-    private val cartMap: MutableMap<String, Int>,
     private val onCartChange: (List<NewProductList>) -> Unit
 ) : RecyclerView.Adapter<POSAdapter.POSViewHolder>() {
 
@@ -62,9 +62,7 @@ class POSAdapter(
         if (priceList.isEmpty()) {
             holder.container.visibility = View.GONE
             return
-        } else {
-            holder.container.visibility = View.VISIBLE
-        }
+        } else holder.container.visibility = View.VISIBLE
 
         // Restore last selected variation index
         val lastSelectedIndex = variationMap[product.productId.toString()] ?: 0
@@ -72,17 +70,20 @@ class POSAdapter(
 
         if (priceList.size > 1) {
             holder.spinnerLayout.visibility = View.VISIBLE
-
             val variationNames = priceList.map { it.productVariation ?: "Default" }
             val spinnerAdapter = ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, variationNames)
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             holder.variationSpinner.adapter = spinnerAdapter
-
-            // Remove listener before setting selection to prevent unwanted triggers
             holder.variationSpinner.onItemSelectedListener = null
             holder.variationSpinner.setSelection(lastSelectedIndex, false)
 
-            // Set listener after selection
+            val restoredPrice = priceList[lastSelectedIndex]
+            val restoredKey = "${product.productId}_${restoredPrice.productPriceId}"
+            restoredPrice.selectedQuantity = CartManager.cartMap[restoredKey] ?: 0
+            CartManager.allProductsMap[restoredKey] = restoredPrice
+            updatePriceViews(restoredPrice, holder)
+            updateQuantityVisibility(restoredPrice, holder)
+
             holder.variationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                     product.selectedVariationIndex = pos
@@ -90,16 +91,24 @@ class POSAdapter(
 
                     val selectedPrice = priceList[pos]
                     val key = "${product.productId}_${selectedPrice.productPriceId}"
-
-                    // Restore previous quantity
-                    selectedPrice.selectedQuantity = cartMap[key] ?: 0
+                    selectedPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
+                    CartManager.allProductsMap[key] = selectedPrice
 
                     updatePriceViews(selectedPrice, holder)
                     updateQuantityVisibility(selectedPrice, holder)
 
-                    // Save current quantity in cart map
-                    cartMap[key] = selectedPrice.selectedQuantity
-                    onCartChange(products)
+// only keep cart entry if quantity > 0
+                    if (selectedPrice.selectedQuantity > 0) {
+                        CartManager.cartMap[key] = selectedPrice.selectedQuantity
+                    } else {
+                        CartManager.cartMap.remove(key)
+                    }
+
+// ✅ Only trigger update if this variation is already in cart (has qty > 0)
+                    if (selectedPrice.selectedQuantity > 0) {
+                        onCartChange(products)
+                    }
+
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -108,35 +117,54 @@ class POSAdapter(
             holder.spinnerLayout.visibility = View.GONE
         }
 
-        // Restore quantity for currently selected variation
-        val selectedPrice = priceList[product.selectedVariationIndex]
-        val key = "${product.productId}_${selectedPrice.productPriceId}"
-        selectedPrice.selectedQuantity = cartMap[key] ?: 0
-        updatePriceViews(selectedPrice, holder)
-        updateQuantityVisibility(selectedPrice, holder)
-
-        // Add to cart button
+        val currentPrice = priceList[product.selectedVariationIndex]
+        val key = "${product.productId}_${currentPrice.productPriceId}"
+        currentPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
+        CartManager.allProductsMap[key] = currentPrice
+        updatePriceViews(currentPrice, holder)
+        updateQuantityVisibility(currentPrice, holder)
         holder.addToBag.setOnClickListener {
-            selectedPrice.selectedQuantity = 1
-            cartMap[key] = selectedPrice.selectedQuantity
-            updateQuantityVisibility(selectedPrice, holder)
-            onCartChange(products)
+            val activePrice = priceList[product.selectedVariationIndex]
+            val activeKey = "${product.productId}_${activePrice.productPriceId}"
+
+            if (!CartManager.cartMap.containsKey(activeKey) || CartManager.cartMap[activeKey] == 0) {
+                activePrice.selectedQuantity = 1
+                CartManager.cartMap[activeKey] = activePrice.selectedQuantity
+                CartManager.allProductsMap[activeKey] = activePrice
+                updateQuantityVisibility(activePrice, holder)
+                onCartChange(products) // updates cart bar & badge
+            }
         }
 
         holder.btnIncrease.setOnClickListener {
-            selectedPrice.selectedQuantity += 1
-            cartMap[key] = selectedPrice.selectedQuantity
-            updateQuantityVisibility(selectedPrice, holder)
-            onCartChange(products)
+            val activePrice = priceList[product.selectedVariationIndex]
+            val activeKey = "${product.productId}_${activePrice.productPriceId}"
+            activePrice.selectedQuantity++
+            CartManager.cartMap[activeKey] = activePrice.selectedQuantity
+            CartManager.allProductsMap[activeKey] = activePrice
+            updateQuantityVisibility(activePrice, holder)
+            onCartChange(products) // only updates cart bar, badge count handled automatically
         }
 
         holder.btnDecrease.setOnClickListener {
-            selectedPrice.selectedQuantity = if (selectedPrice.selectedQuantity > 1) selectedPrice.selectedQuantity - 1 else 0
-            cartMap[key] = selectedPrice.selectedQuantity
-            updateQuantityVisibility(selectedPrice, holder)
-            onCartChange(products)
+            val activePrice = priceList[product.selectedVariationIndex]
+            val activeKey = "${product.productId}_${activePrice.productPriceId}"
+            activePrice.selectedQuantity = maxOf(0, activePrice.selectedQuantity - 1)
+
+            if (activePrice.selectedQuantity == 0) {
+                CartManager.cartMap.remove(activeKey) // remove product if quantity 0
+            } else {
+                CartManager.cartMap[activeKey] = activePrice.selectedQuantity
+            }
+
+            CartManager.allProductsMap[activeKey] = activePrice
+            updateQuantityVisibility(activePrice, holder)
+            onCartChange(products) // updates cart bar & badge
         }
+
     }
+
+
 
     private fun updatePriceViews(price: NewProductPrice, holder: POSViewHolder) {
         holder.productAmount.text = price.productPrice ?: "0.00"

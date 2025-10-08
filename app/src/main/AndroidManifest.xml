@@ -17,7 +17,12 @@
         android:theme="@style/Theme.ApiTest"
         tools:targetApi="31">
         <activity
-            android:name=".NavigationActivity"
+            android:name=".cartScreen.CartActivity"
+            android:exported="true">
+
+        </activity>
+        <activity
+            android:name=".helperClass.NavigationActivity"
             android:exported="false" />
         <activity
             android:name=".POSActivity"

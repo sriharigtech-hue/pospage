@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /*************************************************************************
+  ~ * AstoLabs
+  ~ *
+  ~ * Created by Team Android, GTechSolutions on 04/08/23, 12:07 pm
+  ~ * info@gtechwebsolutions.com
+  ~ * Last modified 04/08/23, 9:39 am
+  ~ * Copyright (c) 2023.
+  ~ * All rights reserved.
+  ~ ***************************************************************************/
+  -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="32dp" />
+    <solid android:color="@color/white" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/colorPrimary" />
+</shape>
