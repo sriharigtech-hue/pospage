@@ -1,10 +1,8 @@
-package com.example.apitest.activity
+package com.example.apitest
 
-import android.app.Activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.apitest.R
 import com.example.apitest.dataModel.InputField
 import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.network.ApiClient
@@ -71,7 +69,7 @@ class AddUnitActivity : AppCompatActivity() {
             override fun onResponse(call: Call<StatusResponse?>, response: Response<StatusResponse?>) {
                 if (response.isSuccessful && response.body()?.status == true) {
                     Toast.makeText(this@AddUnitActivity, "Unit added successfully", Toast.LENGTH_SHORT).show()
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                     finish()
                 } else {
                     Toast.makeText(this@AddUnitActivity, "Failed to add unit", Toast.LENGTH_SHORT).show()
@@ -90,7 +88,7 @@ class AddUnitActivity : AppCompatActivity() {
             override fun onResponse(call: Call<StatusResponse?>, response: Response<StatusResponse?>) {
                 if (response.isSuccessful && response.body()?.status == true) {
                     Toast.makeText(this@AddUnitActivity, "Unit updated successfully", Toast.LENGTH_SHORT).show()
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                     finish()
                 } else {
                     Toast.makeText(this@AddUnitActivity, "Failed to update unit", Toast.LENGTH_SHORT).show()

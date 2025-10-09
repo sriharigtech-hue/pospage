@@ -8,20 +8,28 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.adapter.POSAdapter
 import com.example.apitest.adapter.PosCategoryAdapter
 import com.example.apitest.adapter.PosSubCategoryAdapter
 import com.example.apitest.cartScreen.CartActivity
-import com.example.apitest.dataModel.*
+import com.example.apitest.dataModel.CategoryList
+import com.example.apitest.dataModel.CategoryOutput
+import com.example.apitest.dataModel.Input
+import com.example.apitest.dataModel.NewProductList
+import com.example.apitest.dataModel.NewProductOutput
+import com.example.apitest.dataModel.ProductInput
+import com.example.apitest.dataModel.ProfileOutput
+import com.example.apitest.dataModel.SubCategoryDetails
+import com.example.apitest.dataModel.SubCategoryOutput
 import com.example.apitest.helperClass.CartManager
+import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.network.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class POSActivity : NavigationActivity() {
-    private val jwtToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiOTMyZGFhM2IyNGZmM2Q0ZTY5NmQwYTdlODdhNmY1Y2ViOTA1Y2VhMzc0NWU5NmFlMTBhZWEwZjY2MDkxZDZiMWI1MjIwYjIwYmU4N2EyNDEiLCJpYXQiOjE3NTg3OTI2NDEuMjExMDEsIm5iZiI6MTc1ODc5MjY0MS4yMTEwMTMsImV4cCI6MTc5MDMyODY0MS4yMDQ5NjYsInN1YiI6IjYiLCJzY29wZXMiOltdfQ.lcZz0mc3u-to55t0p23p5g_Z1NQHM23K6xT8vaRAr7X9qHsMbyN9OEq-KuHhZGaqikcY-7ak26uM3_mtoLpLfq6jivhUPFC06JL7ID3HRHOUsWY05CqjIwPpOfjop127eWyz1CYmBmZx3mKsSuE2rvNK91OsROryf1Dz-Px0SnVJ1uDJGK9y1zsJ_Mi8wY7WIH_E3cBusI7uSgNHTQq7dh6GurCYymPxnvvR8cdMQ4Om9SnmfqX9f3GCUncHXBVfxYCuH6ElLsjq74Z9ZXRGBLdwdM4BJWiyv4jzKfU80LmErPo7XT90DPzqa40T0pRblACQsaSGLn64TBoKvxlsO4HjJV8nBg3az5PrCkDsj8QTwgPLzJtP7WcT3pvcCI6O3O8OKlL2lR2-csFHNzCHetHaT1fmOLnVWuc5YIjqhYFEOjp8IKVhzxmcocxsd3R8bcvrjR8NcutOX5H7zmfD-GX17f64RT2c0zqSRdVpRxFZYlNycxd3rI591w9ImgZSkeGQN4Eg8us8oqmlRqfF5mO7QZXi_OsjJgnMdovqP1NB1IxHuTHQIyfESkQ3DoA_KYBF4_8DXhyjvE2D5_SQfZitUpjSwfWqZ_ghgVoOdLJokz4TBJQ9j_ec4jK3uf3nCwS_6Evx9zwbZxmin2CpnIrg4lFRmMpO6YgLfYKPqoI"
+    private val jwtToken ="Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiOTMyZGFhM2IyNGZmM2Q0ZTY5NmQwYTdlODdhNmY1Y2ViOTA1Y2VhMzc0NWU5NmFlMTBhZWEwZjY2MDkxZDZiMWI1MjIwYjIwYmU4N2EyNDEiLCJpYXQiOjE3NTg3OTI2NDEuMjExMDEsIm5iZiI6MTc1ODc5MjY0MS4yMTEwMTMsImV4cCI6MTc5MDMyODY0MS4yMDQ5NjYsInN1YiI6IjYiLCJzY29wZXMiOltdfQ.lcZz0mc3u-to55t0p23p5g_Z1NQHM23K6xT8vaRAr7X9qHsMbyN9OEq-KuHhZGaqikcY-7ak26uM3_mtoLpLfq6jivhUPFC06JL7ID3HRHOUsWY05CqjIwPpOfjop127eWyz1CYmBmZx3mKsSuE2rvNK91OsROryf1Dz-Px0SnVJ1uDJGK9y1zsJ_Mi8wY7WIH_E3cBusI7uSgNHTQq7dh6GurCYymPxnvvR8cdMQ4Om9SnmfqX9f3GCUncHXBVfxYCuH6ElLsjq74Z9ZXRGBLdwdM4BJWiyv4jzKfU80LmErPo7XT90DPzqa40T0pRblACQsaSGLn64TBoKvxlsO4HjJV8nBg3az5PrCkDsj8QTwgPLzJtP7WcT3pvcCI6O3O8OKlL2lR2-csFHNzCHetHaT1fmOLnVWuc5YIjqhYFEOjp8IKVhzxmcocxsd3R8bcvrjR8NcutOX5H7zmfD-GX17f64RT2c0zqSRdVpRxFZYlNycxd3rI591w9ImgZSkeGQN4Eg8us8oqmlRqfF5mO7QZXi_OsjJgnMdovqP1NB1IxHuTHQIyfESkQ3DoA_KYBF4_8DXhyjvE2D5_SQfZitUpjSwfWqZ_ghgVoOdLJokz4TBJQ9j_ec4jK3uf3nCwS_6Evx9zwbZxmin2CpnIrg4lFRmMpO6YgLfYKPqoI"
 
     private lateinit var categoryRecyclerView: RecyclerView
     private lateinit var subCategoryRecyclerView: RecyclerView
@@ -43,13 +51,9 @@ class POSActivity : NavigationActivity() {
     private lateinit var totalAmountText: TextView
     private lateinit var viewBillBtn: Button
     private lateinit var cartBadge: TextView
-
+    private var quantityStatus: String = "0"
 
     private lateinit var viewBillsLayout: View
-
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +108,6 @@ class POSActivity : NavigationActivity() {
         categoryRecyclerView.adapter = categoryAdapter
 
 
-
         // Subcategory Adapter
         subCategoryRecyclerView = findViewById(R.id.subCategoryList)
         subCategoryRecyclerView.layoutManager =
@@ -127,17 +130,21 @@ class POSActivity : NavigationActivity() {
         subCategoryRecyclerView.adapter = subCategoryAdapter
 
 
-
         // Products RecyclerView
         centerRecyclerView = findViewById(R.id.centerRecyclerView)
         centerRecyclerView.layoutManager = LinearLayoutManager(this)
-        productAdapter = POSAdapter(productList) {
-            updateCartBar()
-            updateCartBadge()  // <--- add this line
-        }
+        productAdapter = POSAdapter(
+            products = productList,
+            onCartChange = { updatedProducts ->
+                updateCartBar()
+                updateCartBadge()
+            },
+            quantityStatus = quantityStatus // pass the value from profile API
+        )
+
+
 
         centerRecyclerView.adapter = productAdapter
-
 
 
         // Fetch categories
@@ -148,7 +155,10 @@ class POSActivity : NavigationActivity() {
         val input = Input(status = "1")
         ApiClient.instance.categoryApi(jwtToken, input)
             .enqueue(object : Callback<CategoryOutput> {
-                override fun onResponse(call: Call<CategoryOutput>, response: Response<CategoryOutput>) {
+                override fun onResponse(
+                    call: Call<CategoryOutput>,
+                    response: Response<CategoryOutput>,
+                ) {
                     if (response.isSuccessful && response.body()?.status == true) {
                         categoryList.clear()
                         response.body()?.categoryList?.let { categoryList.addAll(it) }
@@ -167,12 +177,17 @@ class POSActivity : NavigationActivity() {
                             getPOSProducts(selectedCategoryId.toString(), null)
                         }
                     } else {
-                        Toast.makeText(this@POSActivity, "No categories found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@POSActivity, "No categories found", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
 
                 override fun onFailure(call: Call<CategoryOutput>, t: Throwable) {
-                    Toast.makeText(this@POSActivity, "API Error: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@POSActivity,
+                        "API Error: ${t.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
     }
@@ -184,7 +199,10 @@ class POSActivity : NavigationActivity() {
         val input = Input(status = "1", category_id = categoryId)
         ApiClient.instance.subCategoryApi(jwtToken, input)
             ?.enqueue(object : Callback<SubCategoryOutput> {
-                override fun onResponse(call: Call<SubCategoryOutput>, response: Response<SubCategoryOutput>) {
+                override fun onResponse(
+                    call: Call<SubCategoryOutput>,
+                    response: Response<SubCategoryOutput>,
+                ) {
                     if (response.isSuccessful && response.body()?.status == true) {
                         val subList = response.body()?.data ?: emptyList()
 
@@ -224,52 +242,74 @@ class POSActivity : NavigationActivity() {
     }
 
 
-
     private fun getPOSProducts(categoryId: String, subCategoryId: String?) {
-        val input = ProductInput(categoryId = categoryId, subCategoryId = subCategoryId, status = "1", page = "1")
-        ApiClient.instance.posProductApi(jwtToken, input)?.enqueue(object : Callback<NewProductOutput> {
-            override fun onResponse(call: Call<NewProductOutput>, response: Response<NewProductOutput>) {
-                if (response.isSuccessful && response.body()?.status == true) {
-                    productList.clear()
-                    response.body()?.data?.forEach { product ->
-                        product.productPrice?.forEach { variation ->
-                            val key = "${product.productId}_${variation.productPriceId}"
-                            variation.selectedQuantity = CartManager.cartMap[key] ?: variation.selectedQuantity
-                            CartManager.allProductsMap[key] = variation
+        val input = ProductInput(
+            categoryId = categoryId,
+            subCategoryId = subCategoryId,
+            status = "1",
+            page = "1"
+        )
+        ApiClient.instance.posProductApi(jwtToken, input)
+            ?.enqueue(object : Callback<NewProductOutput> {
+                override fun onResponse(
+                    call: Call<NewProductOutput>,
+                    response: Response<NewProductOutput>,
+                ) {
+                    if (response.isSuccessful && response.body()?.status == true) {
+                        productList.clear()
+                        response.body()?.data?.forEach { product ->
+                            product.productPrice?.forEach { variation ->
+                                val key = "${product.productId}_${variation.productPriceId}"
+                                // restore previous quantity in cart
+                                variation.selectedQuantity = CartManager.cartMap[key] ?: 0
+                                CartManager.allProductsMap[key] = variation
+                            }
                         }
+                        response.body()?.data?.let { productList.addAll(it) }
+                        productAdapter.notifyDataSetChanged()
+                        updateCartBar()
+                        updateCartBadge()
                     }
-                    response.body()?.data?.let { productList.addAll(it) }
-                    productAdapter.notifyDataSetChanged()
-                    updateCartBar()
                 }
-            }
 
-            override fun onFailure(call: Call<NewProductOutput>, t: Throwable) {}
-        })
+                override fun onFailure(call: Call<NewProductOutput>, t: Throwable) {}
+            })
     }
+
 
     private fun getUserProfile() {
         val input = Input(status = "1")
         ApiClient.instance.getUserDetails(jwtToken, input)
             ?.enqueue(object : Callback<ProfileOutput> {
-                override fun onResponse(call: Call<ProfileOutput>, response: Response<ProfileOutput>) {}
+                override fun onResponse(call: Call<ProfileOutput>, response: Response<ProfileOutput>) {
+                    if (response.isSuccessful && response.body()?.status == true) {
+                        quantityStatus = response.body()?.userDetails?.quantity_status ?: "0"
+
+                        // Recreate productAdapter with quantityStatus
+                        productAdapter = POSAdapter(productList, { updatedProducts ->
+                            updateCartBar()
+                            updateCartBadge()
+                        }, quantityStatus)
+
+                        centerRecyclerView.adapter = productAdapter
+                    }
+                }
+
                 override fun onFailure(call: Call<ProfileOutput>, t: Throwable) {}
             } as Callback<ProfileOutput?>)
     }
 
 
+    // --- Cart summary update ---
+    private fun updateCartBar() {
+        val totalQty = CartManager.getDistinctItemsCount()          // total distinct variation items
+        val totalAmount = CartManager.getTotalAmount()             // total price
 
-// --- Cart summary update ---
-private fun updateCartBar() {
-    val totalQty = CartManager.getTotalQuantity()
-    val totalAmount = CartManager.getTotalAmount()
+        cartSummaryBar.visibility = if (totalQty > 0) View.VISIBLE else View.GONE
+        totalItemsText.text = "$totalQty item${if (totalQty > 1) "s" else ""}"
+        totalAmountText.text = "₹%.2f".format(totalAmount)
+    }
 
-    cartSummaryBar.visibility = if (totalQty > 0) View.VISIBLE else View.GONE
-    totalItemsText.text = "$totalQty item${if (totalQty > 1) "s" else ""}"
-    totalAmountText.text = "₹%.2f".format(totalAmount)
-}
-
-    // logic for cart number showing in pos screen
     private fun updateCartBadge() {
         val totalItems = CartManager.getDistinctItemsCount()
         if (totalItems > 0) {
@@ -279,12 +319,12 @@ private fun updateCartBar() {
             cartBadge.visibility = View.GONE
         }
     }
+
+
     private fun openCartScreen() {
         val intent = Intent(this, CartActivity::class.java)
         startActivity(intent)
     }
-
-
 
 
 }

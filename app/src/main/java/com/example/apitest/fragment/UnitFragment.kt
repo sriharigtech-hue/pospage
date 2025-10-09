@@ -3,7 +3,6 @@ package com.example.apitest.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.apitest.R
-import com.example.apitest.activity.AddUnitActivity
+import com.example.apitest.AddUnitActivity
 import com.example.apitest.adapter.UnitAdapter
-import com.example.apitest.dataModel.DeleteUnitInput
 import com.example.apitest.dataModel.Input
 import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.dataModel.StatusUpdateInput

@@ -1,12 +1,10 @@
 package com.example.apitest.adapter
 
+import android.app.Dialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.Spinner
+import android.widget.*
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,11 +12,14 @@ import com.example.apitest.R
 import com.example.apitest.dataModel.NewProductList
 import com.example.apitest.dataModel.NewProductPrice
 import com.example.apitest.helperClass.CartManager
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textview.MaterialTextView
 import com.makeramen.roundedimageview.RoundedImageView
 
 class POSAdapter(
     private val products: List<NewProductList>,
-    private val onCartChange: (List<NewProductList>) -> Unit
+    private val onCartChange: (List<NewProductList>) -> Unit,
+    private val quantityStatus: String? = "0"
 ) : RecyclerView.Adapter<POSAdapter.POSViewHolder>() {
 
     // Stores last selected variation index per product
@@ -74,6 +75,11 @@ class POSAdapter(
             val spinnerAdapter = ArrayAdapter(holder.itemView.context, android.R.layout.simple_spinner_item, variationNames)
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             holder.variationSpinner.adapter = spinnerAdapter
+
+            // Restore last selected variation index
+            val lastSelectedIndex = variationMap[product.productId.toString()] ?: 0
+
+            // Temporarily remove listener to prevent onItemSelected being triggered by setSelection
             holder.variationSpinner.onItemSelectedListener = null
             holder.variationSpinner.setSelection(lastSelectedIndex, false)
 
@@ -84,38 +90,27 @@ class POSAdapter(
             updatePriceViews(restoredPrice, holder)
             updateQuantityVisibility(restoredPrice, holder)
 
+            // Re-attach listener
             holder.variationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                    product.selectedVariationIndex = pos
-                    variationMap[product.productId.toString()] = pos
+                    if (product.selectedVariationIndex != pos) { // only act if changed
+                        product.selectedVariationIndex = pos
+                        variationMap[product.productId.toString()] = pos
 
-                    val selectedPrice = priceList[pos]
-                    val key = "${product.productId}_${selectedPrice.productPriceId}"
-                    selectedPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
-                    CartManager.allProductsMap[key] = selectedPrice
-
-                    updatePriceViews(selectedPrice, holder)
-                    updateQuantityVisibility(selectedPrice, holder)
-
-// only keep cart entry if quantity > 0
-                    if (selectedPrice.selectedQuantity > 0) {
-                        CartManager.cartMap[key] = selectedPrice.selectedQuantity
-                    } else {
-                        CartManager.cartMap.remove(key)
+                        val selectedPrice = priceList[pos]
+                        val key = "${product.productId}_${selectedPrice.productPriceId}"
+                        selectedPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
+                        CartManager.allProductsMap[key] = selectedPrice
+                        updatePriceViews(selectedPrice, holder)
+                        updateQuantityVisibility(selectedPrice, holder)
                     }
-
-// ✅ Only trigger update if this variation is already in cart (has qty > 0)
-                    if (selectedPrice.selectedQuantity > 0) {
-                        onCartChange(products)
-                    }
-
                 }
-
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         } else {
             holder.spinnerLayout.visibility = View.GONE
         }
+
 
         val currentPrice = priceList[product.selectedVariationIndex]
         val key = "${product.productId}_${currentPrice.productPriceId}"
@@ -123,47 +118,127 @@ class POSAdapter(
         CartManager.allProductsMap[key] = currentPrice
         updatePriceViews(currentPrice, holder)
         updateQuantityVisibility(currentPrice, holder)
-        holder.addToBag.setOnClickListener {
-            val activePrice = priceList[product.selectedVariationIndex]
-            val activeKey = "${product.productId}_${activePrice.productPriceId}"
 
-            if (!CartManager.cartMap.containsKey(activeKey) || CartManager.cartMap[activeKey] == 0) {
-                activePrice.selectedQuantity = 1
-                CartManager.cartMap[activeKey] = activePrice.selectedQuantity
-                CartManager.allProductsMap[activeKey] = activePrice
-                updateQuantityVisibility(activePrice, holder)
-                onCartChange(products) // updates cart bar & badge
+        // Add to bag
+        holder.addToBag.setOnClickListener {
+            val selectedPrice = getSelectedPrice(product, holder)
+            val key = "${product.productId}_${selectedPrice.productPriceId}"
+
+            if (selectedPrice.stockCount == null || selectedPrice.stockCount == 0) {
+                Toast.makeText(holder.itemView.context, "Out of stock", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (selectedPrice.selectedQuantity < (selectedPrice.stockCount ?: 0)) {
+                selectedPrice.selectedQuantity = 1
+                CartManager.cartMap[key] = selectedPrice.selectedQuantity
+                CartManager.allProductsMap[key] = selectedPrice
+                updateQuantityVisibility(selectedPrice, holder)
+                onCartChange(products)
+            } else {
+                Toast.makeText(holder.itemView.context, "Stock limit reached", Toast.LENGTH_SHORT).show()
             }
         }
 
+
         holder.btnIncrease.setOnClickListener {
-            val activePrice = priceList[product.selectedVariationIndex]
-            val activeKey = "${product.productId}_${activePrice.productPriceId}"
-            activePrice.selectedQuantity++
-            CartManager.cartMap[activeKey] = activePrice.selectedQuantity
-            CartManager.allProductsMap[activeKey] = activePrice
-            updateQuantityVisibility(activePrice, holder)
-            onCartChange(products) // only updates cart bar, badge count handled automatically
+            val selectedPrice = getSelectedPrice(product, holder)
+            incrementQuantity(product, selectedPrice, holder)
         }
 
         holder.btnDecrease.setOnClickListener {
-            val activePrice = priceList[product.selectedVariationIndex]
-            val activeKey = "${product.productId}_${activePrice.productPriceId}"
-            activePrice.selectedQuantity = maxOf(0, activePrice.selectedQuantity - 1)
+            val selectedPrice = getSelectedPrice(product, holder)
+            decrementQuantity(product, selectedPrice, holder)
+        }
 
-            if (activePrice.selectedQuantity == 0) {
-                CartManager.cartMap.remove(activeKey) // remove product if quantity 0
-            } else {
-                CartManager.cartMap[activeKey] = activePrice.selectedQuantity
-            }
-
-            CartManager.allProductsMap[activeKey] = activePrice
-            updateQuantityVisibility(activePrice, holder)
-            onCartChange(products) // updates cart bar & badge
+        holder.txtQuantity.setOnClickListener {
+            val selectedPrice = getSelectedPrice(product, holder)
+            showQuantityDialog(holder, product, selectedPrice)
         }
 
     }
 
+    private fun incrementQuantity(product: NewProductList, price: NewProductPrice, holder: POSViewHolder) {
+        val stock = price.stockCount ?: 0
+        if (price.selectedQuantity < stock) {
+            price.selectedQuantity++
+            val key = "${product.productId}_${price.productPriceId}"
+            CartManager.cartMap[key] = price.selectedQuantity
+            CartManager.allProductsMap[key] = price
+            updateQuantityVisibility(price, holder)
+            onCartChange(products)
+        } else {
+            Toast.makeText(holder.itemView.context, "Stock limit reached", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun decrementQuantity(product: NewProductList, price: NewProductPrice, holder: POSViewHolder) {
+        price.selectedQuantity = maxOf(0, price.selectedQuantity - 1)
+        val key = "${product.productId}_${price.productPriceId}"
+        if (price.selectedQuantity == 0) CartManager.cartMap.remove(key)
+        else CartManager.cartMap[key] = price.selectedQuantity
+        CartManager.allProductsMap[key] = price
+        updateQuantityVisibility(price, holder)
+        onCartChange(products)
+    }
+
+    private fun showQuantityDialog(holder: POSViewHolder, product: NewProductList, price: NewProductPrice) {
+        val context = holder.itemView.context
+        val dialog = Dialog(context)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_qty, null)
+        dialog.setContentView(dialogView)
+
+        val stockTextView = dialogView.findViewById<MaterialTextView>(R.id.stock)
+        val valueEditText = dialogView.findViewById<TextInputEditText>(R.id.value)
+        val submitButton = dialogView.findViewById<MaterialTextView>(R.id.enter)
+        val cancelBtn = dialogView.findViewById<View>(R.id.cancel)
+
+        // Show stock
+        stockTextView.visibility = View.VISIBLE
+        stockTextView.text = "Available: ${price.stockCount ?: 0}"
+
+        // ✅ Set initial quantity in dialog with correct format
+        val initialQuantity = if (quantityStatus == "1") {
+            "%.1f".format(price.selectedQuantity.toDouble())
+        } else {
+            price.selectedQuantity.toString()
+        }
+        valueEditText.setText(initialQuantity)
+
+        submitButton.setOnClickListener {
+            val entered = valueEditText.text.toString().toDoubleOrNull()
+            val stock = price.stockCount?.toDouble() ?: 0.0
+
+            if (entered == null || entered <= 0) {
+                Toast.makeText(context, "Enter a valid quantity", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (entered > stock) {
+                Toast.makeText(context, "Stock limit: ${price.stockCount}", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Store as Int if quantityStatus = "0", else keep decimal as Double
+            price.selectedQuantity = if (quantityStatus == "1") {
+                entered.toInt() // keep as Int in model, display as decimal
+            } else {
+                entered.toInt()
+            }
+
+            val key = "${product.productId}_${price.productPriceId}"
+            CartManager.cartMap[key] = price.selectedQuantity
+            CartManager.allProductsMap[key] = price
+
+            // Update RecyclerView quantity display
+            updateQuantityVisibility(price, holder)
+            onCartChange(products)
+            dialog.dismiss()
+        }
+
+        cancelBtn.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
 
 
     private fun updatePriceViews(price: NewProductPrice, holder: POSViewHolder) {
@@ -174,13 +249,25 @@ class POSAdapter(
         if (price.selectedQuantity > 0) {
             holder.addToBag.visibility = View.GONE
             holder.quantityLayout.visibility = View.VISIBLE
-            holder.txtQuantity.text = price.selectedQuantity.toString()
+
+            holder.txtQuantity.text = if (quantityStatus == "1") {
+                "%.1f".format(price.selectedQuantity.toDouble()) // show decimal
+            } else {
+                price.selectedQuantity.toString()                 // show integer
+            }
+
         } else {
             holder.addToBag.visibility = View.VISIBLE
             holder.quantityLayout.visibility = View.GONE
-            holder.txtQuantity.text = "0"
+            holder.txtQuantity.text = if (quantityStatus == "1") "0" else "-1"
         }
     }
+
+    private fun getSelectedPrice(product: NewProductList, holder: POSViewHolder): NewProductPrice {
+        val index = product.selectedVariationIndex
+        return product.productPrice?.get(index) ?: throw IllegalStateException("No variation")
+    }
+
 
     override fun getItemCount(): Int = products.size
 }
