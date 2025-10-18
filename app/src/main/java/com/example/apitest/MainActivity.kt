@@ -36,12 +36,6 @@ class MainActivity : NavigationActivity() {
         tabUnit = findViewById(R.id.tabUnit)
 
 
-        val posButton = findViewById<RelativeLayout>(R.id.sale_but)
-
-        posButton.setOnClickListener {
-            startActivity(Intent(this, POSActivity::class.java))
-        }
-
 
         tabUnit.visibility = View.GONE
 
@@ -65,50 +59,45 @@ class MainActivity : NavigationActivity() {
             selectTab(tabUnit)
         }
 
-
-        val webButton = findViewById<LinearLayout>(R.id.web_button)
-        webButton.setOnClickListener {
-            fetchUserProfileForStock() // call API when Stock tab clicked
+        // POS button
+        findViewById<RelativeLayout>(R.id.sale_but).setOnClickListener {
+            startActivity(Intent(this, POSActivity::class.java))
         }
 
-
-
+        // Stock button click → check API first
+        findViewById<LinearLayout>(R.id.web_button).setOnClickListener {
+            fetchUserProfileForStock()
+        }
 
     }
 
     private fun fetchUserProfileForStock() {
-        val jwtToken =
-            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiOTMyZGFhM2IyNGZmM2Q0ZTY5NmQwYTdlODdhNmY1Y2ViOTA1Y2VhMzc0NWU5NmFlMTBhZWEwZjY2MDkxZDZiMWI1MjIwYjIwYmU4N2EyNDEiLCJpYXQiOjE3NTg3OTI2NDEuMjExMDEsIm5iZiI6MTc1ODc5MjY0MS4yMTEwMTMsImV4cCI6MTc5MDMyODY0MS4yMDQ5NjYsInN1YiI6IjYiLCJzY29wZXMiOltdfQ.lcZz0mc3u-to55t0p23p5g_Z1NQHM23K6xT8vaRAr7X9qHsMbyN9OEq-KuHhZGaqikcY-7ak26uM3_mtoLpLfq6jivhUPFC06JL7ID3HRHOUsWY05CqjIwPpOfjop127eWyz1CYmBmZx3mKsSuE2rvNK91OsROryf1Dz-Px0SnVJ1uDJGK9y1zsJ_Mi8wY7WIH_E3cBusI7uSgNHTQq7dh6GurCYymPxnvvR8cdMQ4Om9SnmfqX9f3GCUncHXBVfxYCuH6ElLsjq74Z9ZXRGBLdwdM4BJWiyv4jzKfU80LmErPo7XT90DPzqa40T0pRblACQsaSGLn64TBoKvxlsO4HjJV8nBg3az5PrCkDsj8QTwgPLzJtP7WcT3pvcCI6O3O8OKlL2lR2-csFHNzCHetHaT1fmOLnVWuc5YIjqhYFEOjp8IKVhzxmcocxsd3R8bcvrjR8NcutOX5H7zmfD-GX17f64RT2c0zqSRdVpRxFZYlNycxd3rI591w9ImgZSkeGQN4Eg8us8oqmlRqfF5mO7QZXi_OsjJgnMdovqP1NB1IxHuTHQIyfESkQ3DoA_KYBF4_8DXhyjvE2D5_SQfZitUpjSwfWqZ_ghgVoOdLJokz4TBJQ9j_ec4jK3uf3nCwS_6Evx9zwbZxmin2CpnIrg4lFRmMpO6YgLfYKPqoI"
-        val input = Input(status = "1") // Add any required fields if needed
+        val jwtToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiZGE0YjJmNjlmZGJkNjMwMDMyNGE3MWNkZWRhMDI2ZWI2YTIwMGM4NWIyNTI2MTNjOTZhZGIyMDA2MTE3YjMxMGI0MTFjYjczNzNmZmNlZDAiLCJpYXQiOjE3NjAzMjkzNTkuNDc3MTA1LCJuYmYiOjE3NjAzMjkzNTkuNDc3MTA4LCJleHAiOjE3OTE4NjUzNTkuNDcyNjI1LCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.C3ySWdDX7BRHm4qzwWFZZofL_DEx3C2Qjy7iEUWxy9GdrL8OJS7m7Kk_Oe4HtFaT7DvPMEWE_c9kIC8RalMXflXTvPGKkfsw7yxdVxZOKSE20UNZiSbScAdvx3RxAz-XoHK4wJr7wepspLad5y5KCv4RyPXAJl8sIjFELfiCMoxt1CiYGp5_GhsOjbMeSLWSBoDwd3H4MLNvUyU2KN2zhvQaRRUh4T-L11mZgmd_8A8kWZbp_bO6AK-3hGHFGd7VaT2Xqoi4asmn0ABlxusVYWG6hw9UhnU-_uxOVFQLAHog-WKfbahCwfkssXtK07wMpk-ZGHfRn7ujbkrMAX5gNgNkcNQZPRMkUSrokHylEJXKC7UOAgUiK8fy32bIlmFuMQE9hTuuQjHWJ8hdEqtPaXVIcc1oXURtZhCWTp2APH9RE4_L41NYStog_bVMdXwRO_a6QEg_ex0moqxwtRZKivnIF4DKm6WLj45X0FLj-F7HTlZ-eoc9j3w_dVaVyhhxEKUiTyQSJ_AwVKMTbAUmxvWY3OnoIAmu4WYrbC4T4tA2cWoB9yXKna8Yfbil_vC46tLZweGF7RRZR2MPT16q-iCzKG73JqAMphV4NO7b-bMk6mhvgz8TR0_YUewsPg2CVvgdvEmnV4DE4znhnwiLMniN0kPGzF5pindkKTVNDb8"
+        val input = Input(status = "1")
 
-        val call = ApiClient.instance.getUserDetails(jwtToken, input)
-
-        call?.enqueue(object : retrofit2.Callback<ProfileOutput?> {
+        ApiClient.instance.getUserDetails(jwtToken, input)?.enqueue(object :
+            retrofit2.Callback<ProfileOutput?> {
             override fun onResponse(
                 call: retrofit2.Call<ProfileOutput?>,
-                response: retrofit2.Response<ProfileOutput?>,
+                response: retrofit2.Response<ProfileOutput?>
             ) {
                 if (response.isSuccessful) {
                     val profile = response.body()
-                    val stockStatus = profile?.userDetails?.stock_status
+                    UserAccess.isStockAllowed = profile?.userDetails?.stock_status == "1"
 
-                    if (stockStatus == "1") {
-                        // Stock is available → open StockActivity
+                    if (UserAccess.isStockAllowed) {
+                        // Open StockActivity
                         startActivity(Intent(this@MainActivity, StockActivity::class.java))
                     } else {
-                        // Stock unavailable → show Toast
                         Toast.makeText(
                             this@MainActivity,
-                            "Stock status is unavailable",
+                            "Access restricted",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Failed to fetch profile",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@MainActivity, "Failed to fetch profile", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
 

@@ -2,6 +2,7 @@ package com.example.apitest
 
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.fragment.LowStockListFragment
@@ -22,21 +23,33 @@ class StockActivity : NavigationActivity() {
         tabStockList = findViewById(R.id.tabStockList)
         tabLowStockList = findViewById(R.id.tabLowStockList)
 
-        // Default fragment
-        replaceFragment(StockListFragment(), "StockListFragment")
-        selectTab(tabStockList)
+
+        // Only show fragments if allowed
+        if (UserAccess.isStockAllowed) {
+            replaceFragment(StockListFragment(), "StockListFragment")
+            selectTab(tabStockList)
+        } else {
+            Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
+        }
+
 
         tabStockList.setOnClickListener {
+            if (!UserAccess.isStockAllowed) {
+                Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             replaceFragment(StockListFragment(), "StockListFragment")
             selectTab(tabStockList)
         }
 
         tabLowStockList.setOnClickListener {
+            if (!UserAccess.isStockAllowed) {
+                Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             replaceFragment(LowStockListFragment(), "LowStockListFragment")
             selectTab(tabLowStockList)
         }
-
-
     }
 
     private fun selectTab(selected: TextView) {

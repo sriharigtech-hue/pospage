@@ -32,7 +32,17 @@ data class NewProductPrice(
     var unitId: String? = null,
     @Json(name = "unit_name")
     var unitName: String? = null,
+    @Json(name = "product_id")
+    var productId: Int? = null,
+    @Json(name = "product_name")
+    var productName: String? = null,
+
 
 // **New field to track quantity per variation**
-    var selectedQuantity: Int = 0
+    var selectedQuantity: Int = 0,
+    var selectedQuantityDecimal: Double = 0.0,
+    val priceValue: Double = productPrice?.toDoubleOrNull() ?: 0.0,
+    var cartKey: String = ""
+
+
 )

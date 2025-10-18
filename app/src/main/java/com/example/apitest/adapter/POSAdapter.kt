@@ -1,12 +1,14 @@
 package com.example.apitest.adapter
 
 import android.app.Dialog
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.max
 import com.bumptech.glide.Glide
 import com.example.apitest.R
 import com.example.apitest.dataModel.NewProductList
@@ -65,6 +67,11 @@ class POSAdapter(
             return
         } else holder.container.visibility = View.VISIBLE
 
+// 🔹 Sync quantities from CartManager for all variations
+        priceList.forEach { variation ->
+            syncQuantitiesFromCart(product.productId, variation, quantityStatus)
+        }
+
         // Restore last selected variation index
         val lastSelectedIndex = variationMap[product.productId.toString()] ?: 0
         product.selectedVariationIndex = lastSelectedIndex
@@ -76,17 +83,13 @@ class POSAdapter(
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             holder.variationSpinner.adapter = spinnerAdapter
 
-            // Restore last selected variation index
-            val lastSelectedIndex = variationMap[product.productId.toString()] ?: 0
 
             // Temporarily remove listener to prevent onItemSelected being triggered by setSelection
             holder.variationSpinner.onItemSelectedListener = null
             holder.variationSpinner.setSelection(lastSelectedIndex, false)
 
+
             val restoredPrice = priceList[lastSelectedIndex]
-            val restoredKey = "${product.productId}_${restoredPrice.productPriceId}"
-            restoredPrice.selectedQuantity = CartManager.cartMap[restoredKey] ?: 0
-            CartManager.allProductsMap[restoredKey] = restoredPrice
             updatePriceViews(restoredPrice, holder)
             updateQuantityVisibility(restoredPrice, holder)
 
@@ -98,9 +101,12 @@ class POSAdapter(
                         variationMap[product.productId.toString()] = pos
 
                         val selectedPrice = priceList[pos]
-                        val key = "${product.productId}_${selectedPrice.productPriceId}"
-                        selectedPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
-                        CartManager.allProductsMap[key] = selectedPrice
+                        syncQuantitiesFromCart(product.productId, selectedPrice, quantityStatus)
+//
+//                        val key = "${product.productId}_${selectedPrice.productPriceId}"
+//                        selectedPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
+//                        CartManager.allProductsMap[key] = selectedPrice
+
                         updatePriceViews(selectedPrice, holder)
                         updateQuantityVisibility(selectedPrice, holder)
                     }
@@ -113,26 +119,25 @@ class POSAdapter(
 
 
         val currentPrice = priceList[product.selectedVariationIndex]
-        val key = "${product.productId}_${currentPrice.productPriceId}"
-        currentPrice.selectedQuantity = CartManager.cartMap[key] ?: 0
-        CartManager.allProductsMap[key] = currentPrice
         updatePriceViews(currentPrice, holder)
         updateQuantityVisibility(currentPrice, holder)
 
         // Add to bag
         holder.addToBag.setOnClickListener {
+            // No need to set productName here, should be done in POSActivity
             val selectedPrice = getSelectedPrice(product, holder)
-            val key = "${product.productId}_${selectedPrice.productPriceId}"
+            Log.d("POSAdapter", "Adding to cart: $product")
+            val stock = selectedPrice.stockCount?.toDouble() ?: 0.0
 
-            if (selectedPrice.stockCount == null || selectedPrice.stockCount == 0) {
+            if (stock <= 0.0) {
                 Toast.makeText(holder.itemView.context, "Out of stock", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (selectedPrice.selectedQuantity < (selectedPrice.stockCount ?: 0)) {
-                selectedPrice.selectedQuantity = 1
-                CartManager.cartMap[key] = selectedPrice.selectedQuantity
-                CartManager.allProductsMap[key] = selectedPrice
+            val currentQty = getCurrentQuantity(selectedPrice)
+            if (currentQty < stock) {
+                val newQty = if (quantityStatus == "1") 1.0 else 1.0 // Initial quantity is 1 or 1.0
+                saveQuantity(product, selectedPrice, newQty)
                 updateQuantityVisibility(selectedPrice, holder)
                 onCartChange(products)
             } else {
@@ -157,14 +162,49 @@ class POSAdapter(
         }
 
     }
+    // 🟢 FIX 4: Central helper to read the correct quantity
+    private fun getCurrentQuantity(price: NewProductPrice): Double {
+        return if (quantityStatus == "1") {
+            price.selectedQuantityDecimal
+        } else {
+            price.selectedQuantity.toDouble()
+        }
+    }
+    // 🟢 FIX 5: Central helper to save the quantity
+    private fun saveQuantity(product: NewProductList, price: NewProductPrice, newQty: Double) {
+        val key = "${product.productId}_${price.productPriceId}"
+
+        if (newQty <= 0.0) {
+            price.selectedQuantity = 0
+            price.selectedQuantityDecimal = 0.0
+            CartManager.cartMap.remove(key)
+            CartManager.allProductsMap.remove(key)
+        } else {
+            if (quantityStatus == "1") {
+                // Save the precise decimal value locally
+                price.selectedQuantityDecimal = newQty
+                // Still save an Int value (truncated) for API compatibility if needed elsewhere
+                price.selectedQuantity = newQty.toInt()
+            } else {
+                // Save the whole number locally (Int)
+                price.selectedQuantity = newQty.toInt()
+                // Keep decimal in sync for display consistency
+                price.selectedQuantityDecimal = newQty.toDouble()
+            }
+            // Always save the Double value to the global cartMap for consistent calculation
+            CartManager.cartMap[key] = newQty
+            CartManager.allProductsMap[key] = price
+        }
+    }
 
     private fun incrementQuantity(product: NewProductList, price: NewProductPrice, holder: POSViewHolder) {
-        val stock = price.stockCount ?: 0
-        if (price.selectedQuantity < stock) {
-            price.selectedQuantity++
-            val key = "${product.productId}_${price.productPriceId}"
-            CartManager.cartMap[key] = price.selectedQuantity
-            CartManager.allProductsMap[key] = price
+        val stock = price.stockCount?.toDouble() ?: 0.0
+        val currentQty = getCurrentQuantity(price)
+
+        if (currentQty < stock) {
+            val increment = if (quantityStatus == "1") 1.0 else 1.0 // assuming 1.0 unit increment
+            val newQty = currentQty + increment
+            saveQuantity(product, price, newQty)
             updateQuantityVisibility(price, holder)
             onCartChange(products)
         } else {
@@ -173,14 +213,24 @@ class POSAdapter(
     }
 
     private fun decrementQuantity(product: NewProductList, price: NewProductPrice, holder: POSViewHolder) {
-        price.selectedQuantity = maxOf(0, price.selectedQuantity - 1)
-        val key = "${product.productId}_${price.productPriceId}"
-        if (price.selectedQuantity == 0) CartManager.cartMap.remove(key)
-        else CartManager.cartMap[key] = price.selectedQuantity
-        CartManager.allProductsMap[key] = price
+        val currentQty = getCurrentQuantity(price)
+        val decrement = if (quantityStatus == "1") 1.0 else 1.0 // assuming 1.0 unit decrement
+
+        val newQty = max(0.0, currentQty - decrement)
+
+        saveQuantity(product, price, newQty)
+
+        // If removed (newQty is 0.0), reset variation logic (as was already implemented)
+        if (newQty <= 0.0) {
+            val firstAvailable = product.productPrice?.indexOfFirst { getCurrentQuantity(it) > 0.0 } ?: 0
+            product.selectedVariationIndex = if (firstAvailable >= 0) firstAvailable else 0
+        }
+
         updateQuantityVisibility(price, holder)
         onCartChange(products)
     }
+
+
 
     private fun showQuantityDialog(holder: POSViewHolder, product: NewProductList, price: NewProductPrice) {
         val context = holder.itemView.context
@@ -193,44 +243,37 @@ class POSAdapter(
         val submitButton = dialogView.findViewById<MaterialTextView>(R.id.enter)
         val cancelBtn = dialogView.findViewById<View>(R.id.cancel)
 
+        val stock = price.stockCount?.toDouble() ?: 0.0
+        val currentQty = getCurrentQuantity(price)
+
         // Show stock
         stockTextView.visibility = View.VISIBLE
         stockTextView.text = "Available: ${price.stockCount ?: 0}"
 
-        // ✅ Set initial quantity in dialog with correct format
-        val initialQuantity = if (quantityStatus == "1") {
-            "%.1f".format(price.selectedQuantity.toDouble())
+        // Set initial quantity in dialog with correct format
+        val initialQuantityText = if (quantityStatus == "1") {
+            "%.1f".format(currentQty)
         } else {
-            price.selectedQuantity.toString()
+            currentQty.toInt().toString()
         }
-        valueEditText.setText(initialQuantity)
+        valueEditText.setText(initialQuantityText)
 
         submitButton.setOnClickListener {
-            val entered = valueEditText.text.toString().toDoubleOrNull()
-            val stock = price.stockCount?.toDouble() ?: 0.0
 
-            if (entered == null || entered <= 0) {
+            val entered = valueEditText.text.toString().toDoubleOrNull()
+
+            if (entered == null || entered < 0.0) { // Check against 0.0
                 Toast.makeText(context, "Enter a valid quantity", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (entered > stock) {
-                Toast.makeText(context, "Stock limit: ${price.stockCount}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Stock limit: ${price.stockCount}", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
-            // Store as Int if quantityStatus = "0", else keep decimal as Double
-            price.selectedQuantity = if (quantityStatus == "1") {
-                entered.toInt() // keep as Int in model, display as decimal
-            } else {
-                entered.toInt()
-            }
-
-            val key = "${product.productId}_${price.productPriceId}"
-            CartManager.cartMap[key] = price.selectedQuantity
-            CartManager.allProductsMap[key] = price
-
-            // Update RecyclerView quantity display
+            saveQuantity(product, price, entered)
             updateQuantityVisibility(price, holder)
             onCartChange(products)
             dialog.dismiss()
@@ -240,26 +283,23 @@ class POSAdapter(
         dialog.show()
     }
 
-
     private fun updatePriceViews(price: NewProductPrice, holder: POSViewHolder) {
         holder.productAmount.text = price.productPrice ?: "0.00"
     }
 
     private fun updateQuantityVisibility(price: NewProductPrice, holder: POSViewHolder) {
-        if (price.selectedQuantity > 0) {
+        val currentQty = getCurrentQuantity(price)
+
+        if (currentQty > 0.0) {
             holder.addToBag.visibility = View.GONE
             holder.quantityLayout.visibility = View.VISIBLE
-
-            holder.txtQuantity.text = if (quantityStatus == "1") {
-                "%.1f".format(price.selectedQuantity.toDouble()) // show decimal
-            } else {
-                price.selectedQuantity.toString()                 // show integer
-            }
-
+            holder.txtQuantity.text = if (quantityStatus == "1")
+                "%.1f".format(currentQty)
+            else
+                currentQty.toInt().toString()
         } else {
             holder.addToBag.visibility = View.VISIBLE
             holder.quantityLayout.visibility = View.GONE
-            holder.txtQuantity.text = if (quantityStatus == "1") "0" else "-1"
         }
     }
 
@@ -267,6 +307,52 @@ class POSAdapter(
         val index = product.selectedVariationIndex
         return product.productPrice?.get(index) ?: throw IllegalStateException("No variation")
     }
+
+    private fun syncQuantitiesFromCart(productId: Int?, price: NewProductPrice, quantityStatus: String?) {
+        val key = "${productId}_${price.productPriceId}"
+        val quantityInCart = CartManager.cartMap[key] ?: 0.0 // Read Double
+
+        if (quantityStatus == "1") {
+            price.selectedQuantityDecimal = quantityInCart
+            price.selectedQuantity = quantityInCart.toInt() // Still keep an Int value
+        } else {
+            price.selectedQuantity = quantityInCart.toInt()
+            price.selectedQuantityDecimal = quantityInCart // Keep them in sync
+        }
+
+        if (quantityInCart > 0.0) {
+            CartManager.allProductsMap[key] = price
+        } else {
+            CartManager.allProductsMap.remove(key)
+        }
+    }
+
+
+    fun refreshCart() {
+        products.forEach { product ->
+            product.productPrice?.forEach { price ->
+                val key = "${product.productId}_${price.productPriceId}"
+                val quantityInCart = CartManager.cartMap[key] ?: 0.0
+
+                if (quantityStatus == "1") {
+                    price.selectedQuantityDecimal = quantityInCart
+                    price.selectedQuantity = quantityInCart.toInt()
+                } else {
+                    price.selectedQuantity = quantityInCart.toInt()
+                    price.selectedQuantityDecimal = quantityInCart
+                }
+
+                if (quantityInCart > 0.0) {
+                    CartManager.allProductsMap[key] = price
+                } else {
+                    CartManager.allProductsMap.remove(key)
+                }
+            }
+        }
+        notifyDataSetChanged()
+    }
+
+
 
 
     override fun getItemCount(): Int = products.size

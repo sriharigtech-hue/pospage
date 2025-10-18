@@ -37,13 +37,12 @@ import retrofit2.http.Part
 interface ApiService {
 
 
-
-                    @Headers("Accept:application/json; charset=UTF-8")
-                    @POST("stock_category")
-                    fun stockCategoryApi(
-                        @Header("Authorization") jwtToken: String,
-                        @Body input: CategoryInput?,
-                    ): Call<CategoryListOutput>
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("stock_category")
+    fun stockCategoryApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: CategoryInput?,
+    ): Call<CategoryListOutput>
 
 
     @Multipart
@@ -209,7 +208,7 @@ fun getAllProduct(
         @Body input: Input?
     ): Call<SubCategoryOutput?>?
 
-    // Add unit API screen
+    //  unit API screen
     @Headers("Accept:application/json; charset=UTF-8")
     @POST("unit")
     fun unitApi(

@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_4dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_12dp"
+    app:cardElevation="2dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_4dp"
+            android:orientation="vertical"
+            android:padding="@dimen/_4dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/question1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_16dp"
+                android:layout_marginEnd="@dimen/_16dp"
+                android:fontFamily="@font/font_bold"
+                android:text="Custom Item"
+                android:textColor="@color/text243757"
+                android:textSize="@dimen/_16sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_12dp"
+                android:hint="Item Name *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_12dp"
+                android:hint="Item Variation Name"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/variationName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/question1"
+                android:layout_marginStart="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_16dp"
+                android:layout_marginEnd="@dimen/_16dp"
+                android:layout_marginBottom="@dimen/_16dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_4dp"
+                    android:hint="Quantity *"
+                    android:textColorHint="@color/black"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                    app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                    app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                    app:boxCornerRadiusTopStart="@dimen/_24dp"
+                    app:boxStrokeColor="@color/colorPrimary"
+                    app:boxStrokeErrorColor="@color/red_EB5757"
+                    app:boxStrokeWidth="@dimen/_1dp"
+                    app:boxStrokeWidthFocused="@dimen/_2dp"
+                    app:cursorColor="@color/colorPrimary"
+                    app:hintAnimationEnabled="true"
+                    app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                    app:hintTextColor="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/qty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_semibold"
+                        android:gravity="center_vertical"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:paddingVertical="@dimen/_16dp"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/_9ea1a9"
+                        android:textSize="@dimen/_14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:hint="Amount For 1 Qty *"
+                    android:textColorHint="@color/black"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                    app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                    app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                    app:boxCornerRadiusTopStart="@dimen/_24dp"
+                    app:boxStrokeColor="@color/colorPrimary"
+                    app:boxStrokeErrorColor="@color/red_EB5757"
+                    app:boxStrokeWidth="@dimen/_1dp"
+                    app:boxStrokeWidthFocused="@dimen/_2dp"
+                    app:cursorColor="@color/colorPrimary"
+                    app:hintAnimationEnabled="true"
+                    app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                    app:hintTextColor="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_semibold"
+                        android:gravity="center_vertical"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:paddingVertical="@dimen/_16dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/_9ea1a9"
+                        android:textSize="@dimen/_14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/priceTaxLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Price Tax (%) *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/priceTax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16dp"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mrpPriceLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Item MRP Price *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/mrpPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16dp"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="numberDecimal"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_13sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/productWholeSalePriceLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Item Whole Sale Price *"
+                android:textColorHint="@color/black"
+                app:boxBackgroundColor="@color/white"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="@dimen/_24dp"
+                app:boxCornerRadiusBottomStart="@dimen/_24dp"
+                app:boxCornerRadiusTopEnd="@dimen/_24dp"
+                app:boxCornerRadiusTopStart="@dimen/_24dp"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxStrokeErrorColor="@color/red_EB5757"
+                app:boxStrokeWidth="@dimen/_1dp"
+                app:boxStrokeWidthFocused="@dimen/_2dp"
+                app:cursorColor="@color/colorPrimary"
+                app:hintAnimationEnabled="true"
+                app:hintTextAppearance="@style/MyCustomTextAppearance1"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/productWholeSalePrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16dp"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center_vertical"
+                    android:inputType="numberDecimal"
+                    android:paddingVertical="@dimen/_16dp"
+                    android:paddingStart="@dimen/_16dp"
+                    android:paddingEnd="@dimen/_16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/_9ea1a9"
+                    android:textSize="@dimen/_13sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/unitSpinnerTitleLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:fontFamily="@font/font_semibold"
+                android:text="Please Select Unit *"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14sp" />
+
+            <LinearLayout
+                android:id="@+id/unitSpinnerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_12dp"
+                android:layout_marginBottom="@dimen/_16dp"
+                android:background="@drawable/outer_curve_border2"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_16dp">
+
+                <Spinner
+                    android:id="@+id/unitSpinner"
+                    style="@style/SpinnerTheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_16dp"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/question1"
+                android:layout_marginStart="@dimen/_16dp"
+                android:layout_marginEnd="@dimen/_16dp"
+                android:layout_marginBottom="@dimen/_16dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/no_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_background2"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/font_semibold"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/_12dp"
+                    android:text="Cancel"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_14sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/yes_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/font_semibold"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/_12dp"
+                    android:text="Add"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.cardview.widget.CardView>
