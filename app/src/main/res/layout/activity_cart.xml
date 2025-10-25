@@ -471,7 +471,6 @@
                 android:layout_marginTop="@dimen/_4dp"
                 android:clipToPadding="false"
                 android:divider="@null"
-
                 android:nestedScrollingEnabled="false"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
