@@ -15,11 +15,9 @@ import com.example.apitest.adapter.PosCategoryAdapter
 import com.example.apitest.adapter.PosSubCategoryAdapter
 import com.example.apitest.cartScreen.CartActivity
 import com.example.apitest.dataModel.*
-
 import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.network.ApiClient
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -78,6 +76,7 @@ class POSActivity : NavigationActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_posactivity)
         setupBottomNavigation("pos")
+
 
         // Cart summary views
         cartSummaryBar = findViewById(R.id.cartSummaryBar)
@@ -237,12 +236,32 @@ class POSActivity : NavigationActivity() {
 
     private fun getPOSProducts(categoryId: String, subCategoryId: String?) {
         val input = ProductInput(categoryId = categoryId, subCategoryId = subCategoryId, status = "1", page = "1")
+
+        // 🧠 Save current selections before clearing list
+        val selectedMap = mutableMapOf<String, Double>()
+        productList.forEach { product ->
+            product.productPrice?.forEach { price ->
+                if (price.selectedQuantityDecimal > 0) {
+                    selectedMap[product.productId.toString()] = price.selectedQuantityDecimal
+                }
+            }
+        }
+
         ApiClient.instance.posProductApi(jwtToken, input)
             ?.enqueue(object : Callback<NewProductOutput> {
                 override fun onResponse(call: Call<NewProductOutput>, response: Response<NewProductOutput>) {
                     if (response.isSuccessful && response.body()?.status == true) {
                         productList.clear()
-                        response.body()?.data?.let { productList.addAll(it) }
+                        response.body()?.data?.let { newProducts ->
+                            // 🪄 Restore previous selections
+                            newProducts.forEach { newProd ->
+                                val savedQty = selectedMap[newProd.productId.toString()]
+                                if (savedQty != null && savedQty > 0) {
+                                    newProd.productPrice?.firstOrNull()?.selectedQuantityDecimal = savedQty
+                                }
+                            }
+                            productList.addAll(newProducts)
+                        }
                         productAdapter.notifyDataSetChanged()
                         syncCartWithProducts()
                         updateCartSummary()
@@ -251,6 +270,7 @@ class POSActivity : NavigationActivity() {
                 override fun onFailure(call: Call<NewProductOutput>, t: Throwable) {}
             })
     }
+
 
     // -------------------- SYNC CART WITH POS PRODUCTS --------------------
     private fun syncCartWithProducts() {
@@ -266,7 +286,8 @@ class POSActivity : NavigationActivity() {
                             name = product.productName ?: "N/A",
                             quantity = price.selectedQuantityDecimal,
                             price = price.productPrice?.toDoubleOrNull() ?: 0.0,
-                            isCustom = false
+                            isCustom = false,
+                            stockCount = price.stockCount?.toDouble()
                         )
                     )
                 }
@@ -391,6 +412,4 @@ class POSActivity : NavigationActivity() {
             updateCartSummary()
         }
     }
-
-
 }

@@ -35,8 +35,6 @@ class MainActivity : NavigationActivity() {
         tabCategory = findViewById(R.id.tabCategory)
         tabUnit = findViewById(R.id.tabUnit)
 
-
-
         tabUnit.visibility = View.GONE
 
         // Default fragment
@@ -91,7 +89,7 @@ class MainActivity : NavigationActivity() {
                     } else {
                         Toast.makeText(
                             this@MainActivity,
-                            "Access restricted",
+                            "Access Restricted",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -111,14 +109,11 @@ class MainActivity : NavigationActivity() {
         })
     }
 
-
     private fun selectTab(selected: TextView) {
         tabItems.setBackgroundResource(0)
         tabSubCategory.setBackgroundResource(0)
         tabCategory.setBackgroundResource(0)
         tabUnit.setBackgroundResource(0)
-
-
         selected.setBackgroundResource(R.drawable.tab_selected_bg)
     }
 

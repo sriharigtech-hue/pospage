@@ -9,5 +9,6 @@ data class CartItem(
     val name: String,
     var quantity: Double,
     val price: Double,
-    val isCustom: Boolean = false
+    val isCustom: Boolean = false,
+    val stockCount: Double? = null // ✅ Added field
 ) : Parcelable

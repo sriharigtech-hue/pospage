@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.apitest.R
 import com.example.apitest.dataModel.CartItem
+import kotlin.math.max
 
 class CartAdapter(
     private val items: MutableList<CartItem>,
@@ -35,37 +37,64 @@ class CartAdapter(
         val item = items[position]
 
         holder.name.text = item.name
-        holder.qty.text = if (item.quantity % 1.0 == 0.0) item.quantity.toInt().toString() else item.quantity.toString()
+
+        // Show integer qty if decimal part is 0
+        holder.qty.text = if (item.quantity % 1.0 == 0.0)
+            item.quantity.toInt().toString()
+        else
+            item.quantity.toString()
+
         holder.price.text = "₹%.2f".format(item.price * item.quantity)
 
-        // Show quantity layout, hide add button
         holder.quantityLayout.visibility = View.VISIBLE
         holder.addToBag.visibility = View.GONE
 
-        // Increase quantity
+        // ✅ Get the stock for this product
+        val stock = item.stockCount ?: Double.MAX_VALUE  // Default = unlimited if null
+
+        // 🔼 Increase quantity — but don't exceed stock
         holder.btnIncrease.setOnClickListener {
-            item.quantity += 1
-            holder.qty.text = if (item.quantity % 1.0 == 0.0) item.quantity.toInt().toString() else item.quantity.toString()
-            holder.price.text = "₹%.2f".format(item.price * item.quantity)
-            onItemUpdated(item)
+            if (item.quantity < stock) {
+                item.quantity += 1.0
+                holder.qty.text = if (item.quantity % 1.0 == 0.0)
+                    item.quantity.toInt().toString()
+                else
+                    item.quantity.toString()
+
+                holder.price.text = "₹%.2f".format(item.price * item.quantity)
+                onItemUpdated(item)
+            } else {
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Stock limit reached (${stock.toInt()})",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
-        // Decrease quantity
+        // 🔽 Decrease quantity — cannot go below 1
         holder.btnDecrease.setOnClickListener {
             if (item.quantity > 1) {
-                item.quantity -= 1
-                holder.qty.text = if (item.quantity % 1.0 == 0.0) item.quantity.toInt().toString() else item.quantity.toString()
+                item.quantity = max(1.0, item.quantity - 1.0)
+                holder.qty.text = if (item.quantity % 1.0 == 0.0)
+                    item.quantity.toInt().toString()
+                else
+                    item.quantity.toString()
+
                 holder.price.text = "₹%.2f".format(item.price * item.quantity)
                 onItemUpdated(item)
             }
         }
 
-        // Delete item
+        // 🗑️ Delete button
         holder.delete.setOnClickListener {
-            items.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, items.size)
-            onItemDeleted(item)
+            val pos = holder.adapterPosition
+            if (pos != RecyclerView.NO_POSITION) {
+                val deletedItem = items[pos]
+                items.removeAt(pos)
+                notifyItemRemoved(pos)
+                onItemDeleted(deletedItem)
+            }
         }
     }
 

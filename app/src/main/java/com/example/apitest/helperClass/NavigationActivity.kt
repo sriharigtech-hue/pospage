@@ -15,9 +15,7 @@ import com.example.apitest.UserAccess
 open class NavigationActivity : AppCompatActivity() {
 
     var currentTab: String? = null
-/*    object UserAccess {
-        var isStockAllowed = true
-    }*/
+
 
     protected fun setupBottomNavigation(tab: String) {
         currentTab = tab

@@ -13,7 +13,6 @@ class StockActivity : NavigationActivity() {
     private lateinit var tabStockList: TextView
     private lateinit var tabLowStockList: TextView
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stock)
