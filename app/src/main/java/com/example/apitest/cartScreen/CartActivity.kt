@@ -3,51 +3,103 @@ package com.example.apitest.cartScreen
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.RelativeLayout
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import kotlin.text.toDoubleOrNull
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.apitest.R
-import com.example.apitest.dataModel.CartItem
-import com.example.apitest.helperClass.NavigationActivity
-import com.google.android.material.textfield.TextInputLayout
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
-import androidx.core.view.isVisible
+import com.example.apitest.R
+import com.example.apitest.dataModel.CartItem
+import com.example.apitest.dataModel.Input
+import com.example.apitest.dataModel.ProfileOutput
+import com.example.apitest.dataModel.UserDetails
+import com.example.apitest.helperClass.NavigationActivity
+import com.example.apitest.network.ApiClient
+import com.google.android.material.textfield.TextInputLayout
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CartActivity : NavigationActivity() {
+
+    private val jwtToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1IiwianRpIjoiZTRjY2JlNDBmYWFiZmE5YTg1YmVkMDdjOTcyMzAzNWY3MTljNzQ4M2Q3YzIzMjg3M2E5ZjZmN2QyMjQ1Y2E3MjVhNjVlMTQ5ZGRiZjBkYjgiLCJpYXQiOjE3NjE2MzM3OTIuNDI5OTk5LCJuYmYiOjE3NjE2MzM3OTIuNDMwMDAzLCJleHAiOjE3OTMxNjk3OTIuNDIyNjY5LCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.SutcB4SMDdEzgfDZ1lnzGDjY4gf1aSwNJMGFnKF3RXWGbB4MhP6R8wRLCa2wtCMZ1egUQc1LxPMq2S9P-hfCeh4stj4W-zlWf0xOfvswvWVos14aP5RBTjbZ8Rc3PrmAwiFvnzu7PpRtqy8hGF_h1nt2dJrZpT4k0CIuvpUK8afLBKYfpr0i1NOx1awb2Z6Uo5YfJRQrB7y4wrs8TEsnbuAIdC4JG6-9Oi_TPwZ42SGatw4UEUvm09I3SjKGjZRDCOMJZLbSc1O4C6B53aK9hNQKCjnwsSXWc37h-cA6lKg-DSfm6K1usg0yHeAsE-2uya2_b8_TNq3LN4Mb04S820FmpnP0RqtDoPeoqBUSTacd0bSINimYpNv8NyiaO0D6k0J3HzaNd5MmwORyHpTNnVEaM8l0O5iyI-UIa3bPaOBnltamiAydE2EmUA9pfRQy3HWd6yZnxfuITM0THdj73ju1Qh3D0WVP7aUFR-3XUbp5qVflBZkiBe0klClG94ubWNFMX6vebixLQ21KsDvEDLj2Xy0hoLY-g6sm33l14NwbSiUgZ0VQI_3WbOzSpUvU0sprU7ozX7y7-nwjIXjshOQ5ymktZUMCN7LyCbvgX-qcGyxbS8C9JN9BhmvhagIBatDpPZw75arXlksHzxKnytbLG3BVxFHXxkp9jSBqW2s"
 
     private lateinit var cartRecyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter
     private val cartList = mutableListOf<CartItem>()
+    private var profileOutput: ProfileOutput? = null
+
+    private lateinit var selectionBG: LinearLayout // sales/expense layout
+    private lateinit var addItemButton: AppCompatTextView
+    private lateinit var paymentStatusLayout: LinearLayout
+    private lateinit var subTotalText: AppCompatTextView
+    private lateinit var discountText: AppCompatTextView
+    private lateinit var totalText: AppCompatTextView
+
+
+
+    // Flags
+    private var taxEnabled = false
+    private var mrpEnabled = false
+    private var wholeEnabled = false
+    private var unitEnabled = false
+    private var customProductEnabled = false
+
+
+    //  added layouts for tax
+    private lateinit var taxLayout: RelativeLayout
+    private lateinit var sgstTaxLayout: RelativeLayout
+    private lateinit var cgstTaxLayout: RelativeLayout
+    private lateinit var totalAmountLayout: RelativeLayout
+
+    private lateinit var addDiscountLayout: AppCompatTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
         setupBottomNavigation("cart")
+        subTotalText = findViewById(R.id.sub_total)
+        discountText = findViewById(R.id.discount)
+        totalText = findViewById(R.id.total_bill)
+        taxLayout = findViewById(R.id.taxLayout)
+        sgstTaxLayout = findViewById(R.id.sgstTaxLayout)
+        cgstTaxLayout = findViewById(R.id.cgstTaxLayout)
+        totalAmountLayout = findViewById(R.id.total_bill_layout)
+        addDiscountLayout = findViewById(R.id.add_discount) // your layout for Add Discount section
+        addDiscountLayout.visibility = View.GONE // default hidden
 
-        // 🔹 Back button click
+
         val backButton: RelativeLayout = findViewById(R.id.backButton)
         backButton.setOnClickListener { finishWithResult() }
 
-        // 🔹 Recycler setup
+        selectionBG = findViewById(R.id.selectionBG)
+        addItemButton = findViewById(R.id.addItem)
+        addItemButton.visibility = View.GONE
+        paymentStatusLayout = findViewById(R.id.paymentStatusLayout)
+        paymentStatusLayout.visibility = View.GONE // default hidden
+
         cartRecyclerView = findViewById(R.id.cart_list)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // 🔹 Receive items from POSActivity
         val receivedItems = intent.getParcelableArrayListExtra<CartItem>("cart_items")
         if (!receivedItems.isNullOrEmpty()) cartList.addAll(receivedItems)
 
-        // 🔹 Setup adapter
+
+
         cartAdapter = CartAdapter(
             cartList,
-            onItemUpdated = { /* local update */ },
-            onItemDeleted = { /* local delete */ }
+            onItemUpdated = {  updateSubTotal()},
+            onItemDeleted = { updateSubTotal() },
+            discountType = "0"
         )
         cartRecyclerView.adapter = cartAdapter
 
-        // 🔹 Add Customer section toggle
         val addCustomer = findViewById<AppCompatTextView>(R.id.add_customer)
         val mobileLayout = findViewById<TextInputLayout>(R.id.mobileLayout)
         val nameLayout = findViewById<TextInputLayout>(R.id.nameLayout)
@@ -55,27 +107,246 @@ class CartActivity : NavigationActivity() {
         val locationRecyclerView = findViewById<RecyclerView>(R.id.locationRecyclerView)
 
         var isVisible = false
-
         addCustomer.setOnClickListener {
             TransitionManager.beginDelayedTransition(findViewById(android.R.id.content), AutoTransition())
             isVisible = !isVisible
-
             mobileLayout.isVisible = isVisible
             nameLayout.isVisible = isVisible
             addressLayout.isVisible = isVisible
             locationRecyclerView.isVisible = isVisible
-
             addCustomer.text = if (isVisible) "Hide" else "Add"
+        }
+
+        loadUserProfile()
+        updateSubTotal()
+
+    }
+
+    // 🔹 Fetch Profile API
+    private fun loadUserProfile() {
+        val input = Input(status = "1")
+
+        ApiClient.instance.getUserDetails(jwtToken, input)
+            ?.enqueue(object : Callback<ProfileOutput?> {
+                override fun onResponse(call: Call<ProfileOutput?>, response: Response<ProfileOutput?>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        profileOutput = response.body()
+                        val userDetails = profileOutput?.userDetails
+                        handleUserDetailsResponse(userDetails)
+                    } else {
+                        Toast.makeText(this@CartActivity, "Failed to fetch profile", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ProfileOutput?>, t: Throwable) {
+                    Toast.makeText(this@CartActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    // 🔹 Apply profile flags & setup custom button
+    private fun handleUserDetailsResponse(userDetails: UserDetails?) {
+        selectionBG.visibility = if (userDetails?.estimation_bill_status == "0") View.GONE else View.VISIBLE
+        paymentStatusLayout.visibility = if (userDetails?.advance_payment_status == "1") View.VISIBLE else View.GONE
+
+        customProductEnabled = userDetails?.custom_product_status == "1"
+        taxEnabled = userDetails?.product_tax_status == "1"
+        mrpEnabled = userDetails?.mrp_price_status == "1"
+        wholeEnabled = userDetails?.whole_sale_price_status == "1"
+        unitEnabled = userDetails?.unit_status == "1"
+
+        val discountType = userDetails?.discount_type ?: "0"
+
+        // --- Discount type handling ---
+        if (discountType == "1") {
+            // ✅ Total discount → show Add Discount button on cart screen
+            addDiscountLayout.visibility = View.VISIBLE
+        } else {
+            // ✅ Product-wise or none → hide total Add Discount button
+            addDiscountLayout.visibility = View.GONE
+        }
+
+        // --- Update adapter with correct discount type ---
+        cartAdapter = CartAdapter(
+            cartList,
+            onItemUpdated = { updateSubTotal() },
+            onItemDeleted = { updateSubTotal() },
+            discountType = discountType
+        )
+        cartRecyclerView.adapter = cartAdapter
+
+        // --- Tax section handling ---
+        if (userDetails?.tax_status == "1") {
+            taxLayout.visibility = View.VISIBLE
+            sgstTaxLayout.visibility = View.VISIBLE
+            cgstTaxLayout.visibility = View.VISIBLE
+            totalAmountLayout.visibility = View.GONE
+        } else {
+            taxLayout.visibility = View.GONE
+            sgstTaxLayout.visibility = View.GONE
+            cgstTaxLayout.visibility = View.GONE
+            totalAmountLayout.visibility = View.VISIBLE
+        }
+
+        // --- Custom product handling ---
+        if (customProductEnabled) {
+            addItemButton.visibility = View.VISIBLE
+            addItemButton.setOnClickListener { showCustomItemDialog() }
+        } else {
+            addItemButton.visibility = View.GONE
         }
     }
 
-    // 🔹 Send cart back to POSActivity when leaving
+
+    // 🔹 Custom Item Dialog (same logic as POSActivity)
+    private fun showCustomItemDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_custom_box, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        val nameEdit = dialogView.findViewById<EditText>(R.id.name)
+        val qtyEdit = dialogView.findViewById<EditText>(R.id.qty)
+        val priceEdit = dialogView.findViewById<EditText>(R.id.price)
+        val unitSpinner = dialogView.findViewById<Spinner>(R.id.unitSpinner)
+
+        val priceTaxLayout = dialogView.findViewById<View>(R.id.priceTaxLayout)
+        val mrpLayout = dialogView.findViewById<View>(R.id.mrpPriceLayout)
+        val wholeLayout = dialogView.findViewById<View>(R.id.productWholeSalePriceLayout)
+        val unitLayout = dialogView.findViewById<View>(R.id.unitSpinnerLayout)
+        val unitTitleLayout = dialogView.findViewById<View>(R.id.unitSpinnerTitleLayout)
+
+        priceTaxLayout.visibility = if (taxEnabled) View.VISIBLE else View.GONE
+        mrpLayout.visibility = if (mrpEnabled) View.VISIBLE else View.GONE
+        wholeLayout.visibility = if (wholeEnabled) View.VISIBLE else View.GONE
+        unitLayout.visibility = if (unitEnabled) View.VISIBLE else View.GONE
+        unitTitleLayout.visibility = if (unitEnabled) View.VISIBLE else View.GONE
+
+        if (unitEnabled) fetchUnits(unitSpinner)
+
+        val yesBtn = dialogView.findViewById<AppCompatTextView>(R.id.yes_btn)
+        val noBtn = dialogView.findViewById<AppCompatTextView>(R.id.no_btn)
+
+        noBtn.setOnClickListener { dialog.dismiss() }
+
+        yesBtn.setOnClickListener {
+            val name = nameEdit.text.toString().trim()
+            val qty = qtyEdit.text.toString().trim().toDoubleOrNull()
+            val price = priceEdit.text.toString().trim().toDoubleOrNull()
+
+            if (name.isEmpty() || qty == null || price == null) {
+                Toast.makeText(this, "Please fill valid fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val newItem = CartItem(
+                productId = null,
+                name = name,
+                quantity = qty,
+                price = price,
+                isCustom = true
+            )
+            cartList.add(newItem)
+            cartAdapter.notifyItemInserted(cartList.size - 1)
+            updateSubTotal()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun fetchUnits(spinner: Spinner) {
+        val input = Input(status = "1")
+        ApiClient.instance.unitApi(jwtToken, input)
+            .enqueue(object : Callback<com.example.apitest.dataModel.UnitOutput> {
+                override fun onResponse(call: Call<com.example.apitest.dataModel.UnitOutput>, response: Response<com.example.apitest.dataModel.UnitOutput>) {
+                    val units = response.body()?.unitList ?: emptyList()
+                    val adapter = ArrayAdapter(
+                        this@CartActivity,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        units.map { it.unitName ?: "N/A" }
+                    )
+                    spinner.adapter = adapter
+                }
+
+                override fun onFailure(call: Call<com.example.apitest.dataModel.UnitOutput>, t: Throwable) {}
+            })
+    }
+
+    // 🔹 Send updated cart back
     private fun finishWithResult() {
         val resultIntent = Intent()
         resultIntent.putParcelableArrayListExtra("updated_cart_items", ArrayList(cartList))
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
+
+    private fun updateSubTotal() {
+        var total = 0.0
+        var totalDiscount = 0.0
+
+        for (item in cartList) {
+            val price = item.price ?: 0.0
+            val qty = item.quantity ?: 0.0
+            val itemTotal = price * qty
+            total += itemTotal
+
+            if (item.discountValue != null && item.discountType != null) {
+                val discount = if (item.discountType == "%") {
+                    (itemTotal * item.discountValue!!) / 100
+                } else {
+                    item.discountValue!!
+                }
+                totalDiscount += discount
+            }
+        }
+
+        val subTotal = total
+        val discountAmount = totalDiscount
+        val taxableAmount = subTotal - discountAmount
+
+        // 🔹 Get dynamic shop tax from profile
+        val shopTaxPercent = profileOutput?.userDetails?.shop_tax?.toString()?.toDoubleOrNull() ?: 0.0
+        val halfTaxPercent = shopTaxPercent / 2
+
+        // 🔹 Calculate tax amounts
+        val totalTaxAmount = (taxableAmount * shopTaxPercent) / 100 //(eg:product price : 500 , discount : 0 , tax : 25% , then totalTaxAmount = 125)
+        val sgstAmount = (taxableAmount * halfTaxPercent) / 100
+        val cgstAmount = (taxableAmount * halfTaxPercent) / 100
+        val grandTotal = taxableAmount + totalTaxAmount
+
+        // 🔹 Update base UI
+        subTotalText.text = String.format("%.2f", subTotal)
+        discountText.text = String.format("%.2f", discountAmount)
+        totalText.text = String.format("%.2f", grandTotal)
+
+        // 🔹 Update tax-related text views if exist
+        findViewById<AppCompatTextView?>(R.id.tax_total)?.text = String.format("%.2f", totalTaxAmount)
+        findViewById<AppCompatTextView?>(R.id.sgstTax_total)?.text = String.format("%.2f", sgstAmount)
+        findViewById<AppCompatTextView?>(R.id.cgstTax_total)?.text = String.format("%.2f", cgstAmount)
+
+        // 🔹 Update tax labels dynamically
+        findViewById<AppCompatTextView?>(R.id.taxTextView)?.text = "Total Tax (${shopTaxPercent.toInt()}%)"
+        findViewById<AppCompatTextView?>(R.id.sgstTaxTextView)?.text = "SGST (${halfTaxPercent.toInt()}%)"
+        findViewById<AppCompatTextView?>(R.id.cgstTaxTextView)?.text = "CGST (${halfTaxPercent.toInt()}%)"
+
+        // 🔹 Show/Hide tax layout dynamically if tax = 0.00
+        if (shopTaxPercent == 0.0) {
+            taxLayout.visibility = View.GONE
+            sgstTaxLayout.visibility = View.GONE
+            cgstTaxLayout.visibility = View.GONE
+            totalAmountLayout.visibility = View.VISIBLE
+        } else {
+            taxLayout.visibility = View.VISIBLE
+            sgstTaxLayout.visibility = View.VISIBLE
+            cgstTaxLayout.visibility = View.VISIBLE
+            totalAmountLayout.visibility = View.GONE
+        }
+    }
+
+
+
 
     override fun onBackPressed() {
         finishWithResult()

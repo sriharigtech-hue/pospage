@@ -8,7 +8,14 @@ data class CartItem(
     val productId: String?,
     val name: String,
     var quantity: Double,
-    val price: Double,
+    var price: Double,
     val isCustom: Boolean = false,
-    val stockCount: Double? = null // ✅ Added field
+    val stockCount: Double? = null, // ✅ Added field
+    var originalPrice: Double = 0.0,
+    var discountValue: Double? = null,
+    var discountType: String? = null,
+    var discountedPrice: Double? = null,
+    var discount: Double = 0.0 // percent-based discount
+
+
 ) : Parcelable

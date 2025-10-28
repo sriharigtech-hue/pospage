@@ -32,4 +32,8 @@
         <item name="android:fontFamily">@font/font_semibold</item>
         <item name="fontFamily">@font/font_semibold</item>
     </style>
+    <style name="CustomAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 </resources>
