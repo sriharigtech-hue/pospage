@@ -20,6 +20,7 @@
         android:padding="@dimen/_2dp"
         android:src="@drawable/cancel" />
 
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -195,15 +195,26 @@ class CartAdapter(
 
         btnEnter.setOnClickListener {
             val value = edtDiscount.text.toString().toDoubleOrNull() ?: 0.0
+            val itemTotal = (item.originalPrice.takeIf { it > 0 } ?: item.price) * item.quantity
+
             if (value <= 0) {
                 Toast.makeText(context, "Enter valid discount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!isPercentage && value > itemTotal) {
+                Toast.makeText(context, "Flat discount cannot exceed total (₹${"%.2f".format(itemTotal)})", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (isPercentage && value > 100) {
+                Toast.makeText(context, "Percentage discount cannot exceed 100%", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             item.originalPrice = if (item.originalPrice == 0.0) item.price else item.originalPrice
             item.discountValue = value
             item.discountType = if (isPercentage) "PERCENTAGE" else "FLAT"
-
             onItemUpdated(item)
             notifyItemChanged(items.indexOf(item))
             dialog.dismiss()

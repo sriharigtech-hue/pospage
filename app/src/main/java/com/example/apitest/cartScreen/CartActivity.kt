@@ -21,6 +21,8 @@ import com.example.apitest.dataModel.ProfileOutput
 import com.example.apitest.dataModel.UserDetails
 import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.network.ApiClient
+import com.google.android.material.textfield.TextInputEditText
+
 import com.google.android.material.textfield.TextInputLayout
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,8 +43,7 @@ class CartActivity : NavigationActivity() {
     private lateinit var subTotalText: AppCompatTextView
     private lateinit var discountText: AppCompatTextView
     private lateinit var totalText: AppCompatTextView
-
-
+    private lateinit var removeCouponText: AppCompatTextView
 
     // Flags
     private var taxEnabled = false
@@ -59,6 +60,7 @@ class CartActivity : NavigationActivity() {
     private lateinit var totalAmountLayout: RelativeLayout
 
     private lateinit var addDiscountLayout: AppCompatTextView
+    private lateinit var acLayout: RelativeLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +74,11 @@ class CartActivity : NavigationActivity() {
         cgstTaxLayout = findViewById(R.id.cgstTaxLayout)
         totalAmountLayout = findViewById(R.id.total_bill_layout)
         addDiscountLayout = findViewById(R.id.add_discount) // your layout for Add Discount section
+        discountText = findViewById(R.id.discount)
+        acLayout = findViewById(R.id.ac_layout)
+
         addDiscountLayout.visibility = View.GONE // default hidden
+        acLayout.visibility = View.GONE // default hidden
 
 
         val backButton: RelativeLayout = findViewById(R.id.backButton)
@@ -86,6 +92,12 @@ class CartActivity : NavigationActivity() {
 
         cartRecyclerView = findViewById(R.id.cart_list)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
+        removeCouponText = findViewById(R.id.removeCoupon)
+        removeCouponText.visibility = View.GONE  // default hidden
+
+        removeCouponText.setOnClickListener {
+            removeDiscount()
+        }
 
         val receivedItems = intent.getParcelableArrayListExtra<CartItem>("cart_items")
         if (!receivedItems.isNullOrEmpty()) cartList.addAll(receivedItems)
@@ -144,6 +156,7 @@ class CartActivity : NavigationActivity() {
             })
     }
 
+
     // 🔹 Apply profile flags & setup custom button
     private fun handleUserDetailsResponse(userDetails: UserDetails?) {
         selectionBG.visibility = if (userDetails?.estimation_bill_status == "0") View.GONE else View.VISIBLE
@@ -161,6 +174,9 @@ class CartActivity : NavigationActivity() {
         if (discountType == "1") {
             // ✅ Total discount → show Add Discount button on cart screen
             addDiscountLayout.visibility = View.VISIBLE
+            addDiscountLayout.setOnClickListener {
+                showCartDiscountDialog()
+            }
         } else {
             // ✅ Product-wise or none → hide total Add Discount button
             addDiscountLayout.visibility = View.GONE
@@ -195,6 +211,16 @@ class CartActivity : NavigationActivity() {
         } else {
             addItemButton.visibility = View.GONE
         }
+        //--- ac / non ac ----
+        if (userDetails?.ac_status == "1") {
+            acLayout.visibility = View.VISIBLE
+
+            findViewById<RelativeLayout>(R.id.ac).setOnClickListener { showAcDialog() }
+
+        } else {
+            acLayout.visibility = View.GONE
+        }
+
     }
 
 
@@ -282,6 +308,7 @@ class CartActivity : NavigationActivity() {
         finish()
     }
 
+
     private fun updateSubTotal() {
         var total = 0.0
         var totalDiscount = 0.0
@@ -307,43 +334,184 @@ class CartActivity : NavigationActivity() {
         val taxableAmount = subTotal - discountAmount
 
         // 🔹 Get dynamic shop tax from profile
-        val shopTaxPercent = profileOutput?.userDetails?.shop_tax?.toString()?.toDoubleOrNull() ?: 0.0
-        val halfTaxPercent = shopTaxPercent / 2
+//        val shopTaxPercent = profileOutput?.userDetails?.shop_tax?.toString()?.toDoubleOrNull() ?: 0.0
+//        val halfTaxPercent = shopTaxPercent / 2
 
         // 🔹 Calculate tax amounts
-        val totalTaxAmount = (taxableAmount * shopTaxPercent) / 100 //(eg:product price : 500 , discount : 0 , tax : 25% , then totalTaxAmount = 125)
-        val sgstAmount = (taxableAmount * halfTaxPercent) / 100
-        val cgstAmount = (taxableAmount * halfTaxPercent) / 100
-        val grandTotal = taxableAmount + totalTaxAmount
+//        val totalTaxAmount = (taxableAmount * shopTaxPercent) / 100 //(eg:product price : 500 , discount : 0 , tax : 25% , then totalTaxAmount = 125)
+//        val sgstAmount = (taxableAmount * halfTaxPercent) / 100
+//        val cgstAmount = (taxableAmount * halfTaxPercent) / 100
+//        val grandTotal = taxableAmount + totalTaxAmount
 
         // 🔹 Update base UI
         subTotalText.text = String.format("%.2f", subTotal)
         discountText.text = String.format("%.2f", discountAmount)
-        totalText.text = String.format("%.2f", grandTotal)
+        totalText.text = String.format("%.2f", taxableAmount)
 
         // 🔹 Update tax-related text views if exist
-        findViewById<AppCompatTextView?>(R.id.tax_total)?.text = String.format("%.2f", totalTaxAmount)
-        findViewById<AppCompatTextView?>(R.id.sgstTax_total)?.text = String.format("%.2f", sgstAmount)
-        findViewById<AppCompatTextView?>(R.id.cgstTax_total)?.text = String.format("%.2f", cgstAmount)
+//        findViewById<AppCompatTextView?>(R.id.tax_total)?.text = String.format("%.2f", totalTaxAmount)
+//        findViewById<AppCompatTextView?>(R.id.sgstTax_total)?.text = String.format("%.2f", sgstAmount)
+//        findViewById<AppCompatTextView?>(R.id.cgstTax_total)?.text = String.format("%.2f", cgstAmount)
 
         // 🔹 Update tax labels dynamically
-        findViewById<AppCompatTextView?>(R.id.taxTextView)?.text = "Total Tax (${shopTaxPercent.toInt()}%)"
-        findViewById<AppCompatTextView?>(R.id.sgstTaxTextView)?.text = "SGST (${halfTaxPercent.toInt()}%)"
-        findViewById<AppCompatTextView?>(R.id.cgstTaxTextView)?.text = "CGST (${halfTaxPercent.toInt()}%)"
+//        findViewById<AppCompatTextView?>(R.id.taxTextView)?.text = "Total Tax (${shopTaxPercent.toInt()}%)"
+//        findViewById<AppCompatTextView?>(R.id.sgstTaxTextView)?.text = "SGST (${halfTaxPercent.toInt()}%)"
+//        findViewById<AppCompatTextView?>(R.id.cgstTaxTextView)?.text = "CGST (${halfTaxPercent.toInt()}%)"
 
         // 🔹 Show/Hide tax layout dynamically if tax = 0.00
-        if (shopTaxPercent == 0.0) {
-            taxLayout.visibility = View.GONE
-            sgstTaxLayout.visibility = View.GONE
-            cgstTaxLayout.visibility = View.GONE
-            totalAmountLayout.visibility = View.VISIBLE
-        } else {
-            taxLayout.visibility = View.VISIBLE
-            sgstTaxLayout.visibility = View.VISIBLE
-            cgstTaxLayout.visibility = View.VISIBLE
-            totalAmountLayout.visibility = View.GONE
-        }
+//        if (shopTaxPercent == 0.0) {
+//            taxLayout.visibility = View.GONE
+//            sgstTaxLayout.visibility = View.GONE
+//            cgstTaxLayout.visibility = View.GONE
+//            totalAmountLayout.visibility = View.VISIBLE
+//        } else {
+//            taxLayout.visibility = View.VISIBLE
+//            sgstTaxLayout.visibility = View.VISIBLE
+//            cgstTaxLayout.visibility = View.VISIBLE
+//            totalAmountLayout.visibility = View.GONE
+//        }
     }
+
+    // 🔹 Show Total Discount Dialog (for discountType = "1")
+    private fun showCartDiscountDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_discount, null)
+        val dialog = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        val btnFlat = dialogView.findViewById<TextView>(R.id.flat)
+        val btnPercentage = dialogView.findViewById<TextView>(R.id.percentage)
+        val edtDiscount = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.discountValue)
+        val btnEnter = dialogView.findViewById<TextView>(R.id.enter)
+        val btnCancel = dialogView.findViewById<androidx.appcompat.widget.AppCompatImageView>(R.id.cancel)
+        val hintLayout = dialogView.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.hint)
+
+        var isPercentage = false
+        btnFlat.setBackgroundResource(R.drawable.gradient_bg)
+        btnFlat.setTextColor(getColor(R.color.white))
+        hintLayout.hint = "Enter Flat Discount Amount *"
+
+        btnFlat.setOnClickListener {
+            isPercentage = false
+            btnFlat.setBackgroundResource(R.drawable.gradient_bg)
+            btnFlat.setTextColor(getColor(R.color.white))
+            btnPercentage.setBackgroundColor(getColor(android.R.color.transparent))
+            btnPercentage.setTextColor(getColor(R.color.colorPrimary))
+            hintLayout.hint = "Enter Flat Discount Amount *"
+        }
+
+        btnPercentage.setOnClickListener {
+            isPercentage = true
+            btnPercentage.setBackgroundResource(R.drawable.gradient_bg)
+            btnPercentage.setTextColor(getColor(R.color.white))
+            btnFlat.setBackgroundColor(getColor(android.R.color.transparent))
+            btnFlat.setTextColor(getColor(R.color.colorPrimary))
+            hintLayout.hint = "Enter Percentage Discount *"
+        }
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        btnEnter.setOnClickListener {
+            val discountValue = edtDiscount.text.toString().toDoubleOrNull()
+            if (discountValue == null || discountValue <= 0) {
+                Toast.makeText(this, "Enter valid discount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            applyTotalDiscount(discountValue, isPercentage)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+// 🔹 Apply total discount logic (with validation fix)
+    private fun applyTotalDiscount(value: Double, isPercentage: Boolean) {
+        var total = 0.0
+        for (item in cartList) {
+            total += (item.price ?: 0.0) * (item.quantity ?: 0.0)
+        }
+
+        // calculate discount
+        var discountAmount = if (isPercentage) (total * value / 100) else value
+
+        // prevent negative total
+        if (discountAmount > total) {
+            discountAmount = total
+            Toast.makeText(this, "Discount cannot exceed subtotal", Toast.LENGTH_SHORT).show()
+        }
+        val newTotal = total - discountAmount
+        // update UI
+        discountText.text = String.format("%.2f", discountAmount)
+        totalText.text = String.format("%.2f", newTotal)
+        removeCouponText.visibility = View.VISIBLE
+    }
+
+    private fun removeDiscount() {
+        var total = 0.0
+        for (item in cartList) {
+            total += (item.price ?: 0.0) * (item.quantity ?: 0.0)
+        }
+
+        discountText.text = "0.00"
+        totalText.text = String.format("%.2f", total)
+        removeCouponText.visibility = View.GONE
+
+        Toast.makeText(this, "Discount removed", Toast.LENGTH_SHORT).show()
+    }
+    // 🔹 Show AC Dialog
+// 🔹 Show AC Dialog
+    private fun showAcDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_qty, null)
+        val dialog = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        val submitBtn = dialogView.findViewById<TextView>(R.id.enter)
+        val inputLayout = dialogView.findViewById<TextInputLayout>(R.id.hint)
+        val valueEditText = dialogView.findViewById<TextInputEditText>(R.id.value)
+        inputLayout.hint = "Enter AC Service Charge *"
+
+
+        submitBtn.setOnClickListener {
+            val enteredValue = valueEditText.text?.toString()?.trim()
+            if (enteredValue.isNullOrEmpty()) {
+                Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val acValue = enteredValue.toDoubleOrNull()
+            if (acValue == null || acValue < 0) {
+                Toast.makeText(this, "Enter a valid number", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // ✅ Update AC total TextView
+            val acTotalText = findViewById<AppCompatTextView>(R.id.ac_total)
+            acTotalText.text = String.format("%.2f", acValue)
+
+            // ✅ Optionally, add to grand total if you want
+            updateAcTotalInBill(acValue)
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    // 🔹 Optional: Add AC value to total
+// Keep last AC value in memory
+    private var lastAcValue = 0.0
+
+    private fun updateAcTotalInBill(acValue: Double) {
+        val currentTotal = totalText.text.toString().toDoubleOrNull() ?: 0.0
+        val newTotal = currentTotal - lastAcValue + acValue  // ✅ remove old value, add new
+        totalText.text = String.format("%.2f", newTotal)
+        lastAcValue = acValue
+    }
+
 
 
 
