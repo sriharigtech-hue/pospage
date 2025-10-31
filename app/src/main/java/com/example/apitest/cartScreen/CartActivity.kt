@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import com.example.apitest.R
 import com.example.apitest.dataModel.CartItem
 import com.example.apitest.dataModel.Input
@@ -22,7 +24,6 @@ import com.example.apitest.dataModel.UserDetails
 import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.network.ApiClient
 import com.google.android.material.textfield.TextInputEditText
-
 import com.google.android.material.textfield.TextInputLayout
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,6 +62,15 @@ class CartActivity : NavigationActivity() {
 
     private lateinit var addDiscountLayout: AppCompatTextView
     private lateinit var acLayout: RelativeLayout
+    private lateinit var acAmountLayout: RelativeLayout
+    private lateinit var billingAmtText: AppCompatTextView
+    private lateinit var balanceBillText: AppCompatTextView
+    private lateinit var unpaidBtn: AppCompatTextView
+
+    private var currentSubTotal = 0.0
+    private var currentAcCharge = 0.0
+    private var currentDiscount = 0.0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,10 +86,19 @@ class CartActivity : NavigationActivity() {
         addDiscountLayout = findViewById(R.id.add_discount) // your layout for Add Discount section
         discountText = findViewById(R.id.discount)
         acLayout = findViewById(R.id.ac_layout)
+        acLayout = findViewById(R.id.ac_layout)
+        acAmountLayout = findViewById(R.id.ac_amount_layout)
+        acAmountLayout.visibility = View.GONE  // hide by default
+        billingAmtText = findViewById(R.id.billing_amt)
+        balanceBillText = findViewById(R.id.balance_bill)
+        unpaidBtn = findViewById(R.id.unpaid)
 
         addDiscountLayout.visibility = View.GONE // default hidden
         acLayout.visibility = View.GONE // default hidden
-
+        val paidBtn = findViewById<AppCompatTextView>(R.id.paid)
+        val unpaidBtn = findViewById<AppCompatTextView>(R.id.unpaid)
+        val billingAmtText = findViewById<AppCompatTextView>(R.id.billing_amt)
+        val balanceBillText = findViewById<AppCompatTextView>(R.id.balance_bill)
 
         val backButton: RelativeLayout = findViewById(R.id.backButton)
         backButton.setOnClickListener { finishWithResult() }
@@ -101,7 +120,21 @@ class CartActivity : NavigationActivity() {
 
         val receivedItems = intent.getParcelableArrayListExtra<CartItem>("cart_items")
         if (!receivedItems.isNullOrEmpty()) cartList.addAll(receivedItems)
-
+        billingAmtText.text = "0.00"
+        balanceBillText.text = String.format("%.2f", getCurrentBillingAmount())
+        unpaidBtn.setOnClickListener {
+            val billingAmount = getCurrentBillingAmount()
+            billingAmtText.text = "0.00"
+            balanceBillText.text = String.format("%.2f", billingAmount)
+            Toast.makeText(this, "Marked as UNPAID", Toast.LENGTH_SHORT).show()
+        }
+// 🔹 Handle PAID click
+        paidBtn.setOnClickListener {
+            val billingAmount = getCurrentBillingAmount()
+            billingAmtText.text = String.format("%.2f", billingAmount)
+            balanceBillText.text = "0.00"
+            Toast.makeText(this, "Marked as PAID", Toast.LENGTH_SHORT).show()
+        }
 
 
         cartAdapter = CartAdapter(
@@ -133,8 +166,15 @@ class CartActivity : NavigationActivity() {
         updateSubTotal()
 
     }
+    // 🔹 Function to calculate total billing amount dynamically
+    fun getCurrentBillingAmount(): Double {
+        return currentSubTotal + currentAcCharge - currentDiscount
+    }
 
-    // 🔹 Fetch Profile API
+
+
+
+    //  Fetch Profile API
     private fun loadUserProfile() {
         val input = Input(status = "1")
 
@@ -157,7 +197,7 @@ class CartActivity : NavigationActivity() {
     }
 
 
-    // 🔹 Apply profile flags & setup custom button
+    //  Apply profile flags & setup custom button
     private fun handleUserDetailsResponse(userDetails: UserDetails?) {
         selectionBG.visibility = if (userDetails?.estimation_bill_status == "0") View.GONE else View.VISIBLE
         paymentStatusLayout.visibility = if (userDetails?.advance_payment_status == "1") View.VISIBLE else View.GONE
@@ -172,13 +212,13 @@ class CartActivity : NavigationActivity() {
 
         // --- Discount type handling ---
         if (discountType == "1") {
-            // ✅ Total discount → show Add Discount button on cart screen
+            //  Total discount → show Add Discount button on cart screen
             addDiscountLayout.visibility = View.VISIBLE
             addDiscountLayout.setOnClickListener {
                 showCartDiscountDialog()
             }
         } else {
-            // ✅ Product-wise or none → hide total Add Discount button
+            //  Product-wise or none → hide total Add Discount button
             addDiscountLayout.visibility = View.GONE
         }
 
@@ -215,16 +255,63 @@ class CartActivity : NavigationActivity() {
         if (userDetails?.ac_status == "1") {
             acLayout.visibility = View.VISIBLE
 
-            findViewById<RelativeLayout>(R.id.ac).setOnClickListener { showAcDialog() }
+            val acButton = findViewById<RelativeLayout>(R.id.ac)
+            val nonAcButton = findViewById<RelativeLayout>(R.id.non_ac)
+            val acTotalText = findViewById<AppCompatTextView>(R.id.ac_total)
+
+            // Default selection → Non-AC
+            var selectedType = "NON_AC"
+            highlightAcSelection(acButton, nonAcButton, selectedType)
+
+            nonAcButton.setOnClickListener {
+                selectedType = "NON_AC"
+                highlightAcSelection(acButton, nonAcButton, selectedType)
+                updateAcTotalInBill(0.0)
+                acTotalText.text = "0.00"
+                acAmountLayout.visibility = View.GONE   // hide when Non-AC selected
+            }
+
+
+            acButton.setOnClickListener {
+                // 🔹 Don't immediately select AC — open dialog first
+                showAcDialog(acTotalText, acAmountLayout) { acEntered ->
+                    if (acEntered) {
+                        // ✅ If value entered, then select AC
+                        selectedType = "AC"
+                        highlightAcSelection(acButton, nonAcButton, selectedType)
+                    } else {
+                        // ❌ If dialog canceled or invalid, keep NON-AC selected
+                        selectedType = "NON_AC"
+                        highlightAcSelection(acButton, nonAcButton, selectedType)
+                    }
+                }
+            }
+
 
         } else {
             acLayout.visibility = View.GONE
         }
 
+
+    }
+    // 🔹 Toggle background highlight for AC / Non-AC selection
+    private fun highlightAcSelection(
+        acButton: RelativeLayout,
+        nonAcButton: RelativeLayout,
+        selectedType: String
+    ) {
+        if (selectedType == "AC") {
+            acButton.setBackgroundResource(R.drawable.light_blue)
+            nonAcButton.setBackgroundResource(R.drawable.button_left)
+        } else {
+            nonAcButton.setBackgroundResource(R.drawable.light_blue)
+            acButton.setBackgroundResource(R.drawable.button_left)
+        }
     }
 
 
-    // 🔹 Custom Item Dialog (same logic as POSActivity)
+
+    //  Custom Item Dialog (same logic as POSActivity)
     private fun showCustomItemDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_custom_box, null)
         val dialog = AlertDialog.Builder(this)
@@ -331,7 +418,7 @@ class CartActivity : NavigationActivity() {
 
         val subTotal = total
         val discountAmount = totalDiscount
-        val taxableAmount = subTotal - discountAmount
+//        val taxableAmount = subTotal - discountAmount
 
         // 🔹 Get dynamic shop tax from profile
 //        val shopTaxPercent = profileOutput?.userDetails?.shop_tax?.toString()?.toDoubleOrNull() ?: 0.0
@@ -346,7 +433,13 @@ class CartActivity : NavigationActivity() {
         // 🔹 Update base UI
         subTotalText.text = String.format("%.2f", subTotal)
         discountText.text = String.format("%.2f", discountAmount)
-        totalText.text = String.format("%.2f", taxableAmount)
+        totalText.text = String.format("%.2f", subTotal - discountAmount)
+        currentSubTotal = subTotal
+        currentDiscount = discountAmount
+        updateBillingAmount()
+        toggleTotalBillLayoutVisibility()
+
+
 
         // 🔹 Update tax-related text views if exist
 //        findViewById<AppCompatTextView?>(R.id.tax_total)?.text = String.format("%.2f", totalTaxAmount)
@@ -372,7 +465,7 @@ class CartActivity : NavigationActivity() {
 //        }
     }
 
-    // 🔹 Show Total Discount Dialog (for discountType = "1")
+    //  Show Total Discount Dialog (for discountType = "1")
     private fun showCartDiscountDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_discount, null)
         val dialog = AlertDialog.Builder(this, R.style.CustomAlertDialog)
@@ -426,27 +519,38 @@ class CartActivity : NavigationActivity() {
         dialog.show()
     }
 
-// 🔹 Apply total discount logic (with validation fix)
-    private fun applyTotalDiscount(value: Double, isPercentage: Boolean) {
-        var total = 0.0
-        for (item in cartList) {
-            total += (item.price ?: 0.0) * (item.quantity ?: 0.0)
-        }
-
-        // calculate discount
-        var discountAmount = if (isPercentage) (total * value / 100) else value
-
-        // prevent negative total
-        if (discountAmount > total) {
-            discountAmount = total
-            Toast.makeText(this, "Discount cannot exceed subtotal", Toast.LENGTH_SHORT).show()
-        }
-        val newTotal = total - discountAmount
-        // update UI
-        discountText.text = String.format("%.2f", discountAmount)
-        totalText.text = String.format("%.2f", newTotal)
-        removeCouponText.visibility = View.VISIBLE
+//  Apply total discount logic (with validation fix)
+private fun applyTotalDiscount(value: Double, isPercentage: Boolean) {
+    var total = 0.0
+    for (item in cartList) {
+        total += (item.price ?: 0.0) * (item.quantity ?: 0.0)
     }
+
+    // Calculate discount
+    var discountAmount = if (isPercentage) (total * value / 100) else value
+    if (discountAmount > total) {
+        discountAmount = total
+        Toast.makeText(this, "Discount cannot exceed subtotal", Toast.LENGTH_SHORT).show()
+    }
+
+    val newTotal = total - discountAmount
+
+    // ✅ Update display
+    discountText.text = String.format("%.2f", discountAmount)
+    totalText.text = String.format("%.2f", newTotal)
+
+    // ✅ Update stored values
+    currentDiscount = discountAmount
+    currentSubTotal = total
+
+    // ✅ Always update Billing Amount
+    updateBillingAmount()
+
+    removeCouponText.visibility = View.VISIBLE
+    toggleTotalBillLayoutVisibility()
+
+}
+
 
     private fun removeDiscount() {
         var total = 0.0
@@ -456,13 +560,19 @@ class CartActivity : NavigationActivity() {
 
         discountText.text = "0.00"
         totalText.text = String.format("%.2f", total)
+        currentDiscount = 0.0
+        updateBillingAmount()
+
         removeCouponText.visibility = View.GONE
+        toggleTotalBillLayoutVisibility()
+
 
         Toast.makeText(this, "Discount removed", Toast.LENGTH_SHORT).show()
     }
     // 🔹 Show AC Dialog
 // 🔹 Show AC Dialog
-    private fun showAcDialog() {
+    private fun showAcDialog(acTotalText: AppCompatTextView, acAmountLayout: RelativeLayout,   onResult: (Boolean) -> Unit)
+    {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_qty, null)
         val dialog = AlertDialog.Builder(this, R.style.CustomAlertDialog)
             .setView(dialogView)
@@ -472,7 +582,15 @@ class CartActivity : NavigationActivity() {
         val submitBtn = dialogView.findViewById<TextView>(R.id.enter)
         val inputLayout = dialogView.findViewById<TextInputLayout>(R.id.hint)
         val valueEditText = dialogView.findViewById<TextInputEditText>(R.id.value)
+        val cancelBtn = dialogView.findViewById<AppCompatImageView>(R.id.cancel)
+
         inputLayout.hint = "Enter AC Service Charge *"
+
+
+        cancelBtn.setOnClickListener {
+            dialog.dismiss()
+            onResult(false)
+        }
 
 
         submitBtn.setOnClickListener {
@@ -488,32 +606,62 @@ class CartActivity : NavigationActivity() {
                 return@setOnClickListener
             }
 
-            // ✅ Update AC total TextView
+            //  Update AC total TextView
             val acTotalText = findViewById<AppCompatTextView>(R.id.ac_total)
             acTotalText.text = String.format("%.2f", acValue)
-
-            // ✅ Optionally, add to grand total if you want
             updateAcTotalInBill(acValue)
-
+            acAmountLayout.visibility = View.VISIBLE
             dialog.dismiss()
+            onResult(true)
         }
-
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
-    // 🔹 Optional: Add AC value to total
-// Keep last AC value in memory
+
+    // Keep last AC value (if needed later)
     private var lastAcValue = 0.0
 
     private fun updateAcTotalInBill(acValue: Double) {
-        val currentTotal = totalText.text.toString().toDoubleOrNull() ?: 0.0
-        val newTotal = currentTotal - lastAcValue + acValue  // ✅ remove old value, add new
-        totalText.text = String.format("%.2f", newTotal)
+        // ✅ Update displayed AC total
+        val acTotalText = findViewById<AppCompatTextView>(R.id.ac_total)
+        acTotalText.text = String.format("%.2f", acValue)
+
+        // ✅ Save for billing formula
+        currentAcCharge = acValue
         lastAcValue = acValue
+
+        // ✅ Refresh final billing total
+        updateBillingAmount()
     }
 
+    // 🔹 Final Billing Calculation
+    private fun updateBillingAmount() {
+        val billingTotal = currentSubTotal + currentAcCharge - currentDiscount
+        billingAmtText.text = String.format("%.2f", billingTotal)
+    }
+    // ✅ Show total_bill_layout only if any product or total discount applied
+    private fun toggleTotalBillLayoutVisibility() {
+        val totalBillLayout = findViewById<RelativeLayout>(R.id.total_bill_layout)
+        var hasDiscount = false
 
+        // Check if any product has discount
+        for (item in cartList) {
+            val itemDiscount = item.discountValue ?: 0.0
+            if (itemDiscount > 0) {
+                hasDiscount = true
+                break
+            }
+        }
 
+        // Check if total discount applied
+        if (currentDiscount > 0.0) {
+            hasDiscount = true
+        }
+
+        // Show/Hide layout
+        totalBillLayout.visibility = if (hasDiscount) View.VISIBLE else View.GONE
+    }
 
 
     override fun onBackPressed() {
