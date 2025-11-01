@@ -20,11 +20,13 @@ import com.example.apitest.dataModel.ProfileOutput
 import com.example.apitest.dataModel.StockProductOutput
 import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
 import com.example.apitest.dataModel.UnitOutput
+import com.example.apitest.dataModel.EmpOutput
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 
 
 import retrofit2.http.Header
@@ -286,4 +288,10 @@ fun getAllProduct(
         @Body productInput: ProductInput?
     ): Call<NewProductOutput>?
 
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @GET("employee_list")
+    fun empListApi(
+        @Header("Authorization") jwtToken: String
+    ): Call<EmpOutput>
 }
