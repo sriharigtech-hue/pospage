@@ -13,6 +13,7 @@ import com.example.apitest.dataModel.StatusResponse
 import com.example.apitest.dataModel.StatusUpdateInput
 import com.example.apitest.dataModel.SubCategoryOutput
 import com.example.apitest.dataModel.CategoryStatusUpdateInput
+import com.example.apitest.dataModel.DashboardOutput
 import com.example.apitest.dataModel.LowStockProductOutput
 import com.example.apitest.dataModel.NewProductOutput
 import com.example.apitest.dataModel.ProductInput
@@ -21,6 +22,8 @@ import com.example.apitest.dataModel.StockProductOutput
 import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
 import com.example.apitest.dataModel.UnitOutput
 import com.example.apitest.dataModel.EmpOutput
+import com.example.apitest.dataModel.ProductReportOutput
+import com.example.apitest.dataModel.SaleReportOutput
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -294,4 +297,34 @@ fun getAllProduct(
     fun empListApi(
         @Header("Authorization") jwtToken: String
     ): Call<EmpOutput>
+
+    // Report screen
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("check_report_password")
+    fun checkReportPassword(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: InputField?
+    ): Call<StatusResponse?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("dashboard")
+    fun dashboard(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<DashboardOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("product_based_report")
+    fun productBasedReport(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<ProductReportOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("sales_based_report")
+    fun salesBasedReport(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<SaleReportOutput>
 }

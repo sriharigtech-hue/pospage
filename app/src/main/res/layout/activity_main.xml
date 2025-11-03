@@ -304,6 +304,7 @@
                 android:paddingVertical="@dimen/_12dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/homereport"
                     android:layout_width="@dimen/_24dp"
                     android:layout_height="@dimen/_24dp"
                     android:tint="@color/grey9599AB"

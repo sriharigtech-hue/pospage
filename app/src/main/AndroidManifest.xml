@@ -17,18 +17,29 @@
         android:theme="@style/Theme.ApiTest"
         tools:targetApi="31">
         <activity
+            android:name=".ActivityMonthDateReport"
+            android:exported="false"
+            android:theme="@style/Theme.ApiTest" />
+        <activity
+            android:name=".ActivityProductReport"
+            android:exported="false"
+            android:theme="@style/Theme.ApiTest" />
+        <activity
+            android:name=".ActivityReportOrderWise"
+            android:exported="false"
+            android:theme="@style/Theme.ApiTest" />
+        <activity
+            android:name=".ActivityReport"
+            android:exported="false" />
+        <activity
             android:name=".cartScreen.CartActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".helperClass.NavigationActivity"
             android:exported="false" />
         <activity
             android:name=".POSActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".StockActivity"
             android:exported="false" />

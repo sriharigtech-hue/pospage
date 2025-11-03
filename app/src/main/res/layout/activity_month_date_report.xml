@@ -1,0 +1,1528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    tools:ignore="HardcodedText">
+
+
+    <RelativeLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_64dp"
+        android:background="@drawable/gradient_bg">
+
+        <RelativeLayout
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/_32dp"
+            android:layout_height="@dimen/_32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_18dp"
+            android:background="@drawable/button_curve_border"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_18dp"
+                android:layout_height="@dimen/_18dp"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/back" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_toEndOf="@+id/backButton"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/splashLogo2"
+                android:layout_width="@dimen/_110dp"
+                android:layout_height="@dimen/_24dp"
+                android:layout_gravity="start"
+                android:src="@drawable/splash2" />
+
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/searchIcon"
+            android:layout_width="@dimen/_24dp"
+            android:layout_height="@dimen/_24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:layout_toStartOf="@+id/refresh"
+            app:srcCompat="@drawable/search"
+            app:tint="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/refresh"
+            android:layout_width="@dimen/_24dp"
+            android:layout_height="@dimen/_24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:layout_toStartOf="@+id/viewBillsLayout"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/refresh"
+            app:tint="@color/white" />
+
+        <RelativeLayout
+            android:id="@+id/viewBillsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_18dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/viewBillsIcon"
+                android:layout_width="@dimen/_28dp"
+                android:layout_height="@dimen/_28dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/cart"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewBillsCount"
+                android:layout_width="@dimen/_14dp"
+                android:layout_height="@dimen/_14dp"
+                android:layout_alignEnd="@+id/viewBillsIcon"
+                android:background="@drawable/circle_bg"
+                android:backgroundTint="@color/red"
+                android:fontFamily="@font/font_bold"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_container"
+        android:layout_below="@+id/toolbar_layout"
+        android:background="@color/bgColor"
+
+        android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/selectionBG"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_8dp"
+                android:paddingTop="@dimen/_8dp"
+                android:paddingEnd="@dimen/_8dp"
+                android:paddingBottom="@dimen/_8dp">
+
+                <LinearLayout
+                    android:id="@+id/salesBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/gradient_btn"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_6dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/salesImage"
+                        android:layout_width="@dimen/_24dp"
+                        android:layout_height="@dimen/_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_2dp"
+                        android:layout_marginEnd="@dimen/_8dp"
+                        android:src="@drawable/pos_icon"
+                        android:tint="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/salesText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_semibold"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Sales"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/expenseBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_background2"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_6dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/expenseImage"
+                        android:layout_width="@dimen/_24dp"
+                        android:layout_height="@dimen/_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_2dp"
+                        android:layout_marginEnd="@dimen/_8dp"
+                        android:src="@drawable/expense"
+                        android:tint="@color/colorPrimary" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/expenseText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_semibold"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Expenses"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/empLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:layout_marginTop="@dimen/_16dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginHorizontal="@dimen/_8dp"
+                    android:fontFamily="@font/font_bold"
+                    android:gravity="start|center_vertical"
+                    android:text="Staff "
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_16sp"
+                    tools:ignore="RtlHardcoded" />
+
+                <LinearLayout
+                    android:layout_width="@dimen/_200dp"
+                    android:layout_height="@dimen/_36dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginHorizontal="@dimen/_8dp"
+                    android:background="@drawable/outer_curve_border2"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/adminText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/font_bold"
+                        android:gravity="center"
+                        android:text="Admin"
+                        android:textSize="@dimen/_18dp" />
+
+                    <Spinner
+                        android:id="@+id/emp_spinner"
+                        style="@style/SpinnerTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="@dimen/_16dp"
+                        android:spinnerMode="dropdown"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8dp"
+                app:cardBackgroundColor="@color/bgColor"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:orientation="vertical">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_12dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/monthRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/colorAccent"
+                            android:fontFamily="@font/font_semibold"
+                            android:text="Month"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16sp" />
+
+                        <RadioButton
+                            android:id="@+id/dateRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/colorAccent"
+                            android:fontFamily="@font/font_semibold"
+                            android:text="Date"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16sp" />
+                    </RadioGroup>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/titleContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_6dp"
+                        android:layout_marginBottom="@dimen/_4dp"
+                        android:fontFamily="@font/font_regular"
+                        android:text="Select Month"
+                        android:textColor="@color/textBlack"
+                        android:textSize="@dimen/_14sp" />
+
+                    <RelativeLayout
+                        android:id="@+id/fromDateLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_8dp"
+                        android:layout_marginEnd="@dimen/_16dp"
+                        android:background="@drawable/outer_curve_border2"
+                        android:padding="@dimen/_8dp">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/fromDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_16dp"
+                            android:fontFamily="@font/font_semibold"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16sp" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/fromDateIcon"
+                            android:layout_width="@dimen/_30dp"
+                            android:layout_height="@dimen/_30dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginTop="@dimen/_8dp"
+                            android:layout_marginEnd="@dimen/_16dp"
+                            android:layout_marginBottom="@dimen/_8dp"
+                            android:src="@drawable/calendar_icon"
+                            android:tint="@color/colorAccent" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/spinnerLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_56dp"
+                        android:layout_marginStart="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:layout_marginEnd="@dimen/_16dp"
+                        android:background="@drawable/outer_curve_border2"
+                        android:orientation="vertical">
+                        <Spinner
+                            android:id="@+id/amount_spinner"
+                            style="@style/SpinnerTheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="@dimen/_16dp"
+                            android:spinnerMode="dropdown" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/resultLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/resultDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_10dp"
+                        android:layout_marginEnd="@dimen/_16dp"
+                        android:fontFamily="@font/font_semibold"
+                        android:text="Report Details"
+                        android:textColor="@color/textBlack"
+                        android:textSize="@dimen/_16sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/resultDate"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginVertical="@dimen/_16dp"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/outer_curve_border1"
+                            android:backgroundTint="@color/_485ec6"
+                            android:elevation="4dp"
+                            android:paddingHorizontal="@dimen/_2dp"
+                            android:paddingVertical="@dimen/_8dp">
+
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/tdyIcon"
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/_8dp"
+                                android:layout_marginEnd="@dimen/_8dp"
+                                android:src="@drawable/sale"
+                                android:tint="@color/_485ec6" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/sale"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_8dp"
+                                android:layout_marginEnd="@dimen/_2dp"
+                                android:layout_toEndOf="@+id/tdyIcon"
+                                android:fontFamily="@font/font_medium"
+                                android:maxLines="1"
+                                android:text="Total Sale Amount"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_14sp" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/totalSalesAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/sale"
+                                android:layout_marginStart="@dimen/_8dp"
+                                android:layout_marginTop="@dimen/_12dp"
+                                android:layout_toEndOf="@+id/tdyIcon"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="@font/font_bold"
+                                android:freezesText="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:maxLines="1"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:text="₹ 0.00"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_18sp" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16dp"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/outer_curve_border1"
+                                android:backgroundTint="@color/_485ec6"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="@dimen/_2dp"
+                                android:paddingVertical="@dimen/_8dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/tdyIcon1"
+                                    android:layout_width="@dimen/_24dp"
+                                    android:layout_height="@dimen/_24dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_8dp"
+                                    android:src="@drawable/sale"
+                                    android:tint="@color/_485ec6" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/sale1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_2dp"
+                                    android:layout_toEndOf="@+id/tdyIcon1"
+                                    android:fontFamily="@font/font_medium"
+                                    android:maxLines="1"
+                                    android:text="Cash Payment"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_14sp" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/totalCashAmount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/sale1"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginTop="@dimen/_12dp"
+                                    android:layout_toEndOf="@+id/tdyIcon1"
+                                    android:ellipsize="marquee"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:fontFamily="@font/font_bold"
+                                    android:freezesText="true"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:maxLines="1"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:text="₹ 0.00"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_18sp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/outer_curve_border1"
+                                android:backgroundTint="@color/_485ec6"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="@dimen/_2dp"
+                                android:paddingVertical="@dimen/_8dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/tdyIcon2"
+                                    android:layout_width="@dimen/_24dp"
+                                    android:layout_height="@dimen/_24dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_8dp"
+                                    android:src="@drawable/sale"
+                                    android:tint="@color/_485ec6" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/sale2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_2dp"
+                                    android:layout_toEndOf="@+id/tdyIcon2"
+                                    android:fontFamily="@font/font_medium"
+                                    android:maxLines="1"
+                                    android:text="Upi Payment"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_14sp" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/totalUpiAmount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/sale2"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginTop="@dimen/_12dp"
+                                    android:layout_toEndOf="@+id/tdyIcon2"
+                                    android:ellipsize="marquee"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:fontFamily="@font/font_bold"
+                                    android:freezesText="true"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:maxLines="1"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:text="₹ 0.00"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_18sp" />
+
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16dp"
+                            android:orientation="horizontal">
+
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/outer_curve_border1"
+                                android:backgroundTint="@color/d0901a"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="@dimen/_2dp"
+                                android:paddingVertical="@dimen/_8dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/yestdyIcon"
+                                    android:layout_width="@dimen/_24dp"
+                                    android:layout_height="@dimen/_24dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_8dp"
+                                    android:tint="@color/d0901a"
+                                    app:srcCompat="@drawable/inventory" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/yes_sale"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_2dp"
+                                    android:layout_toEndOf="@+id/yestdyIcon"
+                                    android:ellipsize="marquee"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:fontFamily="@font/font_medium"
+                                    android:freezesText="true"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:maxLines="1"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:text="Total Orders"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_14sp" />
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/yes_sale"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginTop="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_4dp"
+                                    android:layout_toEndOf="@+id/yestdyIcon"
+                                    android:elevation="4dp"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.textview.MaterialTextView
+                                        android:id="@+id/totalOrders"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:fontFamily="@font/font_bold"
+                                        android:freezesText="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:maxLines="1"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="@color/textBlack"
+                                        android:textSize="@dimen/_18sp" />
+                                </RelativeLayout>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/outer_curve_border1"
+                                android:backgroundTint="@color/d0901a"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="@dimen/_2dp"
+                                android:paddingVertical="@dimen/_8dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/cashUpiIcon"
+                                    android:layout_width="@dimen/_24dp"
+                                    android:layout_height="@dimen/_24dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_8dp"
+                                    android:tint="@color/d0901a"
+                                    app:srcCompat="@drawable/inventory" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/cashUpiSale"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_2dp"
+                                    android:layout_toEndOf="@+id/cashUpiIcon"
+                                    android:ellipsize="marquee"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:fontFamily="@font/font_medium"
+                                    android:freezesText="true"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:maxLines="1"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:text="Cash + Upi Orders"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_14sp" />
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/cashUpiSale"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginTop="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_4dp"
+                                    android:layout_toEndOf="@+id/cashUpiIcon"
+                                    android:elevation="4dp"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.textview.MaterialTextView
+                                        android:id="@+id/cashUpiOrders"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:fontFamily="@font/font_bold"
+                                        android:freezesText="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:maxLines="1"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="@color/textBlack"
+                                        android:textSize="@dimen/_18sp" />
+                                </RelativeLayout>
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16dp"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/outer_curve_border1"
+                                android:backgroundTint="@color/d0901a"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="@dimen/_2dp"
+                                android:paddingVertical="@dimen/_8dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/yestdyIcon1"
+                                    android:layout_width="@dimen/_24dp"
+                                    android:layout_height="@dimen/_24dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_8dp"
+                                    android:tint="@color/d0901a"
+                                    app:srcCompat="@drawable/inventory" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/yes_sale1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_2dp"
+                                    android:layout_toEndOf="@+id/yestdyIcon1"
+                                    android:ellipsize="marquee"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:fontFamily="@font/font_medium"
+                                    android:freezesText="true"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:maxLines="1"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:text="Cash Orders"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_14sp" />
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/yes_sale1"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginTop="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_4dp"
+                                    android:layout_toEndOf="@+id/yestdyIcon1"
+                                    android:elevation="4dp"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.textview.MaterialTextView
+                                        android:id="@+id/cashOrders"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:fontFamily="@font/font_bold"
+                                        android:freezesText="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:maxLines="1"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="@color/textBlack"
+                                        android:textSize="@dimen/_18sp" />
+                                </RelativeLayout>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_6dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/outer_curve_border1"
+                                android:backgroundTint="@color/d0901a"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="@dimen/_2dp"
+                                android:paddingVertical="@dimen/_8dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/yestdyIcon2"
+                                    android:layout_width="@dimen/_24dp"
+                                    android:layout_height="@dimen/_24dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_8dp"
+                                    android:tint="@color/d0901a"
+                                    app:srcCompat="@drawable/inventory" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/yes_sale2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_2dp"
+                                    android:layout_toEndOf="@+id/yestdyIcon2"
+                                    android:ellipsize="marquee"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:fontFamily="@font/font_medium"
+                                    android:freezesText="true"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:maxLines="1"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:text="Upi Orders"
+                                    android:textColor="@color/textBlack"
+                                    android:textSize="@dimen/_14sp" />
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/yes_sale2"
+                                    android:layout_marginStart="@dimen/_8dp"
+                                    android:layout_marginTop="@dimen/_8dp"
+                                    android:layout_marginEnd="@dimen/_4dp"
+                                    android:layout_toEndOf="@+id/yestdyIcon2"
+                                    android:elevation="4dp"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.textview.MaterialTextView
+                                        android:id="@+id/upiOrders"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="marquee"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:fontFamily="@font/font_bold"
+                                        android:freezesText="true"
+                                        android:marqueeRepeatLimit="marquee_forever"
+                                        android:maxLines="1"
+                                        android:scrollHorizontally="true"
+                                        android:singleLine="true"
+                                        android:text="0"
+                                        android:textColor="@color/textBlack"
+                                        android:textSize="@dimen/_18sp" />
+                                </RelativeLayout>
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/no_list_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/bgColor"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/_16dp"
+                    android:paddingBottom="@dimen/_56dp"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/_60dp"
+                        android:layout_height="@dimen/_60dp"
+                        android:layout_marginTop="@dimen/_56dp"
+                        android:tint="@color/colorPrimary"
+                        app:srcCompat="@drawable/search" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/failure_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_24dp"
+                        android:layout_marginTop="@dimen/_16dp"
+                        android:layout_marginEnd="@dimen/_24dp"
+                        android:fontFamily="@font/font_semibold"
+                        android:gravity="center"
+                        android:text="No Report Data Found"
+                        android:textAllCaps="false"
+                        android:textColor="@color/textBlack"
+                        android:textSize="@dimen/_14sp"
+                        tools:ignore="RtlHardcoded" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/resultLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/transactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:background="@color/bgColor" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/reportListLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12dp"
+                android:layout_marginTop="@dimen/_12dp"
+                android:layout_marginBottom="@dimen/_12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/orderWiseReport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginHorizontal="@dimen/_8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/report_curve_border"
+                            android:backgroundTint="@color/dfe4fb"
+                            android:elevation="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_2dp"
+                            android:paddingVertical="@dimen/_22dp">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:src="@drawable/sale"
+                                app:tint="@color/_485ec6" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/report1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="@font/font_bold"
+                                android:freezesText="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:maxLines="1"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:text="Sales Wise Report"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_16sp" />
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:layout_marginTop="@dimen/_2dp"
+                                android:padding="@dimen/_6dp"
+                                android:src="@drawable/right_arrow"
+                                app:tint="@color/_485ec6" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/productWiseReport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_8dp"
+                            android:layout_marginVertical="@dimen/_12dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/report_curve_border"
+                            android:backgroundTint="@color/fdedd4"
+                            android:elevation="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_2dp"
+                            android:paddingVertical="@dimen/_22dp">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:src="@drawable/sales"
+                                app:tint="@color/d0901a" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/report2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="@font/font_bold"
+                                android:freezesText="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:maxLines="1"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:text="Order Wise Report"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_16sp" />
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:layout_marginTop="@dimen/_2dp"
+                                android:padding="@dimen/_6dp"
+                                android:src="@drawable/right_arrow"
+                                app:tint="@color/d0901a" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/dateMonthWiseReport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/report_curve_border"
+                            android:backgroundTint="@color/fcd6e2"
+                            android:elevation="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_2dp"
+                            android:paddingVertical="@dimen/_22dp">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                app:srcCompat="@drawable/inventory"
+                                app:tint="@color/d71852" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/report3"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="@font/font_bold"
+                                android:freezesText="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:maxLines="1"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:text="Item Wise Report"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_16sp" />
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:layout_marginTop="@dimen/_2dp"
+                                android:padding="@dimen/_6dp"
+                                android:src="@drawable/right_arrow"
+                                app:tint="@color/d71852" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/employeeDateMonthWiseReport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_8dp"
+                            android:layout_marginTop="@dimen/_8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/report_curve_border"
+                            android:backgroundTint="@color/bg_gradient_transparent"
+                            android:elevation="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_2dp"
+                            android:paddingVertical="@dimen/_22dp">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:src="@drawable/calendar_icon"
+                                app:tint="@color/colorPrimary" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/employeereport3"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="@font/font_bold"
+                                android:freezesText="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:scrollHorizontally="true"
+                                android:text="Staff Wise Report"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_16sp" />
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:layout_marginTop="@dimen/_2dp"
+                                android:padding="@dimen/_6dp"
+                                android:src="@drawable/right_arrow"
+                                app:tint="@color/colorPrimary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/customizedReport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_8dp"
+                            android:layout_marginVertical="@dimen/_12dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/report_curve_border"
+                            android:backgroundTint="@color/dbf3f5"
+                            android:elevation="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_2dp"
+                            android:paddingVertical="@dimen/_22dp">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:src="@drawable/home"
+                                app:tint="@color/_3dbac6" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/report4"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="@font/font_bold"
+                                android:freezesText="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:maxLines="1"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:text="Customized Report"
+                                android:textColor="@color/textBlack"
+                                android:textSize="@dimen/_16sp" />
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/_24dp"
+                                android:layout_height="@dimen/_24dp"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="@dimen/_8dp"
+                                android:layout_marginTop="@dimen/_2dp"
+                                android:padding="@dimen/_6dp"
+                                android:src="@drawable/right_arrow"
+                                app:tint="@color/_3dbac6" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_layout"
+        android:background="@color/transparent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+<!--        <com.github.ybq.android.spinkit.SpinKitView-->
+<!--            android:id="@+id/loader"-->
+<!--            style="@style/SpinKitView.Circle"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:gravity="center"-->
+<!--            app:SpinKit_Color="@color/colorPrimary" />-->
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12dp"
+            android:fontFamily="@font/font_bold"
+            android:text="Fetching Details ..."
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_16sp" />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/sale_but"
+        android:layout_width="@dimen/_80dp"
+        android:layout_height="@dimen/_80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_6dp"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:gravity="center">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/updateImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/circle2" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/sale_icon"
+                android:layout_width="@dimen/_40dp"
+                android:layout_height="@dimen/_40dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/pos_icon"
+                android:tint="@color/colorAccent" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sale_icon"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_2dp"
+                android:gravity="center"
+                android:text="POS"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_12sp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/top_curve_border"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/inventory_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/inventory" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/matchText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Inventory"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/web_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp"
+                android:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/web" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/searchText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Stock"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/sale_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp"
+                android:visibility="invisible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/mailIcon"
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:src="@drawable/sale"
+                    android:tint="@color/colorPrimary" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/msgCount"
+                    android:layout_width="@dimen/_20dp"
+                    android:layout_height="@dimen/_20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/_14dp"
+                    android:backgroundTint="@color/red"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/mailBoxText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mailIcon"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Sale"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_9sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/home_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/homereport" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/homeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Report"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/profile_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/profileText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Settings"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

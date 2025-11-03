@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    >
+
+
+    <RelativeLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_64dp"
+        android:background="@drawable/gradient_bg">
+
+        <RelativeLayout
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/_32dp"
+            android:layout_height="@dimen/_32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_18dp"
+            android:background="@drawable/button_curve_border"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_18dp"
+                android:layout_height="@dimen/_18dp"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/back" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_8dp"
+            android:layout_toEndOf="@+id/backButton"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/splashLogo2"
+                android:layout_width="@dimen/_110dp"
+                android:layout_height="@dimen/_24dp"
+                android:layout_gravity="start"
+                android:src="@drawable/splash2" />
+
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/searchIcon"
+            android:layout_width="@dimen/_24dp"
+            android:layout_height="@dimen/_24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:layout_toStartOf="@+id/refresh"
+            app:srcCompat="@drawable/search"
+            app:tint="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/refresh"
+            android:layout_width="@dimen/_24dp"
+            android:layout_height="@dimen/_24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_8dp"
+            android:layout_toStartOf="@+id/viewBillsLayout"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/refresh"
+            app:tint="@color/white" />
+
+        <RelativeLayout
+            android:id="@+id/viewBillsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_18dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/viewBillsIcon"
+                android:layout_width="@dimen/_28dp"
+                android:layout_height="@dimen/_28dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/cart"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewBillsCount"
+                android:layout_width="@dimen/_14dp"
+                android:layout_height="@dimen/_14dp"
+                android:layout_alignEnd="@+id/viewBillsIcon"
+                android:background="@drawable/circle_bg"
+                android:backgroundTint="@color/red"
+                android:fontFamily="@font/font_bold"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_container"
+        android:layout_below="@+id/toolbar_layout"
+        android:background="@color/bgColor"
+
+        android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/selectionBG"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_8dp"
+                android:paddingTop="@dimen/_8dp"
+                android:paddingEnd="@dimen/_8dp"
+                android:paddingBottom="@dimen/_8dp">
+
+                <LinearLayout
+                    android:id="@+id/salesBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/gradient_btn"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_6dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/salesImage"
+                        android:layout_width="@dimen/_24dp"
+                        android:layout_height="@dimen/_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_2dp"
+                        android:layout_marginEnd="@dimen/_8dp"
+                        android:src="@drawable/pos_icon"
+                        android:tint="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/salesText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_semibold"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Sales"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/expenseBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_background2"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_6dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/expenseImage"
+                        android:layout_width="@dimen/_24dp"
+                        android:layout_height="@dimen/_24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_2dp"
+                        android:layout_marginEnd="@dimen/_8dp"
+                        android:src="@drawable/expense"
+                        android:tint="@color/colorPrimary" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/expenseText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_semibold"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Expenses"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8dp"
+                app:cardBackgroundColor="@color/bgColor"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_6dp"
+                        android:layout_marginBottom="@dimen/_4dp"
+                        android:fontFamily="@font/font_regular"
+                        android:text="Select Option"
+                        android:textColor="@color/textBlack"
+                        android:textSize="@dimen/_14sp" />
+
+                    <LinearLayout
+                        android:id="@+id/spinnerLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_56dp"
+                        android:layout_marginStart="@dimen/_16dp"
+                        android:layout_marginTop="@dimen/_12dp"
+                        android:layout_marginEnd="@dimen/_16dp"
+                        android:background="@drawable/outer_curve_border2"
+                        android:orientation="vertical">
+
+                        <Spinner
+                            android:id="@+id/amount_spinner"
+                            style="@style/SpinnerTheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="@dimen/_16dp"
+                            android:spinnerMode="dropdown" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/resultLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/resultDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:layout_marginBottom="@dimen/_8dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:text=""
+                    android:textColor="@color/text243757"
+                    android:textSize="@dimen/_16sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/transactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16dp"
+                    android:background="@color/bgColor"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/no_list_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/bgColor"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/_16dp"
+                    android:paddingBottom="@dimen/_56dp"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/_60dp"
+                        android:layout_height="@dimen/_60dp"
+                        android:layout_marginTop="@dimen/_56dp"
+                        android:tint="@color/colorPrimary"
+                        app:srcCompat="@drawable/search" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/failure_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_24dp"
+                        android:layout_marginTop="@dimen/_16dp"
+                        android:layout_marginEnd="@dimen/_24dp"
+                        android:fontFamily="@font/font_semibold"
+                        android:gravity="center"
+                        android:text="No Report Data Found"
+                        android:textAllCaps="false"
+                        android:textColor="@color/textBlack"
+                        android:textSize="@dimen/_14sp"
+                        tools:ignore="RtlHardcoded" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+<!--    <include-->
+<!--        layout="@layout/loading_anim"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerInParent="true"-->
+<!--        android:visibility="gone" />-->
+
+
+    <RelativeLayout
+        android:id="@+id/sale_but"
+        android:layout_width="@dimen/_80dp"
+        android:layout_height="@dimen/_80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_6dp"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:gravity="center">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/updateImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/circle2" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/sale_icon"
+                android:layout_width="@dimen/_40dp"
+                android:layout_height="@dimen/_40dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/pos_icon"
+                android:tint="@color/colorAccent" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sale_icon"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_2dp"
+                android:gravity="center"
+                android:text="POS"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_12sp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_64dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/top_curve_border"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/inventory_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/inventory" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/matchText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Inventory"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/web_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp"
+                android:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/web" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/searchText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Stock"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/sale_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp"
+                android:visibility="invisible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/mailIcon"
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:src="@drawable/sale"
+                    android:tint="@color/colorPrimary" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/msgCount"
+                    android:layout_width="@dimen/_20dp"
+                    android:layout_height="@dimen/_20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/_14dp"
+                    android:backgroundTint="@color/red"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/mailBoxText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mailIcon"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Sale"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_9sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/home_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/homereport" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/homeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Report"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/profile_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:tint="@color/grey9599AB"
+                    app:srcCompat="@drawable/setting" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/profileText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_2dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:gravity="center"
+                    android:text="Settings"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey9599AB"
+                    android:textSize="@dimen/_9sp" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>
