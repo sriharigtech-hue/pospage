@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/_4dp"
+    android:layout_marginStart="@dimen/_8dp"
+    android:layout_marginEnd="@dimen/_8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_8dp">
+
+            <RelativeLayout
+                android:id="@+id/order_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_4dp"
+                android:layout_marginTop="@dimen/_8dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/old_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:text="Order ID"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_12sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/order_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/old_title"
+                    android:layout_marginTop="@dimen/_4dp"
+                    android:layout_marginEnd="@dimen/_8dp"
+                    android:fontFamily="@font/font_bold"
+                    android:text=""
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/_14sp"
+                    tools:ignore="RtlHardcoded" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/book_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:text="Time"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_12sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/booking_date_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/book_title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/_8dp"
+                    android:layout_marginTop="@dimen/_4dp"
+                    android:fontFamily="@font/font_bold"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/grey_4F4F4F"
+                    android:textSize="@dimen/_14sp"
+                    tools:ignore="RtlHardcoded" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_8dp"
+                android:layout_marginBottom="@dimen/_8dp"
+                android:alpha="0.4"
+                android:background="@color/grayA6AEBB" />
+
+            <RelativeLayout
+                android:id="@+id/order_layout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_4dp"
+                android:layout_marginBottom="@dimen/_4dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/old_title1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:text="Payment Method"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_12sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/payment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/old_title1"
+                    android:layout_marginTop="@dimen/_4dp"
+                    android:layout_marginEnd="@dimen/_8dp"
+                    android:fontFamily="@font/font_bold"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sp"
+                    tools:ignore="RtlHardcoded" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/book_title1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/_8dp"
+                    android:fontFamily="@font/font_semibold"
+                    android:text="Amount"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_12sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/book_title1"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/_8dp"
+                    android:layout_marginTop="@dimen/_4dp"
+                    android:fontFamily="@font/font_bold"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_16sp"
+                    tools:ignore="RtlHardcoded" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/emp_name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_4dp"
+                android:layout_marginBottom="@dimen/_8dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/emp_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_medium"
+                    android:text="Staff : "
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/_12sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/emp_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_bold"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sp"
+                    tools:ignore="RtlHardcoded" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actionLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/printerProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/_8dp"
+                    android:src="@drawable/printer"
+                    app:tint="@color/red" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/deleteProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="@dimen/_24dp"
+                    android:layout_height="@dimen/_24dp"
+                    android:layout_marginHorizontal="@dimen/_8dp"
+                    android:src="@drawable/delete"
+                    app:tint="@color/red" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -24,6 +24,7 @@ import com.example.apitest.dataModel.UnitOutput
 import com.example.apitest.dataModel.EmpOutput
 import com.example.apitest.dataModel.ProductReportOutput
 import com.example.apitest.dataModel.SaleReportOutput
+import com.example.apitest.dataModel.ReportOutput
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -327,4 +328,12 @@ fun getAllProduct(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
     ): Call<SaleReportOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("order_list")
+    fun reportApi(
+        @Header("Authorization") jwtToken: String,
+        @Body input: Input?
+    ): Call<ReportOutput>
+
 }

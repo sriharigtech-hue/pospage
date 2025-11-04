@@ -1124,58 +1124,7 @@
                                 android:src="@drawable/right_arrow"
                                 app:tint="@color/d71852" />
                         </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/employeeDateMonthWiseReport"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_8dp"
-                            android:layout_marginTop="@dimen/_8dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/report_curve_border"
-                            android:backgroundTint="@color/bg_gradient_transparent"
-                            android:elevation="4dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="@dimen/_2dp"
-                            android:paddingVertical="@dimen/_22dp">
-
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="@dimen/_24dp"
-                                android:layout_height="@dimen/_24dp"
-                                android:layout_gravity="center"
-                                android:layout_marginHorizontal="@dimen/_8dp"
-                                android:src="@drawable/calendar_icon"
-                                app:tint="@color/colorPrimary" />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/employeereport3"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:ellipsize="marquee"
-                                android:focusable="true"
-                                android:focusableInTouchMode="true"
-                                android:fontFamily="@font/font_bold"
-                                android:freezesText="true"
-                                android:marqueeRepeatLimit="marquee_forever"
-                                android:scrollHorizontally="true"
-                                android:text="Staff Wise Report"
-                                android:textColor="@color/textBlack"
-                                android:textSize="@dimen/_16sp" />
-
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="@dimen/_24dp"
-                                android:layout_height="@dimen/_24dp"
-                                android:layout_gravity="center"
-                                android:layout_marginHorizontal="@dimen/_8dp"
-                                android:layout_marginTop="@dimen/_2dp"
-                                android:padding="@dimen/_6dp"
-                                android:src="@drawable/right_arrow"
-                                app:tint="@color/colorPrimary" />
-                        </LinearLayout>
+=
 
                         <LinearLayout
                             android:id="@+id/customizedReport"
