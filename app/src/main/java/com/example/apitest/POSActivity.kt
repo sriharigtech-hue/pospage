@@ -200,6 +200,7 @@ class POSActivity : NavigationActivity() {
                 override fun onResponse(call: Call<ProfileOutput?>, response: Response<ProfileOutput?>) {
                     if (response.isSuccessful && response.body()?.status == true) {
                         val profile = response.body()?.userDetails
+
                         taxEnabled = profile?.product_tax_status == "1"
                         mrpEnabled = profile?.mrp_price_status == "1"
                         wholeEnabled = profile?.whole_sale_price_status == "1"
@@ -294,16 +295,24 @@ class POSActivity : NavigationActivity() {
         productList.forEach { product ->
             product.productPrice?.forEach { price ->
                 if (price.selectedQuantityDecimal > 0) {
+                    val displayName = if (!price.productVariation.isNullOrEmpty()) {
+                        "${product.productName} - ${price.productVariation}"
+                    } else {
+                        product.productName ?: "N/A"
+                    }
+
                     cartList.add(
                         CartItem(
                             productId = product.productId.toString(),
-                            name = product.productName ?: "N/A",
+                            name = displayName,
                             quantity = price.selectedQuantityDecimal,
                             price = price.productPrice?.toDoubleOrNull() ?: 0.0,
                             isCustom = false,
-                            stockCount = price.stockCount?.toDouble()
+                            stockCount = price.stockCount?.toDouble(),
+                            variationName = price.productVariation
                         )
                     )
+
                 }
             }
         }
@@ -320,8 +329,8 @@ class POSActivity : NavigationActivity() {
                 )
             )
         }
-
     }
+
 
     // ---------------------- CUSTOM ITEM DIALOG ----------------------
     private fun showCustomItemDialog() {
@@ -406,17 +415,16 @@ class POSActivity : NavigationActivity() {
             productList.forEach { product ->
                 product.productPrice?.forEach { it.selectedQuantityDecimal = 0.0 }
             }
-
+            customProductList.clear()
             // Apply updated quantities
             updatedCartItems.forEach { cartItem ->
                 if (!cartItem.isCustom) {
-                    productList.find { it.productId.toString() == cartItem.productId }?.productPrice?.forEach {
-                        it.selectedQuantityDecimal = cartItem.quantity
-                    }
+                    productList.find { it.productId.toString() == cartItem.productId }?.productPrice?.find {
+                        it.productVariation == cartItem.variationName
+                    }?.selectedQuantityDecimal = cartItem.quantity
+
                 } else {
-                    val existing = customProductList.find { it.name.equals(cartItem.name, true) }
-                    if (existing != null) existing.qty = cartItem.quantity
-                    else customProductList.add(CustomProduct(cartItem.name, cartItem.quantity, cartItem.price))
+                    customProductList.add(CustomProduct(cartItem.name, cartItem.quantity, cartItem.price))
                 }
             }
             syncCartWithProducts()

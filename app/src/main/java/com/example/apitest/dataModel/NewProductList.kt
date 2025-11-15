@@ -36,7 +36,7 @@ data class NewProductList(
     var unitId: Int? = null,
     @Json(name = "unit_name")
     var unitName: String? = null,
-
+    val variationName: String? = null,
 
     // 🟢 Track currently selected variation
     var selectedVariationIndex: Int = 0

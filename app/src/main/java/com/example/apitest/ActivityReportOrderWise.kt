@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 
 import androidx.appcompat.app.AppCompatActivity
+import com.example.apitest.helperClass.DialogCustomReport
 import com.example.apitest.helperClass.NavigationActivity
 
 class ActivityReportOrderWise : NavigationActivity() {
@@ -40,9 +41,13 @@ class ActivityReportOrderWise : NavigationActivity() {
             val intent = Intent(this, ActivityMonthDateReport::class.java)
             startActivity(intent)
         }
+        findViewById<View>(R.id.customizedReport).setOnClickListener {
+            DialogCustomReport.showCustomizedReportDialog(this)
+        }
 
 
-        // 🟦 When clicking first layout (Sales Wise Report), go back to ActivityReport
+
+        //  When clicking first layout (Sales Wise Report), go back to ActivityReport
         findViewById<View>(R.id.orderWiseReport).setOnClickListener {
             val intent = Intent(this, ActivityReport::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)

@@ -19,33 +19,30 @@ class StockActivity : NavigationActivity() {
 
         setupBottomNavigation("stock") // using navigation helper class to set up bottom navigation
 
+        // ✅ Check access first
+        if (!UserAccess.isStockAllowed) {
+            Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
+            finish() // Close activity immediately
+            return
+        }
+
+        setContentView(R.layout.activity_stock)
+        setupBottomNavigation("stock")
+
         tabStockList = findViewById(R.id.tabStockList)
         tabLowStockList = findViewById(R.id.tabLowStockList)
 
+        // Default fragment
+        replaceFragment(StockListFragment(), "StockListFragment")
+        selectTab(tabStockList)
 
-        // Only show fragments if allowed
-        if (UserAccess.isStockAllowed) {
-            replaceFragment(StockListFragment(), "StockListFragment")
-            selectTab(tabStockList)
-        } else {
-            Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
-        }
-
-
+        // Tab click listeners
         tabStockList.setOnClickListener {
-            if (!UserAccess.isStockAllowed) {
-                Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
             replaceFragment(StockListFragment(), "StockListFragment")
             selectTab(tabStockList)
         }
 
         tabLowStockList.setOnClickListener {
-            if (!UserAccess.isStockAllowed) {
-                Toast.makeText(this, "Access restricted", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
             replaceFragment(LowStockListFragment(), "LowStockListFragment")
             selectTab(tabLowStockList)
         }

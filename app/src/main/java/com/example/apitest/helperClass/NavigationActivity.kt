@@ -11,6 +11,7 @@ import com.example.apitest.MainActivity
 import com.example.apitest.POSActivity
 import com.example.apitest.R
 import com.example.apitest.StockActivity
+import com.example.apitest.ActivityAccount
 import com.example.apitest.UserAccess
 import com.example.apitest.dataModel.DashboardOutput
 import com.example.apitest.dataModel.Input
@@ -34,10 +35,12 @@ open class NavigationActivity : AppCompatActivity() {
         val stockBtn = findViewById<LinearLayout>(R.id.web_button)
         val posBtn = findViewById<RelativeLayout>(R.id.sale_but)
         val homeBtn = findViewById<LinearLayout>(R.id.home_button) // 👈 new line
+        val profileBtn = findViewById<LinearLayout>(R.id.profile_button)
 
         val inventoryIcon = inventoryBtn.findViewById<AppCompatImageView>(R.id.inventory_icon)
         val stockIcon = stockBtn.findViewById<AppCompatImageView>(R.id.stock_icon)
         val posIcon = posBtn.findViewById<AppCompatImageView>(R.id.sale_icon)
+        val profileIcon = profileBtn.findViewById<AppCompatImageView>(R.id.profile_icon)
 
         // Reset all icons to default gray
         fun resetIcons() {
@@ -54,6 +57,8 @@ open class NavigationActivity : AppCompatActivity() {
             "pos" -> posIcon?.setColorFilter(getColor(R.color.colorAccent))
             "report" -> homeBtn.findViewById<AppCompatImageView>(R.id.homereport)
                 ?.setColorFilter(getColor(R.color.colorAccent))
+            "profile" -> profileIcon?.setColorFilter(getColor(R.color.colorAccent))
+
         }
 
         // Only navigate if user clicks a tab different from current
@@ -95,8 +100,15 @@ open class NavigationActivity : AppCompatActivity() {
             }
         }
 
+        profileBtn.setOnClickListener {
+            startActivity(Intent(this, ActivityAccount::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            })
+        }
 
     }
+
+
 
     private fun showReportPasswordDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_password_report, null)
@@ -170,6 +182,8 @@ open class NavigationActivity : AppCompatActivity() {
 
         dialog.show()
     }
+
+
 
 
 }

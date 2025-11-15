@@ -22,9 +22,13 @@ import com.example.apitest.dataModel.StockProductOutput
 import com.example.apitest.dataModel.SubCategoryStatusUpdateInput
 import com.example.apitest.dataModel.UnitOutput
 import com.example.apitest.dataModel.EmpOutput
+import com.example.apitest.dataModel.PlanDetailsOutput
 import com.example.apitest.dataModel.ProductReportOutput
 import com.example.apitest.dataModel.SaleReportOutput
+import com.example.apitest.dataModel.PrinterOutput
 import com.example.apitest.dataModel.ReportOutput
+import com.example.apitest.dataModel.PosFeaturesDetailsOutput
+import com.example.apitest.dataModel.ShopPlanDetailsOutput
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -335,5 +339,35 @@ fun getAllProduct(
         @Header("Authorization") jwtToken: String,
         @Body input: Input?
     ): Call<ReportOutput>
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @GET("printer_sizes")
+    fun getPrinterSize(): Call<PrinterOutput?>?
+
+    @Multipart
+    @POST("add_shop_image")
+    fun addShopImage(
+        @Header("Authorization") jwtToken: String,
+        @Part image: MultipartBody.Part?,
+    ): Call<StatusResponse>
+
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("get_plans")
+    fun getPlansAPI(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: Input?
+    ): Call<PlanDetailsOutput?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @GET("pos_features")
+    fun posFeaturesAPI(): Call<PosFeaturesDetailsOutput?>?
+
+    @Headers("Accept:application/json; charset=UTF-8")
+    @POST("shop_subscription_details")
+    fun getShopSubscriptionDetailsAPI(
+        @Header("Authorization") jwtToken: String,
+        @Body dashboardInput: Input?
+    ): Call<ShopPlanDetailsOutput?>?
 
 }

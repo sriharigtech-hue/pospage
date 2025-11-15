@@ -146,6 +146,7 @@
                         android:layout_marginEnd="@dimen/_8dp"
                         android:src="@drawable/delete"
                         app:tint="@color/red" />
+
                 </LinearLayout>
             </LinearLayout>
 

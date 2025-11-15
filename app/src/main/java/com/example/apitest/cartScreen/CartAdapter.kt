@@ -47,6 +47,7 @@ class CartAdapter(
         val total = totalOriginal * item.quantity
 
         holder.name.text = item.name
+
         holder.qty.text = if (item.quantity % 1.0 == 0.0)
             item.quantity.toInt().toString()
         else item.quantity.toString()

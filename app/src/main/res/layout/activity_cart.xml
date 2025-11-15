@@ -1779,6 +1779,7 @@
                 android:paddingVertical="@dimen/_12dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/profile_icon"
                     android:layout_width="@dimen/_24dp"
                     android:layout_height="@dimen/_24dp"
                     android:layout_gravity="center"

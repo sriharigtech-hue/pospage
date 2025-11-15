@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clickLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    tools:ignore="TooManyViews,HardcodedText,RtlHardcoded,SpUsage">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@id/cancel"
+        android:layout_width="@dimen/_30dp"
+        android:layout_height="@dimen/_30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/_2dp"
+        android:elevation="8dp"
+        android:padding="@dimen/_2dp"
+        android:src="@drawable/cancel" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_4dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_12dp"
+        app:cardElevation="2dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true">
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/percentage"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_46dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/font_semibold"
+                        android:gravity="center"
+                        android:text="Upload Image"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_15sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/gradient_bg">
+
+                </View>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16dp"
+                    android:orientation="vertical">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/shopImage"
+                        android:layout_width="@dimen/_120dp"
+                        android:layout_height="@dimen/_120dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/ic_launcher_round"
+                        app:riv_corner_radius="@dimen/_100dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/save"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_46dp"
+                        android:layout_marginHorizontal="@dimen/_16dp"
+                        android:layout_marginVertical="@dimen/_18dp"
+                        android:background="@drawable/gradient_btn"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/font_bold"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Upload"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
+
+
+

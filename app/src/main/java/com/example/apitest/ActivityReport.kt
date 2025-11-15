@@ -10,6 +10,7 @@ import com.example.apitest.dataModel.Dashboard
 import com.example.apitest.dataModel.DashboardOutput
 import com.example.apitest.dataModel.Input
 import com.example.apitest.dataModel.ProfileOutput
+import com.example.apitest.helperClass.DialogCustomReport
 import com.example.apitest.helperClass.NavigationActivity
 import com.example.apitest.network.ApiClient
 import retrofit2.Call
@@ -25,7 +26,7 @@ class ActivityReport : NavigationActivity() {
         setContentView(R.layout.activity_report)
         setupBottomNavigation("report")
 
-        // 👉 Navigate to Order Wise Report page when clicked
+        //  Navigate to Order Wise Report page when clicked
         findViewById<View>(R.id.orderWiseReport).setOnClickListener {
             dashboardData?.let { data ->
                 val intent = Intent(this, ActivityReportOrderWise::class.java)
@@ -44,6 +45,10 @@ class ActivityReport : NavigationActivity() {
             val intent = Intent(this, ActivityMonthDateReport::class.java)
             startActivity(intent)
         }
+        findViewById<View>(R.id.customizedReport).setOnClickListener {
+            DialogCustomReport.showCustomizedReportDialog(this)
+        }
+
 
 
     }

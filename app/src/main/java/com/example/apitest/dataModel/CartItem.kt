@@ -15,6 +15,7 @@ data class CartItem(
     var discountValue: Double? = null,
     var discountType: String? = null,
     var discountedPrice: Double? = null,
+    val variationName: String? = null,
     var discount: Double = 0.0 // percent-based discount
 
 
